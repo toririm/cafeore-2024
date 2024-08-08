@@ -43,7 +43,7 @@ export default function Item() {
       <h1 className="text-3xl">アイテム</h1>
       <ul>
         {items?.map((item) => (
-          <li key={item.name}>
+          <li key={item.id}>
             <h2>{item.name}</h2>
             <p>{item.price}</p>
             <p>{item.type}</p>

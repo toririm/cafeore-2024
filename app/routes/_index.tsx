@@ -54,7 +54,7 @@ export default function Index() {
       <Button className="mt-4 bg-sky-900 text-white">Click me</Button>
       <ul>
         {items.map((item) => (
-          <li key={item.name} className="mt-4">
+          <li key={item.id} className="mt-4">
             <h2 className="text-xl">{item.name}</h2>
             <p>{item.price}</p>
             <p>{item.type}</p>
