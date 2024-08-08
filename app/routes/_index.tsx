@@ -2,7 +2,9 @@ import type { MetaFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { collection, getDocs } from "firebase/firestore";
 import { Button } from "~/components/ui/button";
+import { converter } from "~/firebase/converter";
 import { db } from "~/firebase/firestore";
+import { itemSchema } from "~/models/item";
 
 export const meta: MetaFunction = () => {
   return [
@@ -14,7 +16,7 @@ export const meta: MetaFunction = () => {
 export const clientLoader = async () => {
   // clientLoader は Remix SPA 特有の関数で、ページロード時にクライアント側で実行される
   // したがって現時点ではリアルタイムデータの取得はできない
-  const itemsRef = collection(db, "items");
+  const itemsRef = collection(db, "items").withConverter(converter(itemSchema));
   const docSnap = await getDocs(itemsRef);
   const items = docSnap.docs.map((doc) => doc.data());
   console.log(items);
@@ -52,7 +54,7 @@ export default function Index() {
       <Button className="mt-4 bg-sky-900 text-white">Click me</Button>
       <ul>
         {items.map((item) => (
-          <li key={item.id} className="mt-4">
+          <li key={item.name} className="mt-4">
             <h2 className="text-xl">{item.name}</h2>
             <p>{item.price}</p>
             <p>{item.type}</p>
