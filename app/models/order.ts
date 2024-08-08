@@ -2,7 +2,7 @@ import { z } from "zod";
 import { itemSchema } from "./item";
 
 export const orderSchema = z.object({
-  id: z.string(), // Firestore のドキュメント ID
+  id: z.string().nullable(), // Firestore のドキュメント ID
   orderId: z.number(),
   createdAt: z.date(),
   servedAt: z.date().nullable(),
