@@ -15,7 +15,8 @@ export const converter = <T>(schema: ZodSchema<T>) => {
       options: SnapshotOptions,
     ) => {
       const data = snapshot.data(options);
-      return schema.parse(data);
+      // id は Firestore のドキュメント ID を使う
+      return schema.parse({ ...data, id: snapshot.id });
     },
   };
 };
