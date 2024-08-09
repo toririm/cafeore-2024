@@ -20,6 +20,18 @@ module.exports = {
     es6: true,
   },
   ignorePatterns: ["!**/.server", "!**/.client"],
+  rules: {
+    // `_` から始まる変数は使わなくても警告を出さない
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      {
+        argsIgnorePattern: "^_",
+        varsIgnorePattern: "^_",
+        cautionErrorsIgnorePattern: "^_",
+        destructuredArrayIgnorePattern: "^_",
+      },
+    ],
+  },
 
   // Base config
   extends: ["eslint:recommended", "prettier"],
