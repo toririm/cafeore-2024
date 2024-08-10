@@ -9,7 +9,9 @@ import type { ZodSchema } from "zod";
 export const converter = <T>(schema: ZodSchema<T>) => {
   return {
     toFirestore: (data: T) => {
-      return data as DocumentData;
+      // id は ドキュメントには含めない
+      const dataWithoutId = _.omit(data as object, "id");
+      return dataWithoutId;
     },
     fromFirestore: (
       snapshot: QueryDocumentSnapshot,
