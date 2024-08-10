@@ -1,7 +1,7 @@
 import { Item } from "~/models/item";
-import { Repository } from "./type";
+import { ItemRepository } from "./type";
 
-export const itemRepository: Repository<Item> = {
+export const itemRepository: ItemRepository = {
   findAll: async () => {
     // ここに Firestore からデータを取得する処理を記述
     return [];
