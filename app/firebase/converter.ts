@@ -11,7 +11,7 @@ export const converter = <T>(schema: ZodSchema<T>) => {
     toFirestore: (data: T) => {
       // id は ドキュメントには含めない
       const dataWithoutId = _.omit(data as object, "id");
-      return dataWithoutId;
+      return dataWithoutId as T;
     },
     fromFirestore: (
       snapshot: QueryDocumentSnapshot,
