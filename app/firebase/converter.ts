@@ -1,7 +1,8 @@
-import type {
-  DocumentData,
-  QueryDocumentSnapshot,
-  SnapshotOptions,
+import {
+  type DocumentData,
+  type QueryDocumentSnapshot,
+  type SnapshotOptions,
+  Timestamp,
 } from "firebase/firestore";
 import _ from "lodash";
 import type { ZodSchema } from "zod";
@@ -33,7 +34,7 @@ export const converter = <T>(schema: ZodSchema<T>) => {
 const parseDateProperty = (data: DocumentData): DocumentData => {
   const parsedData = _.mapValues(data, (value) =>
     // toDate が存在する場合は Timestamp 型としてパースする
-    value?.toDate ? value.toDate() : value,
+    value instanceof Timestamp ? value.toDate() : value,
   );
   const recursivelyParsedData = _.mapValues(parsedData, (value) => {
     // 再帰的にパースする
