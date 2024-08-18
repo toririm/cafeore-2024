@@ -2,9 +2,9 @@ import { addDoc, collection, getDocs } from "firebase/firestore";
 import { converter } from "~/firebase/converter";
 import { db } from "~/firebase/firestore";
 import { Item, itemSchema } from "~/models/item";
-import { Repository } from "./type";
+import { ItemRepository } from "./type";
 
-export const itemRepository: Repository<Item> = {
+export const itemRepository: ItemRepository = {
   findAll: async () => {
     const itemsRef = collection(db, "items").withConverter(
       converter(itemSchema),

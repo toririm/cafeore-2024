@@ -3,7 +3,7 @@ import { z } from "zod";
 export const itemtypes = ["hot", "ice", "ore", "milk"] as const;
 
 export const itemSchema = z.object({
-  id: z.string().nullable(), // Firestore のドキュメント ID
+  id: z.string().optional(), // Firestore のドキュメント ID
   name: z.string({ required_error: "名前が未入力です" }),
   price: z.number({ required_error: "価格が未入力です" }),
   type: z.enum(itemtypes, {
@@ -13,5 +13,7 @@ export const itemSchema = z.object({
 });
 
 export type Item = z.infer<typeof itemSchema>;
+
+export type ItemWithId = Required<Item>;
 
 export type ItemType = Pick<Item, "type">["type"];
