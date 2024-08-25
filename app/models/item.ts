@@ -14,4 +14,6 @@ export const itemSchema = z.object({
 
 export type Item = z.infer<typeof itemSchema>;
 
+export type ItemWithId = Required<Item>;
+
 export type ItemType = Pick<Item, "type">["type"];
