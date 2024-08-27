@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
 import { converter } from "~/firebase/converter";
 import { db } from "~/firebase/firestore";
 import { hasId } from "~/lib/typeguard";
@@ -25,7 +25,9 @@ export const itemRepository: ItemRepository = {
       throw new Error("Failed to save item");
     }
   },
-  delete: async (id) => {},
+  delete: async (id) => {
+    await deleteDoc(doc(db, "items", id));
+  },
   findById: async (id: string) => {
     // ここに Firestore からデータを取得する処理を記述
     return null;
