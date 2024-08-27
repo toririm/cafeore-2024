@@ -6,13 +6,11 @@ import { ItemRepository } from "./type";
 
 export const itemRepository: ItemRepository = {
   findAll: async () => {
-    const itemsRef = collection(db, "items").withConverter(
-      converter(itemSchema),
+    const colRef = collection(db, "items").withConverter(
+      converter(itemSchema.required()),
     );
-    const docSnap = await getDocs(itemsRef);
-    const items = docSnap.docs.map((doc) => doc.data());
-    console.log(items);
-    return items;
+    const docSnaps = await getDocs(colRef);
+    return docSnaps.docs.map((doc) => doc.data());
   },
   findById: async (id: string) => {
     // ここに Firestore からデータを取得する処理を記述
