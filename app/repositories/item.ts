@@ -25,13 +25,23 @@ export const itemRepository: ItemRepository = {
       throw new Error("Failed to save item");
     }
   },
+
   delete: async (id) => {
     await deleteDoc(doc(db, "items", id));
   },
-  findById: async (id: string) => {
-    // ここに Firestore からデータを取得する処理を記述
-    return null;
+
+  findById: async (id) => {
+    const docRef = doc(db, "items", id).withConverter(
+      converter(itemSchema.required())
+    );
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      return docSnap.data();
+    } else {
+      return null;
+    }
   },
+  
   findAll: async () => {
     const colRef = collection(db, "items").withConverter(
       converter(itemSchema.required()),
