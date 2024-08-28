@@ -65,11 +65,15 @@ export default function Casher() {
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>
-                    受領額とお釣りの額を確認してください
-                  </AlertDialogTitle>
+                  <AlertDialogTitle>金額を確認してください</AlertDialogTitle>
                   <AlertDialogDescription>
-                    {String(recieved_int - mockOrder.total) + " 円"}
+                    <p>{"合計金額：" + String(mockOrder.total)}</p>
+                    <p>{"受領額：" + recieved}</p>
+                    <p>
+                      {"お釣り：" +
+                        String(recieved_int - mockOrder.total) +
+                        " 円"}
+                    </p>
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
