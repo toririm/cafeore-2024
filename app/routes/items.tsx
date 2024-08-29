@@ -2,15 +2,14 @@ import { useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
 import type { ActionFunction, MetaFunction } from "@remix-run/node";
 import { Form, json, useActionData } from "@remix-run/react";
-import { addDoc, collection } from "firebase/firestore";
 import useSWRSubscription from "swr/subscription";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
-import { db } from "~/firebase/firestore";
 import { collectionSub } from "~/firebase/subscription";
 import { itemSchema, itemtypes } from "~/models/item";
+import { itemRepository } from '~/repositories/item';
 
 export const meta: MetaFunction = () => {
   return [{ title: "アイテム" }];
@@ -102,15 +101,10 @@ export const clientAction: ActionFunction = async ({ request }) => {
     return json(submission.reply());
   }
 
-  const { name, price, type } = submission.value;
+  const newItem = submission.value;
+  // あとでマシなエラーハンドリングにする
+  const savedItem = await itemRepository.save(newItem);
 
-  // あとでマシなエラーハンドリングにする & 処理を別ファイルに切り分ける
-  const docRef = await addDoc(collection(db, "items"), {
-    name,
-    price: Number(price),
-    type,
-  });
-
-  console.log("Document written with ID: ", docRef.id);
+  console.log("Document written with ID: ", savedItem.id);
   return new Response(null, { status: 204 });
 };
