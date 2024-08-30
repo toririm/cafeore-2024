@@ -1,29 +1,15 @@
 import type { MetaFunction } from "@remix-run/node";
 import { typedjson, useTypedLoaderData } from "remix-typedjson";
-import { Order } from "~/models/order";
+import { Button } from "~/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from "~/components/ui/card";
 import { orderRepository } from "~/repositories/order";
 
-
-const mockOrder: Order = {
-  orderId: 1,
-  createdAt: new Date(),
-  servedAt: null,
-  items: [
-    {
-      type: "ice",
-      name: "珈琲・俺ブレンド",
-      price: 300,
-    },
-    {
-      type: "ice",
-      name: "珈琲・俺ブレンド",
-      price: 400,
-    },
-  ],
-  assignee: "1st",
-  total: 700,
-  orderReady: false,
-};
 
 export const meta: MetaFunction = () => {
   return [{ title: "オーダー" }];
@@ -43,7 +29,6 @@ export const clientLoader = async () => {
 };
 
 export default function Server() {
-  console.log(mockOrder);
 
   const { orders } = useTypedLoaderData<typeof clientLoader>();
 
@@ -53,7 +38,34 @@ export default function Server() {
       <ul>
         {orders.map((order) => (
           <li key={order.id}>
-            <h2>{order.orderId}</h2>
+            <Card>
+              <CardHeader>
+                <CardTitle>{order.orderId}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p>{order.id}</p>
+                <div>
+                  {order.items.map((item) => (
+                    <div key={item.id}>
+                      <h3>{item.name}</h3>
+                      <p>{item.price}</p>
+                      <p>{type2label[item.type]}</p>
+                    </div>
+                  ))}
+                </div>
+                <p>{order.createdAt.toISOString()}</p>
+                <p>{`提供時間：${order.servedAt?.toISOString()}`}</p>
+                <p>{order.total}</p>
+                <p>{order.orderReady}</p>
+              </CardContent>
+              <CardFooter>
+                <Button>提供</Button>
+              </CardFooter>
+
+            </Card>
+
+
+            {/* <h2>{order.orderId}</h2>
             <p>{order.id}</p>
             <div>
               {order.items.map((item) => (
@@ -67,7 +79,7 @@ export default function Server() {
             <p>{order.createdAt.toISOString()}</p>
             <p>{`提供時間：${order.servedAt?.toISOString()}`}</p>
             <p>{order.total}</p>
-            <p>{order.orderReady}</p>
+            <p>{order.orderReady}</p> */}
           </li>
         ))}
       </ul>
