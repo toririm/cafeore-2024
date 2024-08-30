@@ -34,7 +34,7 @@ export default function Server() {
     <div className="font-sans p-4">
       <div className="flex justify-between pb-4">
         <h1 className="text-3xl">提供</h1>
-        <p>提供待ちオーダー数</p>
+        <p>提供待ちオーダー数：</p>
       </div>
       
       <div className="grid grid-cols-4 gap-4">
@@ -48,11 +48,11 @@ export default function Server() {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 gap-2">
                   {order.items.map((item) => (
                     <div key={item.id}>
                       <Card>
-                        <CardContent>
+                        <CardContent className="pt-6">
                           <h3>{item.name}</h3>
                           <p>{type2label[item.type]}</p>                          
                         </CardContent>
@@ -61,7 +61,7 @@ export default function Server() {
                   ))}
                 </div>
                 <p>{order.orderReady}</p>
-                <div className="flex justify-between">
+                <div className="flex justify-between pt-4">
                   <p className="flex items-center">{`提供時間：${order.servedAt?.toLocaleTimeString()}`}</p>
                   <Button>提供</Button>
                 </div>
