@@ -43,48 +43,51 @@ export default function Casher() {
   console.log(mockOrder);
   return (
     <div>
-      <h1>珈琲・俺POS</h1>
-      <ul>
-        <p>
-          <h2>合計金額：</h2>
-          {/* <h3>{total}</h3> */}
-          <h3>{mockOrder.total}</h3>
-        </p>
-        <p>
-          <h2>受領金額：</h2>
-          <form>
-            <Input
-              type="number"
-              placeholder="受け取った金額を入力してください"
-              value={recieved}
-              onChange={(event) => setText(event.target.value)}
-            />
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button>次の画面へ</Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>金額を確認してください</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    <p>{"合計金額：" + String(mockOrder.total)}</p>
-                    <p>{"受領額：" + recieved}</p>
-                    <p>
-                      {"お釣り：" +
-                        String(recieved_int - mockOrder.total) +
-                        " 円"}
-                    </p>
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>戻る</AlertDialogCancel>
-                  <AlertDialogAction type="submit">送信</AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </form>
-        </p>
-      </ul>
+      <h1>珈琲・俺 POS</h1>
+      <div></div>
+      <div>
+        <ul>
+          <li>
+            <h2>合計金額：</h2>
+            {/* <h3>{total}</h3> */}
+            <h3>{mockOrder.total}</h3>
+          </li>
+          <li>
+            <h2>受領金額：</h2>
+            <form>
+              <Input
+                type="number"
+                placeholder="受け取った金額を入力してください"
+                value={recieved}
+                onChange={(event) => setText(event.target.value)}
+              />
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button>次の画面へ</Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>金額を確認してください</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      <p>{"受領額：" + recieved}</p>
+                      <p>{"合計金額：" + String(mockOrder.total)}</p>
+                      <p>
+                        {"お釣り：" +
+                          String(recieved_int - mockOrder.total) +
+                          " 円"}
+                      </p>
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>戻る</AlertDialogCancel>
+                    <AlertDialogAction type="submit">送信</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </form>
+          </li>
+        </ul>
+      </div>
     </div>
   );
 }
