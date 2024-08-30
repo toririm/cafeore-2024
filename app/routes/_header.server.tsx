@@ -12,7 +12,7 @@ import { orderRepository } from "~/repositories/order";
 
 
 export const meta: MetaFunction = () => {
-  return [{ title: "オーダー" }];
+  return [{ title: "提供" }];
 };
 
 const type2label = {
