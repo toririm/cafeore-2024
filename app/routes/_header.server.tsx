@@ -34,55 +34,40 @@ export default function Server() {
 
   return (
     <div className="font-sans p-4">
-      <h1 className="text-3xl">アイテム</h1>
-      <ul>
+      <h1 className="text-3xl">提供</h1>
+      <div className="grid grid-cols-4 gap-4">
         {orders.map((order) => (
-          <li key={order.id}>
+          <div key={order.id}>
             <Card>
               <CardHeader>
                 <CardTitle>{order.orderId}</CardTitle>
+                <p>{order.createdAt.toISOString()}</p>
               </CardHeader>
               <CardContent>
-                <p>{order.id}</p>
-                <div>
+                <div className="grid grid-cols-3 gap-2">
                   {order.items.map((item) => (
                     <div key={item.id}>
-                      <h3>{item.name}</h3>
-                      <p>{item.price}</p>
-                      <p>{type2label[item.type]}</p>
+                      <Card>
+                        <CardContent>
+                          <h3>{item.name}</h3>
+                          <p>{type2label[item.type]}</p>                          
+                        </CardContent>
+                      </Card>
                     </div>
                   ))}
                 </div>
-                <p>{order.createdAt.toISOString()}</p>
                 <p>{`提供時間：${order.servedAt?.toISOString()}`}</p>
-                <p>{order.total}</p>
-                <p>{order.orderReady}</p>
               </CardContent>
               <CardFooter>
+                <p>{order.orderReady}</p>
                 <Button>提供</Button>
               </CardFooter>
 
             </Card>
 
-
-            {/* <h2>{order.orderId}</h2>
-            <p>{order.id}</p>
-            <div>
-              {order.items.map((item) => (
-                <div key={item.id}>
-                  <h3>{item.name}</h3>
-                  <p>{item.price}</p>
-                  <p>{type2label[item.type]}</p>
-                </div>
-              ))}
-            </div>
-            <p>{order.createdAt.toISOString()}</p>
-            <p>{`提供時間：${order.servedAt?.toISOString()}`}</p>
-            <p>{order.total}</p>
-            <p>{order.orderReady}</p> */}
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
