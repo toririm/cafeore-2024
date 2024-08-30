@@ -4,7 +4,6 @@ import { Button } from "~/components/ui/button";
 import {
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
   CardTitle
 } from "~/components/ui/card";
@@ -12,7 +11,7 @@ import { orderRepository } from "~/repositories/order";
 
 
 export const meta: MetaFunction = () => {
-  return [{ title: "提供" }];
+  return [{ title: "提供画面" }];
 };
 
 const type2label = {
@@ -23,7 +22,6 @@ const type2label = {
 };
 
 export const clientLoader = async () => {
-  console.log("findAllのテスト");
   const orders = await orderRepository.findAll();
   return typedjson({ orders });
 };
@@ -34,14 +32,20 @@ export default function Server() {
 
   return (
     <div className="font-sans p-4">
-      <h1 className="text-3xl">提供</h1>
+      <div className="flex justify-between pb-4">
+        <h1 className="text-3xl">提供</h1>
+        <p>提供待ちオーダー数</p>
+      </div>
+      
       <div className="grid grid-cols-4 gap-4">
         {orders.map((order) => (
           <div key={order.id}>
             <Card>
               <CardHeader>
-                <CardTitle>{order.orderId}</CardTitle>
-                <p>{order.createdAt.toISOString()}</p>
+                <div className="flex justify-between">
+                  <CardTitle>{`No. ${order.orderId}`}</CardTitle>
+                  <p>{order.createdAt.toLocaleTimeString()}</p>
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-3 gap-2">
@@ -56,12 +60,12 @@ export default function Server() {
                     </div>
                   ))}
                 </div>
-                <p>{`提供時間：${order.servedAt?.toISOString()}`}</p>
-              </CardContent>
-              <CardFooter>
                 <p>{order.orderReady}</p>
-                <Button>提供</Button>
-              </CardFooter>
+                <div className="flex justify-between">
+                  <p className="flex items-center">{`提供時間：${order.servedAt?.toLocaleTimeString()}`}</p>
+                  <Button>提供</Button>
+                </div>
+              </CardContent>
 
             </Card>
 
