@@ -9,7 +9,8 @@ export const addItem: ClientActionFunction = async ({ request }) => {
   const submission = parseWithZod(formData, { schema: itemSchema });
 
   if (submission.status !== "success") {
-    return json(submission.reply());
+    console.error("Invalid form data", submission.reply());
+    return json(submission.reply(), { status: 400 });
   }
 
   const newItem = submission.value;
