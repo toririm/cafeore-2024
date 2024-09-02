@@ -1,14 +1,8 @@
 import type { MetaFunction } from "@remix-run/node";
 import { typedjson, useTypedLoaderData } from "remix-typedjson";
 import { Button } from "~/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle
-} from "~/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { orderRepository } from "~/repositories/order";
-
 
 export const meta: MetaFunction = () => {
   return [{ title: "提供画面" }];
@@ -26,17 +20,16 @@ export const clientLoader = async () => {
   return typedjson({ orders });
 };
 
-export default function Server() {
-
+export default function Serve() {
   const { orders } = useTypedLoaderData<typeof clientLoader>();
 
   return (
-    <div className="font-sans p-4">
+    <div className="p-4 font-sans">
       <div className="flex justify-between pb-4">
         <h1 className="text-3xl">提供</h1>
         <p>提供待ちオーダー数：</p>
       </div>
-      
+
       <div className="grid grid-cols-4 gap-4">
         {orders.map((order) => (
           <div key={order.id}>
@@ -54,7 +47,7 @@ export default function Server() {
                       <Card>
                         <CardContent className="pt-6">
                           <h3>{item.name}</h3>
-                          <p>{type2label[item.type]}</p>                          
+                          <p>{type2label[item.type]}</p>
                         </CardContent>
                       </Card>
                     </div>
@@ -66,13 +59,10 @@ export default function Server() {
                   <Button>提供</Button>
                 </div>
               </CardContent>
-
             </Card>
-
           </div>
         ))}
       </div>
     </div>
   );
 }
-
