@@ -1,15 +1,18 @@
 import { useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
-import type { ActionFunction, MetaFunction } from "@remix-run/node";
-import { Form, json, useActionData } from "@remix-run/react";
+import type { MetaFunction } from "@remix-run/node";
+import { Form, useActionData } from "@remix-run/react";
 import useSWRSubscription from "swr/subscription";
+
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import { collectionSub } from "~/firebase/subscription";
 import { itemSchema, itemtypes } from "~/models/item";
-import { itemRepository } from '~/repositories/item';
+
+import type { action as clientAction } from "./action";
+export { action as clientAction } from "./action";
 
 export const meta: MetaFunction = () => {
   return [{ title: "アイテム" }];
@@ -38,7 +41,7 @@ export default function Item() {
   });
 
   return (
-    <div className="font-sans p-4">
+    <div className="p-4 font-sans">
       <h1 className="text-3xl">アイテム</h1>
       <ul>
         {items?.map((item) => (
@@ -46,10 +49,14 @@ export default function Item() {
             <h2>{item.name}</h2>
             <p>{item.price}</p>
             <p>{item.type}</p>
+            <Form method="DELETE">
+              <input type="hidden" name="itemId" value={item.id} />
+              <Button type="submit">削除</Button>
+            </Form>
           </li>
         ))}
       </ul>
-      <Form method="post" id={form.id} onSubmit={form.onSubmit}>
+      <Form method="POST" id={form.id} onSubmit={form.onSubmit}>
         <div>
           <Input
             type="text"
@@ -92,19 +99,3 @@ export default function Item() {
     </div>
   );
 }
-
-export const clientAction: ActionFunction = async ({ request }) => {
-  const formData = await request.formData();
-  const submission = parseWithZod(formData, { schema: itemSchema });
-
-  if (submission.status !== "success") {
-    return json(submission.reply());
-  }
-
-  const newItem = submission.value;
-  // あとでマシなエラーハンドリングにする
-  const savedItem = await itemRepository.save(newItem);
-
-  console.log("Document written with ID: ", savedItem.id);
-  return new Response(null, { status: 204 });
-};
