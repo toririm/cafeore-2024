@@ -1,6 +1,7 @@
 import { parseWithZod } from "@conform-to/zod";
 import { json, type ClientActionFunction } from "@remix-run/react";
 import { z } from "zod";
+import { itemRepository } from "~/repositories/item";
 
 export const deleteItem: ClientActionFunction = async ({ request }) => {
   const formData = await request.formData();
@@ -15,8 +16,7 @@ export const deleteItem: ClientActionFunction = async ({ request }) => {
 
   const { itemId } = submission.value;
 
-  // todo: implement delete item
-  console.error("Not implemented: delete item", itemId);
+  await itemRepository.delete(itemId);
 
   return new Response(null, { status: 204 });
 };
