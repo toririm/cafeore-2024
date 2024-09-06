@@ -9,6 +9,7 @@
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
     "fmt": "prettier --write .",
     "preview": "vite preview",
+    "test": "vitest",
     "typecheck": "tsc"
   },
   "dependencies": {
@@ -54,7 +55,8 @@
     "tailwindcss": "^3.4.4",
     "typescript": "^5.1.6",
     "vite": "^5.1.0",
-    "vite-tsconfig-paths": "^4.2.1"
+    "vite-tsconfig-paths": "^4.2.1",
+    "vitest": "^2.0.5"
   },
   "engines": {
     "node": ">=20.0.0"
