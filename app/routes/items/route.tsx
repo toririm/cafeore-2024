@@ -9,20 +9,13 @@ import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import { collectionSub } from "~/firebase/subscription";
-import { itemSchema, itemtypes } from "~/models/item";
+import { itemSchema, itemtypes, type2label } from "~/models/item";
 
 import type { action as clientAction } from "./action";
 export { action as clientAction } from "./action";
 
 export const meta: MetaFunction = () => {
   return [{ title: "アイテム" }];
-};
-
-const type2label = {
-  hot: "ホット",
-  ice: "アイス",
-  ore: "オレ",
-  milk: "ミルク",
 };
 
 export default function Item() {

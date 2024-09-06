@@ -17,3 +17,11 @@ export type Item = z.infer<typeof itemSchema>;
 export type ItemWithId = Required<Item>;
 
 export type ItemType = Pick<Item, "type">["type"];
+
+export const type2label = {
+  hot: "ホット",
+  ice: "アイス",
+  ore: "オレ",
+  milk: "ミルク",
+};
+
