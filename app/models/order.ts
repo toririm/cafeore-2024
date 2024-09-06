@@ -91,7 +91,7 @@ export class OrderEntity implements Order {
 
   get total() {
     // itemsの更新に合わせて自動で計算する
-    // その代わりitemsは直接更新できない
+    // その代わりtotalは直接更新できない
     this._total = this._items.reduce((acc, item) => acc + item.price, 0);
     return this._total;
   }
