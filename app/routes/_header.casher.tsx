@@ -37,9 +37,15 @@ const mockOrder: Order = {
 
 export default function Casher() {
   // const total = mockOrder.items.reduce((acc, cur) => acc + cur.price, 0);
-  const [recieved, setText] = useState("");
-  const [total, setTotal] = useState(0);
-  const recieved_int = parseInt(recieved);
+  const [recieved, setText] = useState(0);
+  const [items, setItems] = useState<
+    {
+      type: "hot" | "ice" | "ore" | "milk";
+      name: string;
+      price: number;
+      id?: string | undefined;
+    }[]
+  >([]);
   const item_model = {
     ore_blend: {
       type: "ice" as "hot" | "ice" | "ore" | "milk",
@@ -95,7 +101,11 @@ export default function Casher() {
                 (acc, cur) => acc + cur.price,
                 0,
               );
-              setTotal(mockOrder.total);
+              setItems(mockOrder.items);
+              mockOrder.total = mockOrder.items.reduce(
+                (acc, cur) => acc + cur.price,
+                0,
+              );
               console.log(mockOrder);
             }}
           >
@@ -107,8 +117,8 @@ export default function Casher() {
         <ul>
           <li>
             <h2>合計金額：</h2>
-            <h3>{total}</h3>
-            {/* <h3>{mockOrder.total}</h3> */}
+            {/* <h3>{total}</h3> */}
+            <h3>{mockOrder.total}</h3>
           </li>
           <li>
             <h2>受領金額：</h2>
@@ -117,7 +127,7 @@ export default function Casher() {
                 type="number"
                 placeholder="受け取った金額を入力してください"
                 value={recieved}
-                onChange={(event) => setText(event.target.value)}
+                onChange={(event) => setText(parseInt(event.target.value))}
               />
               <AlertDialog>
                 <AlertDialogTrigger asChild>
@@ -131,7 +141,7 @@ export default function Casher() {
                       <p>{"合計金額：" + String(mockOrder.total)}</p>
                       <p>
                         {"お釣り：" +
-                          String(recieved_int - mockOrder.total) +
+                          String(recieved - mockOrder.total) +
                           " 円"}
                       </p>
                     </AlertDialogDescription>
