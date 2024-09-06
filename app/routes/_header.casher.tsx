@@ -38,6 +38,7 @@ const mockOrder: Order = {
 export default function Casher() {
   // const total = mockOrder.items.reduce((acc, cur) => acc + cur.price, 0);
   const [recieved, setText] = useState("");
+  const [total, setTotal] = useState(0);
   const recieved_int = parseInt(recieved);
   const item_model = {
     ore_blend: {
@@ -94,6 +95,7 @@ export default function Casher() {
                 (acc, cur) => acc + cur.price,
                 0,
               );
+              setTotal(mockOrder.total);
               console.log(mockOrder);
             }}
           >
@@ -105,8 +107,8 @@ export default function Casher() {
         <ul>
           <li>
             <h2>合計金額：</h2>
-            {/* <h3>{total}</h3> */}
-            <h3>{mockOrder.total}</h3>
+            <h3>{total}</h3>
+            {/* <h3>{mockOrder.total}</h3> */}
           </li>
           <li>
             <h2>受領金額：</h2>
