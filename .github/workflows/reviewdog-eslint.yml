@@ -17,4 +17,4 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-pr-review # Change reporter.
-          eslint_flags: "--ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint ."
+          eslint_flags: "--ignore-path .gitignore ."
