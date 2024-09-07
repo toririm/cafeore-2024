@@ -1,11 +1,12 @@
+import { WithId } from "~/lib/typeguard";
 import { Item } from "~/models/item";
 import { Order } from "~/models/order";
 
-export type BaseRepository<T> = {
-  save(data: T): Promise<Required<T>>;
+export type BaseRepository<T extends { id?: unknown }> = {
+  save(data: T): Promise<WithId<T>>;
   delete(id: string): Promise<void>;
-  findById(id: string): Promise<Required<T> | null>;
-  findAll(): Promise<Required<T>[]>;
+  findById(id: string): Promise<WithId<T> | null>;
+  findAll(): Promise<WithId<T>[]>;
 };
 
 export type ItemRepository = BaseRepository<Item>;
