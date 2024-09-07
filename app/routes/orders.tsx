@@ -1,5 +1,9 @@
-import type { ActionFunction, MetaFunction } from "@remix-run/node";
-import { Form } from "@remix-run/react";
+import {
+  ClientActionFunction,
+  ClientActionFunctionArgs,
+  Form,
+  MetaFunction,
+} from "@remix-run/react";
 import { typedjson, useTypedLoaderData } from "remix-typedjson";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
@@ -27,7 +31,7 @@ export default function Orders() {
   const { orders } = useTypedLoaderData<typeof clientLoader>();
 
   return (
-    <div className="font-sans p-4">
+    <div className="p-4 font-sans">
       <h1 className="text-3xl">アイテム</h1>
       <ul>
         {orders.map((order) => (
@@ -83,34 +87,51 @@ const testOrder = (orderId: number): Order => ({
   orderReady: false,
 });
 
-export const clientAction: ActionFunction = async ({ request }) => {
-  const formData = await request.formData();
+export const clientAction: ClientActionFunction = async (args) => {
+  const { request } = args;
 
   switch (request.method) {
+    // TODO: func1, func2, func3 の命名を適切に、そしてすべて引数にargsを取るようにする
     case "POST":
       console.log("save(create)のテスト");
-      const orderId = Number(formData.get("orderId"));
-      const newOrder = testOrder(orderId);
-      const savedOrder = await orderRepository.save(newOrder);
-      console.log("created", savedOrder);
+      func1();
       break;
 
     case "DELETE":
-      console.log("deleteのテスト");
-      const id = formData.get("id");
-      await orderRepository.delete(id as string);
+      func2(request);
       break;
 
     case "PUT":
-      console.log("save(update)のテスト");
-      const id2 = formData.get("id");
-      const order = await orderRepository.findById(id2 as string);
-      if (order) {
-        order.servedAt = new Date();
-        await orderRepository.save(order);
-      }
+      func3(args);
       break;
   }
 
   return null;
+};
+
+// できればファイル分割もしたい
+
+const func1 = async () => {
+  console.log("save(create)のテスト");
+  const newOrder = testOrder(1);
+  const savedOrder = await orderRepository.save(newOrder);
+  console.log("created", savedOrder);
+};
+
+const func2 = async (request: Request) => {
+  const formData = await request.formData();
+  console.log("deleteのテスト");
+  const id = formData.get("id");
+  await orderRepository.delete(id as string);
+};
+
+const func3 = async ({ request }: ClientActionFunctionArgs) => {
+  const formData = await request.formData();
+  console.log("save(update)のテスト");
+  const id2 = formData.get("id");
+  const order = await orderRepository.findById(id2 as string);
+  if (order) {
+    order.servedAt = new Date();
+    await orderRepository.save(order);
+  }
 };
