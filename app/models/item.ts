@@ -17,3 +17,20 @@ export type Item = z.infer<typeof itemSchema>;
 export type ItemWithId = Required<Item>;
 
 export type ItemType = Pick<Item, "type">["type"];
+
+export class ItemEntity implements Item {
+  private constructor(
+    public readonly id: string | undefined,
+    public readonly name: string,
+    public readonly price: number,
+    public readonly type: ItemType,
+  ) {}
+
+  static createNew({ name, price, type }: Item): ItemEntity {
+    return new ItemEntity(undefined, name, price, type);
+  }
+
+  static fromItem(item: ItemWithId): ItemEntity {
+    return new ItemEntity(item.id, item.name, item.price, item.type);
+  }
+}
