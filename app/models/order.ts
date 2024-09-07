@@ -15,3 +15,5 @@ export const orderSchema = z.object({
 export type Order = z.infer<typeof orderSchema>;
 
 export type OrderWithId = Required<Order>;
+
+let orderId = 0;
