@@ -1,12 +1,12 @@
 import { z } from "zod";
-import { itemSchema, ItemWithId } from "./item";
+import { Item, itemSchema } from "./item";
 
 export const orderSchema = z.object({
   id: z.string().optional(), // Firestore のドキュメント ID
   orderId: z.number(),
   createdAt: z.date(),
   servedAt: z.date().nullable(),
-  items: z.array(itemSchema.required()),
+  items: z.array(itemSchema),
   assignee: z.string().nullable(),
   total: z.number(),
   orderReady: z.boolean(),
@@ -23,7 +23,7 @@ export class OrderEntity implements Order {
     private readonly _orderId: number,
     private readonly _createdAt: Date,
     private _servedAt: Date | null,
-    private _items: ItemWithId[],
+    private _items: Item[],
     private _assignee: string | null,
     private _total: number,
     private _orderReady: boolean,
@@ -78,7 +78,7 @@ export class OrderEntity implements Order {
   get items() {
     return this._items;
   }
-  set items(items: ItemWithId[]) {
+  set items(items: Item[]) {
     this._items = items;
   }
 
