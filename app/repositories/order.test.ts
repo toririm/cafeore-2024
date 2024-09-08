@@ -15,7 +15,7 @@ describe("[db] orderRepository", async () => {
     projectId: "cafeore-2024",
     firestore: {
       rules: fs.readFileSync("firestore.rules", "utf8"),
-      host: "localhost",
+      host: "127.0.0.1",
       port: 8080,
     },
   });

@@ -10,8 +10,8 @@
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
     "fmt": "prettier --write .",
     "preview": "vite preview",
-    "test:unit": "bun test -t [unit]",
-    "test:db": "firebase emulators:exec --only firestore 'bun test -t [db]'",
+    "test:unit": "bun test -t unit",
+    "test:db": "firebase emulators:exec --only firestore 'bun test -t db'",
     "typecheck": "tsc"
   },
   "dependencies": {
