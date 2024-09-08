@@ -1,13 +1,15 @@
 import { z } from "zod";
 
-import { itemSchema, type Item } from "./item";
+import { type WithId } from "~/lib/typeguard";
+
+import { ItemEntity, itemSchema } from "./item";
 
 export const orderSchema = z.object({
   id: z.string().optional(), // Firestore のドキュメント ID
   orderId: z.number(),
   createdAt: z.date(),
   servedAt: z.date().nullable(),
-  items: z.array(itemSchema),
+  items: z.array(itemSchema.required()),
   assignee: z.string().nullable(),
   total: z.number(),
   orderReady: z.boolean(),
@@ -15,7 +17,7 @@ export const orderSchema = z.object({
 
 export type Order = z.infer<typeof orderSchema>;
 
-export type OrderWithId = Required<Order>;
+export type OrderWithId = WithId<Order>;
 
 export class OrderEntity implements Order {
   // 全てのプロパティを private にして外部からの直接アクセスを禁止
@@ -24,13 +26,13 @@ export class OrderEntity implements Order {
     private readonly _orderId: number,
     private readonly _createdAt: Date,
     private _servedAt: Date | null,
-    private _items: Item[],
+    private _items: WithId<ItemEntity>[],
     private _assignee: string | null,
     private _total: number,
     private _orderReady: boolean,
   ) {}
 
-  static createNew(orderId: number): OrderEntity {
+  static createNew({ orderId }: { orderId: number }): OrderEntity {
     return new OrderEntity(
       undefined,
       orderId,
@@ -43,7 +45,7 @@ export class OrderEntity implements Order {
     );
   }
 
-  static fromOrder(order: OrderWithId): OrderEntity {
+  static fromOrder(order: OrderWithId): WithId<OrderEntity> {
     return new OrderEntity(
       order.id,
       order.orderId,
@@ -53,7 +55,7 @@ export class OrderEntity implements Order {
       order.assignee,
       order.total,
       order.orderReady,
-    );
+    ) as WithId<OrderEntity>;
   }
 
   // --------------------------------------------------
@@ -79,7 +81,7 @@ export class OrderEntity implements Order {
   get items() {
     return this._items;
   }
-  set items(items: Item[]) {
+  set items(items: WithId<ItemEntity>[]) {
     this._items = items;
   }
 
