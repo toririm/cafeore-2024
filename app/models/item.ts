@@ -23,5 +23,4 @@ export const type2label = {
   ice: "アイス",
   ore: "オレ",
   milk: "ミルク",
-};
-
+} as const satisfies Record<ItemType, string>;
