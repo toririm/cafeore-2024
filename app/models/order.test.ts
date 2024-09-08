@@ -4,7 +4,7 @@ import { type ItemWithId } from "./item";
 import { OrderEntity } from "./order";
 
 test("order total auto calc", () => {
-  const order = OrderEntity.createNew(2024);
+  const order = OrderEntity.createNew({ orderId: 2024 });
   expect(order.total).toBe(0);
 
   const items: ItemWithId[] = [
@@ -34,7 +34,7 @@ test("order total auto calc", () => {
 });
 
 test("order beReady", () => {
-  const order = OrderEntity.createNew(2024);
+  const order = OrderEntity.createNew({ orderId: 2024 });
   expect(order.orderReady).toBe(false);
 
   order.beReady();
@@ -42,7 +42,7 @@ test("order beReady", () => {
 });
 
 test("order beServed", () => {
-  const order = OrderEntity.createNew(2024);
+  const order = OrderEntity.createNew({ orderId: 2024 });
   expect(order.servedAt).toBe(null);
 
   order.beServed();
