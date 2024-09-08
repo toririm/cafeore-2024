@@ -1,7 +1,7 @@
 import { parseWithZod } from "@conform-to/zod";
 import { json, type ClientActionFunction } from "@remix-run/react";
 
-import { itemSchema } from "~/models/item";
+import { ItemEntity, itemSchema } from "~/models/item";
 import { itemRepository } from "~/repositories/item";
 
 export const addItem: ClientActionFunction = async ({ request }) => {
@@ -13,7 +13,7 @@ export const addItem: ClientActionFunction = async ({ request }) => {
     return json(submission.reply(), { status: 400 });
   }
 
-  const newItem = submission.value;
+  const newItem = ItemEntity.createNew(submission.value);
   const savedItem = await itemRepository.save(newItem);
 
   console.log("Document written with ID: ", savedItem.id);

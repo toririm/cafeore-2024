@@ -8,7 +8,7 @@ import { typedjson, useTypedLoaderData } from "remix-typedjson";
 
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import { type Order } from "~/models/order";
+import { OrderEntity } from "~/models/order";
 import { orderRepository } from "~/repositories/order";
 
 export const meta: MetaFunction = () => {
@@ -71,23 +71,6 @@ export default function Orders() {
   );
 }
 
-const testOrder = (orderId: number): Order => ({
-  orderId,
-  items: [
-    {
-      id: "1",
-      name: "テスト",
-      price: 100,
-      type: "hot",
-    },
-  ],
-  createdAt: new Date(),
-  servedAt: null,
-  assignee: null,
-  total: 100,
-  orderReady: false,
-});
-
 export const clientAction: ClientActionFunction = async (args) => {
   const { request } = args;
 
@@ -114,7 +97,7 @@ export const clientAction: ClientActionFunction = async (args) => {
 
 const func1 = async () => {
   console.log("save(create)のテスト");
-  const newOrder = testOrder(1);
+  const newOrder = OrderEntity.createNew({ orderId: 1 });
   const savedOrder = await orderRepository.save(newOrder);
   console.log("created", savedOrder);
 };
@@ -132,7 +115,7 @@ const func3 = async ({ request }: ClientActionFunctionArgs) => {
   const id2 = formData.get("id");
   const order = await orderRepository.findById(id2 as string);
   if (order) {
-    order.servedAt = new Date();
+    order.beServed();
     await orderRepository.save(order);
   }
 };
