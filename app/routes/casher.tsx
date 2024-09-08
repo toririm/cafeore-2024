@@ -21,11 +21,13 @@ const mockOrder: Order = {
   servedAt: null,
   items: [
     {
+      id: "1",
       type: "ice",
       name: "珈琲・俺ブレンド",
       price: 300,
     },
     {
+      id: "2",
       type: "ice",
       name: "珈琲・俺ブレンド",
       price: 400,
