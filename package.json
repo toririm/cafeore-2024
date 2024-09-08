@@ -43,7 +43,6 @@
     "@types/lodash": "^4.17.7",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
-    "@types/web": "^0.0.162",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "autoprefixer": "^10.4.20",
