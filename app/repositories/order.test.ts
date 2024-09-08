@@ -11,20 +11,24 @@ import { orderRepoFactory } from "./order";
 
 describe("[db] orderRepository", async () => {
   // To use this environment, firebase emulator must be running.
-  const testEnv = await initializeTestEnvironment({
-    projectId: "cafeore-2024",
-    firestore: {
-      rules: fs.readFileSync("firestore.rules", "utf8"),
-      host: "127.0.0.1",
-      port: 8080,
-    },
-  });
-  const anno = testEnv.unauthenticatedContext();
-  const testDb = anno.firestore();
-  testDb.settings({
-    ignoreUndefinedProperties: true,
-  });
-  const orderRepository = orderRepoFactory(testDb as unknown as Firestore);
+
+  let orderRepository: ReturnType<typeof orderRepoFactory>;
+  try {
+    const testEnv = await initializeTestEnvironment({
+      projectId: "cafeore-2024",
+      firestore: {
+        rules: fs.readFileSync("firestore.rules", "utf8"),
+      },
+    });
+    const anno = testEnv.unauthenticatedContext();
+    const testDb = anno.firestore();
+    testDb.settings({
+      ignoreUndefinedProperties: true,
+    });
+    orderRepository = orderRepoFactory(testDb as unknown as Firestore);
+  } catch (e) {
+    console.log("setup failed");
+  }
 
   test("orderRepository is defined", () => {
     expect(orderRepository).toBeDefined();
