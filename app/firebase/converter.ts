@@ -1,8 +1,8 @@
 import {
+  Timestamp,
   type DocumentData,
   type QueryDocumentSnapshot,
   type SnapshotOptions,
-  Timestamp,
 } from "firebase/firestore";
 import _ from "lodash";
 import type { ZodSchema } from "zod";

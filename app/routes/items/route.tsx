@@ -12,6 +12,7 @@ import { collectionSub } from "~/firebase/subscription";
 import { itemSchema, itemtypes } from "~/models/item";
 
 import type { action as clientAction } from "./action";
+
 export { action as clientAction } from "./action";
 
 export const meta: MetaFunction = () => {

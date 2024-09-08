@@ -1,7 +1,7 @@
 import { type ClientActionFunction } from "@remix-run/react";
-import { deleteItem } from "./actions/deleteItem";
 
 import { addItem } from "./actions/addItem";
+import { deleteItem } from "./actions/deleteItem";
 
 export const action: ClientActionFunction = async (args) => {
   const { request } = args;

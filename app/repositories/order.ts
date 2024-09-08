@@ -7,10 +7,12 @@ import {
   getDocs,
   setDoc,
 } from "firebase/firestore";
+
 import { converter } from "~/firebase/converter";
 import { db } from "~/firebase/firestore";
 import { hasId } from "~/lib/typeguard";
 import { Order, orderSchema, OrderWithId } from "~/models/order";
+
 import { OrderRepository } from "./type";
 
 export const orderRepository: OrderRepository = {
