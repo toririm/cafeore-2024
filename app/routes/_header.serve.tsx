@@ -3,17 +3,11 @@ import { typedjson, useTypedLoaderData } from "remix-typedjson";
 
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { type2label } from "~/models/item";
 import { orderRepository } from "~/repositories/order";
 
 export const meta: MetaFunction = () => {
   return [{ title: "提供画面" }];
-};
-
-const type2label = {
-  hot: "ホット",
-  ice: "アイス",
-  ore: "オレ",
-  milk: "ミルク",
 };
 
 export const clientLoader = async () => {

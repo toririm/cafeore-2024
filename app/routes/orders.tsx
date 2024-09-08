@@ -8,18 +8,12 @@ import { typedjson, useTypedLoaderData } from "remix-typedjson";
 
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
+import { type2label } from "~/models/item";
 import { OrderEntity } from "~/models/order";
 import { orderRepository } from "~/repositories/order";
 
 export const meta: MetaFunction = () => {
   return [{ title: "オーダー" }];
-};
-
-const type2label = {
-  hot: "ホット",
-  ice: "アイス",
-  ore: "オレ",
-  milk: "ミルク",
 };
 
 export const clientLoader = async () => {

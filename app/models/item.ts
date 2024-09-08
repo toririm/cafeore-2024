@@ -20,6 +20,13 @@ export type ItemWithId = WithId<Item>;
 
 export type ItemType = Pick<Item, "type">["type"];
 
+export const type2label = {
+  hot: "ホット",
+  ice: "アイス",
+  ore: "オレ",
+  milk: "ミルク",
+} as const satisfies Record<ItemType, string>;
+
 export class ItemEntity implements Item {
   private constructor(
     public readonly id: string | undefined,
