@@ -6,6 +6,7 @@ import {
   getDoc,
   getDocs,
   setDoc,
+  type Firestore,
 } from "firebase/firestore";
 
 import { orderConverter } from "~/firebase/converter";
@@ -15,49 +16,53 @@ import { type OrderEntity } from "~/models/order";
 
 import { type OrderRepository } from "./type";
 
-export const orderRepository: OrderRepository = {
-  save: async (order) => {
-    if (hasId(order)) {
-      return await update(order);
-    } else {
-      return await create(order);
-    }
-  },
+export const orderRepoFactory = (db: Firestore): OrderRepository => {
+  const update = async (
+    order: WithId<OrderEntity>,
+  ): Promise<WithId<OrderEntity>> => {
+    const docRef = doc(db, "orders", order.id).withConverter(orderConverter);
+    await setDoc(docRef, order);
+    return order;
+  };
 
-  delete: async (id) => {
-    await deleteDoc(doc(db, "orders", id));
-  },
-
-  findById: async (id) => {
-    const docRef = doc(db, "orders", id).withConverter(orderConverter);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      return docSnap.data();
-    }
-    return null;
-  },
-
-  findAll: async () => {
+  const create = async (order: OrderEntity): Promise<WithId<OrderEntity>> => {
     const colRef = collection(db, "orders").withConverter(orderConverter);
-    const docSnaps = await getDocs(colRef);
-    return docSnaps.docs.map((doc) => doc.data());
-  },
+    const docRef = await addDoc(colRef, order);
+    const resultDoc = await getDoc(docRef.withConverter(orderConverter));
+    if (resultDoc.exists()) {
+      return resultDoc.data();
+    }
+    throw new Error("Failed to save order");
+  };
+
+  return {
+    save: async (order) => {
+      if (hasId(order)) {
+        return await update(order);
+      } else {
+        return await create(order);
+      }
+    },
+
+    delete: async (id) => {
+      await deleteDoc(doc(db, "orders", id));
+    },
+
+    findById: async (id) => {
+      const docRef = doc(db, "orders", id).withConverter(orderConverter);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        return docSnap.data();
+      }
+      return null;
+    },
+
+    findAll: async () => {
+      const colRef = collection(db, "orders").withConverter(orderConverter);
+      const docSnaps = await getDocs(colRef);
+      return docSnaps.docs.map((doc) => doc.data());
+    },
+  };
 };
 
-const update = async (
-  order: WithId<OrderEntity>,
-): Promise<WithId<OrderEntity>> => {
-  const docRef = doc(db, "orders", order.id).withConverter(orderConverter);
-  await setDoc(docRef, order);
-  return order;
-};
-
-const create = async (order: OrderEntity): Promise<WithId<OrderEntity>> => {
-  const colRef = collection(db, "orders").withConverter(orderConverter);
-  const docRef = await addDoc(colRef, order);
-  const resultDoc = await getDoc(docRef.withConverter(orderConverter));
-  if (resultDoc.exists()) {
-    return resultDoc.data();
-  }
-  throw new Error("Failed to save order");
-};
+export const orderRepository: OrderRepository = orderRepoFactory(db);
