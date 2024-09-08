@@ -1,5 +1,6 @@
 import { expect, test } from "vitest";
-import { ItemWithId } from "./item";
+
+import { type ItemWithId } from "./item";
 import { OrderEntity } from "./order";
 
 test("order total auto calc", () => {

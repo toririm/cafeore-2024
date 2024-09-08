@@ -72,6 +72,12 @@ module.exports = {
         "plugin:import/recommended",
         "plugin:import/typescript",
       ],
+      rules: {
+        "@typescript-eslint/consistent-type-imports": [
+          "warn",
+          { prefer: "type-imports", fixStyle: "inline-type-imports" },
+        ],
+      },
     },
 
     // Node

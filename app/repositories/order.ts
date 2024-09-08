@@ -7,11 +7,13 @@ import {
   getDocs,
   setDoc,
 } from "firebase/firestore";
+
 import { converter } from "~/firebase/converter";
 import { db } from "~/firebase/firestore";
 import { hasId } from "~/lib/typeguard";
-import { Order, orderSchema, OrderWithId } from "~/models/order";
-import { OrderRepository } from "./type";
+import { orderSchema, type Order, type OrderWithId } from "~/models/order";
+
+import { type OrderRepository } from "./type";
 
 export const orderRepository: OrderRepository = {
   save: async (order) => {

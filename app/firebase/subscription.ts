@@ -1,6 +1,7 @@
 import { collection, onSnapshot, query } from "firebase/firestore";
-import type { SWRSubscription } from "swr/subscription";
+import { type SWRSubscription } from "swr/subscription";
 import { type ZodSchema } from "zod";
+
 import { converter } from "./converter";
 import { db } from "./firestore";
 
