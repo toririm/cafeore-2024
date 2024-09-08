@@ -7,6 +7,7 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
+import { itemConverter } from "~/firebase/converter";
 import { collectionSub } from "~/firebase/subscription";
 import { itemSchema, itemtypes } from "~/models/item";
 
@@ -28,7 +29,7 @@ const type2label = {
 export default function Item() {
   const { data: items } = useSWRSubscription(
     "items",
-    collectionSub(itemSchema),
+    collectionSub(itemConverter),
   );
   const lastResult = useActionData<typeof clientAction>();
   const [form, fields] = useForm({
