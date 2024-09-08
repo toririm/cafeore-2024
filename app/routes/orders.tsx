@@ -10,6 +10,7 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { OrderEntity, type Order } from "~/models/order";
 import { orderRepository } from "~/repositories/order";
+import { type2label } from "~/models/item";
 
 export const meta: MetaFunction = () => {
   return [{ title: "オーダー" }];
