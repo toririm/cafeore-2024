@@ -57,7 +57,7 @@ const parseDateProperty = (data: DocumentData): DocumentData => {
   return recursivelyParsedData;
 };
 
-export const itemConverter: FirestoreDataConverter<ItemEntity> = {
+export const itemConverter: FirestoreDataConverter<WithId<ItemEntity>> = {
   toFirestore: (item: WithId<ItemEntity>) => {
     return converter(itemSchema).toFirestore(item);
   },
@@ -73,7 +73,7 @@ export const itemConverter: FirestoreDataConverter<ItemEntity> = {
   },
 };
 
-export const orderConverter: FirestoreDataConverter<OrderEntity> = {
+export const orderConverter: FirestoreDataConverter<WithId<OrderEntity>> = {
   toFirestore: (order: WithId<OrderEntity>) => {
     return converter(orderSchema).toFirestore(order);
   },
