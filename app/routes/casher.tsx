@@ -1,5 +1,6 @@
 import { AlertDialogCancel } from "@radix-ui/react-alert-dialog";
 import { useState } from "react";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,7 +13,7 @@ import {
 } from "~/components/ui/alert-dialog";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import { Order } from "~/models/order";
+import { type Order } from "~/models/order";
 
 const mockOrder: Order = {
   orderId: 1,
@@ -20,11 +21,13 @@ const mockOrder: Order = {
   servedAt: null,
   items: [
     {
+      id: "1",
       type: "ice",
       name: "珈琲・俺ブレンド",
       price: 300,
     },
     {
+      id: "2",
       type: "ice",
       name: "珈琲・俺ブレンド",
       price: 400,

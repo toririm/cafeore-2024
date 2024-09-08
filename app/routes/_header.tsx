@@ -1,4 +1,5 @@
 import { Outlet } from "@remix-run/react";
+
 import { OnlineStatus } from "~/components/online-status";
 
 export default function BaseHeader() {

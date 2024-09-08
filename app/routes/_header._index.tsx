@@ -1,6 +1,6 @@
-import type { MetaFunction } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, type MetaFunction } from "@remix-run/react";
 import { collection, getDocs } from "firebase/firestore";
+
 import { Button } from "~/components/ui/button";
 import { converter } from "~/firebase/converter";
 import { db } from "~/firebase/firestore";
@@ -27,9 +27,9 @@ export default function Index() {
   const { items } = useLoaderData<typeof clientLoader>();
 
   return (
-    <div className="font-sans p-4">
+    <div className="p-4 font-sans">
       <h1 className="text-3xl">Welcome to Remix (SPA Mode)</h1>
-      <ul className="list-disc mt-4 pl-6 space-y-2">
+      <ul className="mt-4 list-disc space-y-2 pl-6">
         <li>
           <a
             className="text-blue-700 underline visited:text-purple-900"

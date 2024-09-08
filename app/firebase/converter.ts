@@ -1,13 +1,20 @@
 import {
+  Timestamp,
   type DocumentData,
+  type FirestoreDataConverter,
   type QueryDocumentSnapshot,
   type SnapshotOptions,
-  Timestamp,
 } from "firebase/firestore";
 import _ from "lodash";
-import type { ZodSchema } from "zod";
+import { type ZodSchema } from "zod";
 
-export const converter = <T>(schema: ZodSchema<T>) => {
+import { type WithId } from "~/lib/typeguard";
+import { ItemEntity, itemSchema } from "~/models/item";
+import { OrderEntity, orderSchema } from "~/models/order";
+
+export const converter = <T>(
+  schema: ZodSchema<T>,
+): FirestoreDataConverter<T> => {
   return {
     toFirestore: (data: T) => {
       // id は ドキュメントには含めない
@@ -48,4 +55,36 @@ const parseDateProperty = (data: DocumentData): DocumentData => {
     }
   });
   return recursivelyParsedData;
+};
+
+export const itemConverter: FirestoreDataConverter<WithId<ItemEntity>> = {
+  toFirestore: (item: WithId<ItemEntity>) => {
+    return converter(itemSchema).toFirestore(item);
+  },
+  fromFirestore: (
+    snapshot: QueryDocumentSnapshot,
+    options: SnapshotOptions,
+  ) => {
+    const convertedData = converter(itemSchema.required()).fromFirestore(
+      snapshot,
+      options,
+    );
+    return ItemEntity.fromItem(convertedData);
+  },
+};
+
+export const orderConverter: FirestoreDataConverter<WithId<OrderEntity>> = {
+  toFirestore: (order: WithId<OrderEntity>) => {
+    return converter(orderSchema).toFirestore(order);
+  },
+  fromFirestore: (
+    snapshot: QueryDocumentSnapshot,
+    options: SnapshotOptions,
+  ): WithId<OrderEntity> => {
+    const convertedData = converter(orderSchema.required()).fromFirestore(
+      snapshot,
+      options,
+    );
+    return OrderEntity.fromOrder(convertedData);
+  },
 };

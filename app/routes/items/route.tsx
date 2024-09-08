@@ -1,17 +1,18 @@
 import { useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
-import type { MetaFunction } from "@remix-run/node";
-import { Form, useActionData } from "@remix-run/react";
+import { Form, useActionData, type MetaFunction } from "@remix-run/react";
 import useSWRSubscription from "swr/subscription";
 
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
+import { itemConverter } from "~/firebase/converter";
 import { collectionSub } from "~/firebase/subscription";
 import { itemSchema, itemtypes, type2label } from "~/models/item";
 
-import type { action as clientAction } from "./action";
+import { type action as clientAction } from "./action";
+
 export { action as clientAction } from "./action";
 
 export const meta: MetaFunction = () => {
@@ -21,7 +22,7 @@ export const meta: MetaFunction = () => {
 export default function Item() {
   const { data: items } = useSWRSubscription(
     "items",
-    collectionSub(itemSchema),
+    collectionSub(itemConverter),
   );
   const lastResult = useActionData<typeof clientAction>();
   const [form, fields] = useForm({
