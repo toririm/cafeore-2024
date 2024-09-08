@@ -1,14 +1,17 @@
-import { collection, onSnapshot, query } from "firebase/firestore";
+import {
+  collection,
+  onSnapshot,
+  query,
+  type FirestoreDataConverter,
+} from "firebase/firestore";
 import { type SWRSubscription } from "swr/subscription";
-import { type ZodSchema } from "zod";
 
-import { converter } from "./converter";
 import { db } from "./firestore";
 
-export const collectionSub = <T>(schema: ZodSchema<T>) => {
+export const collectionSub = <T>(converter: FirestoreDataConverter<T>) => {
   const sub: SWRSubscription<string, T[], Error> = (key, { next }) => {
     const unsub = onSnapshot(
-      query(collection(db, key)).withConverter(converter(schema)),
+      query(collection(db, key)).withConverter(converter),
       (snapshot) => {
         next(
           null,

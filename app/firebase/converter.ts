@@ -1,6 +1,7 @@
 import {
   Timestamp,
   type DocumentData,
+  type FirestoreDataConverter,
   type QueryDocumentSnapshot,
   type SnapshotOptions,
 } from "firebase/firestore";
@@ -11,7 +12,9 @@ import { type WithId } from "~/lib/typeguard";
 import { ItemEntity, itemSchema } from "~/models/item";
 import { OrderEntity, orderSchema } from "~/models/order";
 
-export const converter = <T>(schema: ZodSchema<T>) => {
+export const converter = <T>(
+  schema: ZodSchema<T>,
+): FirestoreDataConverter<T> => {
   return {
     toFirestore: (data: T) => {
       // id は ドキュメントには含めない
@@ -54,7 +57,7 @@ const parseDateProperty = (data: DocumentData): DocumentData => {
   return recursivelyParsedData;
 };
 
-export const itemConverter = {
+export const itemConverter: FirestoreDataConverter<WithId<ItemEntity>> = {
   toFirestore: (item: WithId<ItemEntity>) => {
     return converter(itemSchema).toFirestore(item);
   },
@@ -70,7 +73,7 @@ export const itemConverter = {
   },
 };
 
-export const orderConverter = {
+export const orderConverter: FirestoreDataConverter<WithId<OrderEntity>> = {
   toFirestore: (order: WithId<OrderEntity>) => {
     return converter(orderSchema).toFirestore(order);
   },
