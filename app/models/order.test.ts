@@ -10,7 +10,7 @@ describe("[unit] order entity", () => {
 
     const items: ItemWithId[] = [
       {
-        id: "1",
+        id: "11111",
         name: "item1",
         price: 100,
         type: "hot",
