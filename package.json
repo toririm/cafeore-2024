@@ -10,7 +10,8 @@
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
     "fmt": "prettier --write .",
     "preview": "vite preview",
-    "test": "vitest",
+    "test:unit": "bun test -t [unit]",
+    "test:db": "firebase emulators:exec --only firestore 'bun test -t [db]'",
     "typecheck": "tsc"
   },
   "dependencies": {
@@ -35,8 +36,10 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@firebase/rules-unit-testing": "^3.0.4",
     "@ianvs/prettier-plugin-sort-imports": "^4.3.1",
     "@remix-run/dev": "^2.11.2",
+    "@types/bun": "^1.1.8",
     "@types/lodash": "^4.17.7",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
@@ -50,6 +53,7 @@
     "eslint-plugin-jsx-a11y": "^6.10.0",
     "eslint-plugin-react": "^7.35.2",
     "eslint-plugin-react-hooks": "^4.6.2",
+    "firebase-tools": "^13.16.0",
     "postcss": "^8.4.45",
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.6",

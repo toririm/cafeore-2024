@@ -17,7 +17,9 @@
       "files": "**/*.test.ts",
       "options": {
         "importOrder": [
-          "^vitest",
+          "<BUILTIN_MODULES>",
+          "",
+          "^bun",
           "",
           "<THIRD_PARTY_MODULES>",
           "",
