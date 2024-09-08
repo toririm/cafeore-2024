@@ -1,6 +1,6 @@
-import { WithId } from "~/lib/typeguard";
-import { Item } from "~/models/item";
-import { Order } from "~/models/order";
+import { type WithId } from "~/lib/typeguard";
+import { type Item } from "~/models/item";
+import { type Order } from "~/models/order";
 
 export type BaseRepository<T extends { id?: unknown }> = {
   save(data: T): Promise<WithId<T>>;

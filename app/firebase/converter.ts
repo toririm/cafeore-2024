@@ -5,7 +5,7 @@ import {
   type SnapshotOptions,
 } from "firebase/firestore";
 import _ from "lodash";
-import type { ZodSchema } from "zod";
+import { type ZodSchema } from "zod";
 
 export const converter = <T>(schema: ZodSchema<T>) => {
   return {

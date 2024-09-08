@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { Item, itemSchema } from "./item";
+import { itemSchema, type Item } from "./item";
 
 export const orderSchema = z.object({
   id: z.string().optional(), // Firestore のドキュメント ID

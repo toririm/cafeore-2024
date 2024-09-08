@@ -13,7 +13,7 @@ import { db } from "~/firebase/firestore";
 import { hasId } from "~/lib/typeguard";
 import { itemSchema } from "~/models/item";
 
-import { ItemRepository } from "./type";
+import { type ItemRepository } from "./type";
 
 export const itemRepository: ItemRepository = {
   save: async (item) => {

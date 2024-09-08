@@ -1,14 +1,14 @@
 import {
-  ClientActionFunction,
-  ClientActionFunctionArgs,
   Form,
-  MetaFunction,
+  type ClientActionFunction,
+  type ClientActionFunctionArgs,
+  type MetaFunction,
 } from "@remix-run/react";
 import { typedjson, useTypedLoaderData } from "remix-typedjson";
 
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import { Order } from "~/models/order";
+import { type Order } from "~/models/order";
 import { orderRepository } from "~/repositories/order";
 
 export const meta: MetaFunction = () => {
