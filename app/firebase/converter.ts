@@ -7,6 +7,10 @@ import {
 import _ from "lodash";
 import { type ZodSchema } from "zod";
 
+import { type WithId } from "~/lib/typeguard";
+import { ItemEntity, itemSchema } from "~/models/item";
+import { OrderEntity, orderSchema } from "~/models/order";
+
 export const converter = <T>(schema: ZodSchema<T>) => {
   return {
     toFirestore: (data: T) => {
@@ -48,4 +52,36 @@ const parseDateProperty = (data: DocumentData): DocumentData => {
     }
   });
   return recursivelyParsedData;
+};
+
+export const itemConverter = {
+  toFirestore: (item: WithId<ItemEntity>) => {
+    return converter(itemSchema).toFirestore(item);
+  },
+  fromFirestore: (
+    snapshot: QueryDocumentSnapshot,
+    options: SnapshotOptions,
+  ) => {
+    const convertedData = converter(itemSchema.required()).fromFirestore(
+      snapshot,
+      options,
+    );
+    return ItemEntity.fromItem(convertedData);
+  },
+};
+
+export const orderConverter = {
+  toFirestore: (order: WithId<OrderEntity>) => {
+    return converter(orderSchema).toFirestore(order);
+  },
+  fromFirestore: (
+    snapshot: QueryDocumentSnapshot,
+    options: SnapshotOptions,
+  ): WithId<OrderEntity> => {
+    const convertedData = converter(orderSchema.required()).fromFirestore(
+      snapshot,
+      options,
+    );
+    return OrderEntity.fromOrder(convertedData);
+  },
 };

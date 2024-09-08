@@ -1,6 +1,6 @@
 import { type WithId } from "~/lib/typeguard";
-import { type Item } from "~/models/item";
-import { type Order } from "~/models/order";
+import { type ItemEntity } from "~/models/item";
+import { type OrderEntity } from "~/models/order";
 
 export type BaseRepository<T extends { id?: unknown }> = {
   save(data: T): Promise<WithId<T>>;
@@ -9,6 +9,6 @@ export type BaseRepository<T extends { id?: unknown }> = {
   findAll(): Promise<WithId<T>[]>;
 };
 
-export type ItemRepository = BaseRepository<Item>;
+export type ItemRepository = BaseRepository<ItemEntity>;
 
-export type OrderRepository = BaseRepository<Order>;
+export type OrderRepository = BaseRepository<OrderEntity>;
