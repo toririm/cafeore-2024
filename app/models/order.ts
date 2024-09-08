@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { type WithId } from "~/lib/typeguard";
 
-import { type ItemEntity, itemSchema } from "./item";
+import { itemSchema, type ItemEntity } from "./item";
 
 export const orderSchema = z.object({
   id: z.string().optional(), // Firestore のドキュメント ID
