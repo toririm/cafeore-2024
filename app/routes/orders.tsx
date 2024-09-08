@@ -8,9 +8,9 @@ import { typedjson, useTypedLoaderData } from "remix-typedjson";
 
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import { OrderEntity, type Order } from "~/models/order";
-import { orderRepository } from "~/repositories/order";
 import { type2label } from "~/models/item";
+import { OrderEntity } from "~/models/order";
+import { orderRepository } from "~/repositories/order";
 
 export const meta: MetaFunction = () => {
   return [{ title: "オーダー" }];
