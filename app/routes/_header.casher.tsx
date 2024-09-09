@@ -52,21 +52,21 @@ export default function Casher() {
   const [order, setOrder] = useState(mockOrder);
 
   // console.log(mockOrder);
-  console.log(items);
+  // console.log(items?.[0]);
   return (
     <div>
       <div>
         <ul>
-          {/* <Button
-            onClick={async () => {
-              add_order(order, ore_blend);
-              setOrder(mockOrder);
-              console.log(mockOrder);
-              console.log(order);
-            }}
-          >
-            珈琲・俺ブレンド
-          </Button> */}
+          {items?.map((item) => (
+            <Button
+              onClick={async () => {
+                setOrder(mockOrder);
+                add_order(order, item);
+              }}
+            >
+              {item.name}
+            </Button>
+          ))}
         </ul>
       </div>
       <div>
@@ -93,8 +93,8 @@ export default function Casher() {
                   <AlertDialogHeader>
                     <AlertDialogTitle>金額を確認してください</AlertDialogTitle>
                     <AlertDialogDescription>
-                      <p>受領額： ¥${recieved}</p>
-                      <p>合計金額： ¥$(mockOrder.total)</p>
+                      <p>受領額： ¥${recieved} 円</p>
+                      <p>合計金額： ¥$(mockOrder.total) 円</p>
                       <p>お釣り： ¥$(recieved - mockOrder.total) 円</p>
                     </AlertDialogDescription>
                   </AlertDialogHeader>
