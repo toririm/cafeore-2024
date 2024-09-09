@@ -2,13 +2,15 @@
 
 ## コマンド
 
-| コマンド   | 説明                                  |
-| ---------- | ------------------------------------- |
-| `bun sync` | 依存パッケージのインストール          |
-| `bun dev`  | 開発環境の立ち上げ                    |
-| `bun tsc`  | TypeScriptの型チェックを実行          |
-| `bun lint` | ESLintの実行。`--fix`をつけて自動修正 |
-| `bun fmt`  | Prettierの実行                        |
+| コマンド        | 説明                                        |
+| --------------- | ------------------------------------------- |
+| `bun sync`      | 依存パッケージのインストール                |
+| `bun dev`       | 開発環境の立ち上げ                          |
+| `bun tsc`       | TypeScriptの型チェックを実行                |
+| `bun lint`      | ESLintの実行。`--fix`をつけて自動修正       |
+| `bun fmt`       | Prettierの実行                              |
+| `bun test:unit` | 単体テスト                                  |
+| `bun test:db`   | Firebase Emulatorsを使ったFirestoreのテスト |
 
 ## Architecture
 
