@@ -16,6 +16,15 @@ import {
 } from "~/components/ui/alert-dialog";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "~/components/ui/table";
 import { collectionSub } from "~/firebase/subscription";
 import { Item, itemSchema } from "~/models/item";
 import { Order } from "~/models/order";
@@ -49,19 +58,27 @@ export default function Casher() {
     collectionSub(itemSchema),
   );
   const [recieved, setText] = useState(0);
-  const [order, setOrder] = useState(mockOrder);
+  const [total, setTotal] = useState(0);
+  const [queue, setQueue] = useState<Item[]>([]);
 
   // console.log(mockOrder);
   // console.log(items?.[0]);
   return (
     <div>
+      <div>No.： {mockOrder.orderId}</div>
       <div>
         <ul>
           {items?.map((item) => (
             <Button
+              key={item.id}
               onClick={async () => {
-                setOrder(mockOrder);
-                add_order(order, item);
+                mockOrder.items.push(item);
+                mockOrder.total = mockOrder.items.reduce(
+                  (acc, cur) => acc + cur.price,
+                  0,
+                );
+                setQueue(mockOrder.items);
+                setTotal(mockOrder.total);
               }}
             >
               {item.name}
@@ -70,11 +87,28 @@ export default function Casher() {
         </ul>
       </div>
       <div>
+        <Table>
+          <TableCaption>注文内容</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[100px]">オーダー</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {queue?.map((item) => (
+              <TableRow>
+                <TableCell className="font-medium">{item.name}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+      <div>
         <ul>
           <li>
             <h2>合計金額：</h2>
-            {/* <h3>{total}</h3> */}
-            <h3>{order.total}</h3>
+            <h3>{total}</h3>
+            {/* <h3>{mockOrder.reduce}</h3> */}
           </li>
           <li>
             <h2>受領金額：</h2>
@@ -93,9 +127,9 @@ export default function Casher() {
                   <AlertDialogHeader>
                     <AlertDialogTitle>金額を確認してください</AlertDialogTitle>
                     <AlertDialogDescription>
-                      <p>受領額： ¥${recieved} 円</p>
-                      <p>合計金額： ¥$(mockOrder.total) 円</p>
-                      <p>お釣り： ¥$(recieved - mockOrder.total) 円</p>
+                      <p>受領額： {recieved} 円</p>
+                      <p>合計金額： (mockOrder.total) 円</p>
+                      <p>お釣り： (recieved - mockOrder.total) 円</p>
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
@@ -113,8 +147,6 @@ export default function Casher() {
 }
 
 export function add_order(order: Order, coffee: Item) {
-  order.items.push(coffee);
-  order.total = mockOrder.items.reduce((acc, cur) => acc + cur.price, 0);
   console.log(mockOrder);
   return order;
 }
