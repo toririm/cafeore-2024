@@ -10,7 +10,7 @@ import {
 } from "firebase/firestore";
 
 import { orderConverter } from "~/firebase/converter";
-import { db } from "~/firebase/firestore";
+import { prodDB } from "~/firebase/firestore";
 import { hasId, type WithId } from "~/lib/typeguard";
 import { type OrderEntity } from "~/models/order";
 
@@ -65,4 +65,4 @@ export const orderRepoFactory = (db: Firestore): OrderRepository => {
   };
 };
 
-export const orderRepository: OrderRepository = orderRepoFactory(db);
+export const orderRepository: OrderRepository = orderRepoFactory(prodDB);
