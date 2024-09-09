@@ -1,6 +1,6 @@
 import { parseWithZod } from "@conform-to/zod";
 import { useSubmit, type ClientActionFunction } from "@remix-run/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useSWRSubscription from "swr/subscription";
 import { z } from "zod";
 
@@ -12,6 +12,29 @@ import { type WithId } from "~/lib/typeguard";
 import { type2label, type ItemEntity } from "~/models/item";
 import { OrderEntity, orderSchema } from "~/models/order";
 import { orderRepository } from "~/repositories/order";
+
+const keys = [
+  "a",
+  "s",
+  "d",
+  "f",
+  "g",
+  "h",
+  "j",
+  "k",
+  "l",
+  ";",
+  "z",
+  "x",
+  "c",
+  "v",
+  "b",
+  "n",
+  "m",
+  ",",
+  ".",
+  "/",
+];
 
 export default function Cashier() {
   const { data: items } = useSWRSubscription(
@@ -41,6 +64,38 @@ export default function Cashier() {
     setOrderItems([]);
   };
 
+  useEffect(() => {
+    items?.forEach((item, idx) => {
+      const handler = (event: KeyboardEvent) => {
+        if (event.key === keys[idx]) {
+          setOrderItems((prevItems) => [...prevItems, item]);
+        }
+      };
+      window.addEventListener("keydown", handler);
+      return () => window.removeEventListener("keydown", handler);
+    });
+  }, [items]);
+
+  useEffect(() => {
+    const handler = (event: KeyboardEvent) => {
+      if (event.key === "Enter") {
+        submitOrder();
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  });
+
+  useEffect(() => {
+    const handler = (event: KeyboardEvent) => {
+      if (event.key === "Backspace") {
+        setOrderItems((prevItems) => prevItems.slice(0, -1));
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  });
+
   return (
     <>
       <div className="grid grid-cols-2">
@@ -52,7 +107,7 @@ export default function Cashier() {
               <p>{type2label[item.type]}</p>
               <Button
                 onClick={() => {
-                  setOrderItems([...orderItems, item]);
+                  setOrderItems((prevItems) => [...prevItems, item]);
                 }}
               >
                 追加
