@@ -4,10 +4,10 @@ import {
   type ClientActionFunctionArgs,
   type MetaFunction,
 } from "@remix-run/react";
-import { typedjson, useTypedLoaderData } from "remix-typedjson";
 
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
+import { useClientLoaderData } from "~/lib/custom-loader";
 import { type2label } from "~/models/item";
 import { OrderEntity } from "~/models/order";
 import { orderRepository } from "~/repositories/order";
@@ -19,11 +19,11 @@ export const meta: MetaFunction = () => {
 export const clientLoader = async () => {
   console.log("findAllのテスト");
   const orders = await orderRepository.findAll();
-  return typedjson({ orders });
+  return { orders };
 };
 
 export default function Orders() {
-  const { orders } = useTypedLoaderData<typeof clientLoader>();
+  const { orders } = useClientLoaderData<typeof clientLoader>();
 
   return (
     <div className="p-4 font-sans">

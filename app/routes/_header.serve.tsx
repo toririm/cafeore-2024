@@ -1,8 +1,8 @@
 import { type MetaFunction } from "@remix-run/react";
-import { typedjson, useTypedLoaderData } from "remix-typedjson";
 
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { useClientLoaderData } from "~/lib/custom-loader";
 import { type2label } from "~/models/item";
 import { orderRepository } from "~/repositories/order";
 
@@ -12,11 +12,11 @@ export const meta: MetaFunction = () => {
 
 export const clientLoader = async () => {
   const orders = await orderRepository.findAll();
-  return typedjson({ orders });
+  return { orders };
 };
 
 export default function Serve() {
-  const { orders } = useTypedLoaderData<typeof clientLoader>();
+  const { orders } = useClientLoaderData<typeof clientLoader>();
 
   return (
     <div className="p-4 font-sans">
