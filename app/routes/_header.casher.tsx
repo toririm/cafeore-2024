@@ -1,5 +1,9 @@
+import { parseWithZod } from "@conform-to/zod";
 import { AlertDialogCancel } from "@radix-ui/react-alert-dialog";
+import type { ActionFunction } from "@remix-run/node";
+import { json } from "@remix-run/react";
 import { useState } from "react";
+import useSWRSubscription from "swr/subscription";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,8 +16,10 @@ import {
 } from "~/components/ui/alert-dialog";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import { Item } from "~/models/item";
+import { collectionSub } from "~/firebase/subscription";
+import { Item, itemSchema } from "~/models/item";
 import { Order } from "~/models/order";
+import { itemRepository } from "~/repositories/item";
 
 const mockOrder: Order = {
   orderId: 1,
@@ -38,64 +44,29 @@ const mockOrder: Order = {
 
 export default function Casher() {
   // const total = mockOrder.items.reduce((acc, cur) => acc + cur.price, 0);
-  const ore_blend: Item = {
-    type: "ice",
-    name: "珈琲・俺ブレンド",
-    price: 300,
-  };
-  const champ_blend: Item = {
-    type: "hot",
-    name: "優勝ブレンド",
-    price: 300,
-  };
-  const edel: Item = {
-    type: "hot",
-    name: "エーデルワイス",
-    price: 300,
-  };
-  const keny: Item = {
-    type: "ice",
-    name: "ケニア",
-    price: 300,
-  };
-  const bra: Item = {
-    type: "hot",
-    name: "ブラジルブルボン",
-    price: 300,
-  };
-  const ore: Item = {
-    type: "ore",
-    name: "カフェオレ",
-    price: 300,
-  };
-  const ice: Item = {
-    type: "ice",
-    name: "アイスコーヒー",
-    price: 300,
-  };
-  const milk: Item = {
-    type: "milk",
-    name: "アイスミルク",
-    price: 300,
-  };
+  const { data: items } = useSWRSubscription(
+    "items",
+    collectionSub(itemSchema),
+  );
   const [recieved, setText] = useState(0);
   const [order, setOrder] = useState(mockOrder);
 
   // console.log(mockOrder);
+  console.log(items);
   return (
     <div>
       <div>
         <ul>
-          <Button
+          {/* <Button
             onClick={async () => {
-              add_order(ore_blend);
+              add_order(order, ore_blend);
               setOrder(mockOrder);
               console.log(mockOrder);
               console.log(order);
             }}
           >
             珈琲・俺ブレンド
-          </Button>
+          </Button> */}
         </ul>
       </div>
       <div>
@@ -141,9 +112,25 @@ export default function Casher() {
   );
 }
 
-export function add_order(coffee: Item) {
-  mockOrder.items.push(coffee);
-  mockOrder.total = mockOrder.items.reduce((acc, cur) => acc + cur.price, 0);
+export function add_order(order: Order, coffee: Item) {
+  order.items.push(coffee);
+  order.total = mockOrder.items.reduce((acc, cur) => acc + cur.price, 0);
   console.log(mockOrder);
-  return mockOrder;
+  return order;
 }
+
+export const clientAction: ActionFunction = async ({ request }) => {
+  const formData = await request.formData();
+  const submission = parseWithZod(formData, { schema: itemSchema });
+
+  if (submission.status !== "success") {
+    return json(submission.reply());
+  }
+
+  const newItem = submission.value;
+  // あとでマシなエラーハンドリングにする
+  const savedItem = await itemRepository.save(newItem);
+
+  console.log("Document written with ID: ", savedItem.id);
+  return new Response(null, { status: 204 });
+};
