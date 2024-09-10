@@ -1,10 +1,9 @@
-import fs from "fs";
-
 import { describe, expect, test } from "bun:test";
 
-import { initializeTestEnvironment } from "@firebase/rules-unit-testing";
-import { type Firestore } from "firebase/firestore";
+import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
 
+import firebasejson from "~/../firebase.json";
+import { type WithId } from "~/lib/typeguard";
 import { OrderEntity } from "~/models/order";
 
 import { orderRepoFactory } from "./order";
@@ -12,32 +11,31 @@ import { orderRepoFactory } from "./order";
 describe("[db] orderRepository", async () => {
   // To use this environment, firebase emulator must be running.
 
-  let orderRepository: ReturnType<typeof orderRepoFactory>;
-  try {
-    const testEnv = await initializeTestEnvironment({
-      projectId: "cafeore-2024",
-      firestore: {
-        rules: fs.readFileSync("firestore.rules", "utf8"),
-      },
-    });
-    const anno = testEnv.unauthenticatedContext();
-    const testDb = anno.firestore();
-    testDb.settings({
-      ignoreUndefinedProperties: true,
-    });
-    orderRepository = orderRepoFactory(testDb as unknown as Firestore);
-  } catch (e) {
-    console.log("setup failed");
-  }
+  let savedOrderHoge: WithId<OrderEntity>;
+
+  const testDB = getFirestore();
+  connectFirestoreEmulator(
+    testDB,
+    "localhost",
+    firebasejson.emulators.firestore.port,
+  );
+  const orderRepository = orderRepoFactory(testDB);
 
   test("orderRepository is defined", () => {
     expect(orderRepository).toBeDefined();
   });
 
-  test("orderRepository.save", async () => {
+  test("orderRepository.save (create)", async () => {
     const order = OrderEntity.createNew({ orderId: 2024 });
-    const savedOrder = await orderRepository.save(order);
-    expect(savedOrder.id).toBeDefined();
+    savedOrderHoge = await orderRepository.save(order);
+    expect(savedOrderHoge.id).toBeDefined();
+  });
+
+  test("orderRepository.save (update)", async () => {
+    savedOrderHoge.assignee = "hoge";
+    const savedOrder = await orderRepository.save(savedOrderHoge);
+    expect(savedOrder.id).toEqual(savedOrderHoge.id);
+    expect(savedOrder.assignee).toEqual("hoge");
   });
 
   test("orderRepository.findById", async () => {

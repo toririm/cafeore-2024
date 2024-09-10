@@ -116,4 +116,17 @@ export class OrderEntity implements Order {
     // servedAt は null -> Date にしか変更できないようにする
     this._servedAt = new Date();
   }
+
+  toOrder(): Order {
+    return {
+      id: this.id,
+      orderId: this.orderId,
+      createdAt: this.createdAt,
+      servedAt: this.servedAt,
+      items: this.items,
+      assignee: this.assignee,
+      total: this.total,
+      orderReady: this.orderReady,
+    };
+  }
 }

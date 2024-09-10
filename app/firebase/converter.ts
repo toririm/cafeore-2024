@@ -17,8 +17,9 @@ export const converter = <T>(
 ): FirestoreDataConverter<T> => {
   return {
     toFirestore: (data: T) => {
+      const parsedData = schema.parse(data);
       // id は ドキュメントには含めない
-      const dataWithoutId = _.omit(data as object, "id");
+      const dataWithoutId = _.omit(parsedData as object, "id");
       return dataWithoutId;
     },
     fromFirestore: (
@@ -58,9 +59,7 @@ const parseDateProperty = (data: DocumentData): DocumentData => {
 };
 
 export const itemConverter: FirestoreDataConverter<WithId<ItemEntity>> = {
-  toFirestore: (item: WithId<ItemEntity>) => {
-    return converter(itemSchema).toFirestore(item);
-  },
+  toFirestore: converter(itemSchema).toFirestore,
   fromFirestore: (
     snapshot: QueryDocumentSnapshot,
     options: SnapshotOptions,
@@ -74,9 +73,7 @@ export const itemConverter: FirestoreDataConverter<WithId<ItemEntity>> = {
 };
 
 export const orderConverter: FirestoreDataConverter<WithId<OrderEntity>> = {
-  toFirestore: (order: WithId<OrderEntity>) => {
-    return converter(orderSchema).toFirestore(order);
-  },
+  toFirestore: converter(orderSchema).toFirestore,
   fromFirestore: (
     snapshot: QueryDocumentSnapshot,
     options: SnapshotOptions,

@@ -11,7 +11,7 @@
     "fmt": "prettier --write .",
     "preview": "vite preview",
     "test:unit": "bun test -t unit",
-    "test:db": "firebase emulators:exec --only firestore 'bun test -t db'",
+    "test:db": "firebase emulators:exec --only firestore --project demo-firestore 'bun test -t db'",
     "typecheck": "tsc"
   },
   "dependencies": {
@@ -29,7 +29,6 @@
     "lucide-react": "^0.424.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "remix-typedjson": "^0.4.1",
     "swr": "^2.2.5",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",

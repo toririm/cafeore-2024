@@ -3,7 +3,7 @@ import { collection, getDocs } from "firebase/firestore";
 
 import { Button } from "~/components/ui/button";
 import { converter } from "~/firebase/converter";
-import { db } from "~/firebase/firestore";
+import { prodDB } from "~/firebase/firestore";
 import { itemSchema } from "~/models/item";
 
 export const meta: MetaFunction = () => {
@@ -16,7 +16,9 @@ export const meta: MetaFunction = () => {
 export const clientLoader = async () => {
   // clientLoader は Remix SPA 特有の関数で、ページロード時にクライアント側で実行される
   // したがって現時点ではリアルタイムデータの取得はできない
-  const itemsRef = collection(db, "items").withConverter(converter(itemSchema));
+  const itemsRef = collection(prodDB, "items").withConverter(
+    converter(itemSchema),
+  );
   const docSnap = await getDocs(itemsRef);
   const items = docSnap.docs.map((doc) => doc.data());
   console.log(items);
