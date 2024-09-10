@@ -66,4 +66,4 @@ export const itemRepoFactory = (db: Firestore): ItemRepository => {
   };
 };
 
-export const itemRepository: ItemRepository = itemRepoFactory(db);
+export const itemRepository: ItemRepository = itemRepoFactory(prodDB);
