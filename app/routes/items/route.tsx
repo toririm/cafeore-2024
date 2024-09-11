@@ -12,6 +12,9 @@ import { itemConverter } from "~/firebase/converter";
 import { collectionSub } from "~/firebase/subscription";
 import { itemSchema, itemtypes, type2label } from "~/models/item";
 
+// Add these imports
+import type { ItemEntity, ItemType } from "~/models/item"; // Adjust the path as needed
+
 import { type action as clientAction } from "./action";
 
 export { action as clientAction } from "./action";
