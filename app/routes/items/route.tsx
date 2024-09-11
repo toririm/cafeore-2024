@@ -1,7 +1,7 @@
 import { useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
 import { Form, useActionData, type MetaFunction } from "@remix-run/react";
-import React from "react";
+import { useMemo } from 'react';
 import useSWRSubscription from "swr/subscription";
 
 import { Button } from "~/components/ui/button";
@@ -36,15 +36,13 @@ export default function Item() {
   });
 
   // Sort and group items by type
-  const sortedItems = React.useMemo(() => {
-    if (!items) return {};
-    return items.reduce((acc, item) => {
-      if (!acc[item.type]) {
-        acc[item.type] = [];
-      }
+  const sortedItems = useMemo<Record<ItemType, ItemEntity[]>>(() => {
+    const base = { hot: [], ice: [], ore: [], milk: [] };
+    if (!items) return base;
+    return items.reduce<Record<ItemType, ItemEntity[]>>((acc, item) => {
       acc[item.type].push(item);
       return acc;
-    }, {});
+    }, base);
   }, [items]);
 
   return (
