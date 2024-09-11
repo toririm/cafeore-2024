@@ -47,6 +47,7 @@ export default function Cashier() {
       { method: "POST" },
     );
     setOrderItems([]);
+    setReceived("");
   };
 
   useEffect(() => {
