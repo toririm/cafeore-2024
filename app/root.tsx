@@ -5,7 +5,9 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
+
 import { useOnlineStatus } from "./components/online-status";
+
 import "./tailwind.css";
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -24,7 +26,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </body>
     </html>
   );
-} 
+}
 
 export default function App() {
   const isOnline = useOnlineStatus();
@@ -35,14 +37,15 @@ export default function App() {
         <div className="text-center">
           <h1 className="text-4xl font-bold mb-4">⛔オフライン</h1>
           <p className="text-xl">
-            インターネット接続が切断されています。<br />
+            インターネット接続が切断されています。
+            <br />
             接続が回復するまでお待ちください。
           </p>
         </div>
       </div>
     );
   }
-  
+
   return <Outlet />;
 }
 
