@@ -57,7 +57,7 @@ export class OrderEntity implements Order {
   }
 
   // --------------------------------------------------
-  // getter and setter
+  // getter / setter
   // --------------------------------------------------
 
   get id() {
@@ -91,8 +91,9 @@ export class OrderEntity implements Order {
   }
 
   get total() {
-    // itemsの更新に合わせて自動で計算する
-    // その代わりtotalは直接更新できない
+    // items の更新に合わせて total を自動で計算する
+    // その代わり total は直接更新できない
+    // TODO(toririm): 計算するのは items が変更された時だけでいい
     this._total = this._items.reduce((acc, item) => acc + item.price, 0);
     return this._total;
   }
@@ -103,7 +104,7 @@ export class OrderEntity implements Order {
 
   // --------------------------------------------------
   // methods
-  // ------------------------------------------------
+  // --------------------------------------------------
 
   beReady() {
     // orderReady は false -> true にしか変更できないようにする

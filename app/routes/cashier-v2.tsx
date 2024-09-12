@@ -81,6 +81,7 @@ export default function Cashier() {
   );
 }
 
+// TODO(toririm): リファクタリングするときにファイルを切り出す
 export const clientAction: ClientActionFunction = async ({ request }) => {
   const formData = await request.formData();
 

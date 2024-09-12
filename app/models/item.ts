@@ -26,6 +26,9 @@ export const type2label = {
 } as const satisfies Record<ItemType, string>;
 
 export class ItemEntity implements Item {
+  // TODO(toririm)
+  // ゲッターやセッターを使う際にはすべてのプロパティにアンスコをつけてprivateにする
+  // 実装の詳細は OrderEntity を参照
   private constructor(
     public readonly id: string | undefined,
     public readonly name: string,

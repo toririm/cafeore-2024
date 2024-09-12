@@ -30,6 +30,7 @@ export default function App() {
   return <Outlet />;
 }
 
+// TODO(toririm): もっとリッチなローディング画面を作る
 export function HydrateFallback() {
   return <p>Loading...</p>;
 }
