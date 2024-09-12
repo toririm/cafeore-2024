@@ -16,6 +16,8 @@ import { type OrderEntity } from "~/models/order";
 
 import { type OrderRepository } from "./type";
 
+// TODO(toririm): エラーハンドリングをやる
+// Result型を使う NeverThrow を使ってみたい
 export const orderRepoFactory = (db: Firestore): OrderRepository => {
   const update = async (
     order: WithId<OrderEntity>,

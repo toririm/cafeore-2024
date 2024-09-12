@@ -17,6 +17,8 @@ export const converter = <T>(
 ): FirestoreDataConverter<T> => {
   return {
     toFirestore: (data: T) => {
+      // Zod のパースを挟まないと、Entityオブジェクトのgetter/setterは無視され
+      // privateプロパティがFirestoreに保存されてしまう
       const parsedData = schema.parse(data);
       // id は ドキュメントには含めない
       const dataWithoutId = _.omit(parsedData as object, "id");
@@ -41,7 +43,7 @@ export const converter = <T>(
 // この関数の型注釈は若干嘘
 const parseDateProperty = (data: DocumentData): DocumentData => {
   const parsedData = _.mapValues(data, (value) =>
-    // toDate が存在する場合は Timestamp 型としてパースする
+    // firestore 固有の Timestamp 型を Date に変換
     value instanceof Timestamp ? value.toDate() : value,
   );
   const recursivelyParsedData = _.mapValues(parsedData, (value) => {
@@ -81,6 +83,9 @@ export const orderConverter: FirestoreDataConverter<WithId<OrderEntity>> = {
     const convertedData = converter(orderSchema.required()).fromFirestore(
       snapshot,
       options,
+    );
+    convertedData.items = convertedData.items.map((item) =>
+      ItemEntity.fromItem(item),
     );
     return OrderEntity.fromOrder(convertedData);
   },

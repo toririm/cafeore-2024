@@ -17,8 +17,6 @@ export const orderSchema = z.object({
 
 export type Order = z.infer<typeof orderSchema>;
 
-export type OrderWithId = WithId<Order>;
-
 export class OrderEntity implements Order {
   // 全てのプロパティを private にして外部からの直接アクセスを禁止
   private constructor(
@@ -45,7 +43,7 @@ export class OrderEntity implements Order {
     );
   }
 
-  static fromOrder(order: OrderWithId): WithId<OrderEntity> {
+  static fromOrder(order: WithId<Order>): WithId<OrderEntity> {
     return new OrderEntity(
       order.id,
       order.orderId,
@@ -59,7 +57,7 @@ export class OrderEntity implements Order {
   }
 
   // --------------------------------------------------
-  // getter and setter
+  // getter / setter
   // --------------------------------------------------
 
   get id() {
@@ -93,8 +91,9 @@ export class OrderEntity implements Order {
   }
 
   get total() {
-    // itemsの更新に合わせて自動で計算する
-    // その代わりtotalは直接更新できない
+    // items の更新に合わせて total を自動で計算する
+    // その代わり total は直接更新できない
+    // TODO(toririm): 計算するのは items が変更された時だけでいい
     this._total = this._items.reduce((acc, item) => acc + item.price, 0);
     return this._total;
   }
@@ -105,7 +104,7 @@ export class OrderEntity implements Order {
 
   // --------------------------------------------------
   // methods
-  // ------------------------------------------------
+  // --------------------------------------------------
 
   beReady() {
     // orderReady は false -> true にしか変更できないようにする

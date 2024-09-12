@@ -4,6 +4,7 @@ import { z } from "zod";
 
 import { itemRepository } from "~/repositories/item";
 
+// TODO(toririm): テストを書く
 export const deleteItem: ClientActionFunction = async ({ request }) => {
   const formData = await request.formData();
   const submission = parseWithZod(formData, {

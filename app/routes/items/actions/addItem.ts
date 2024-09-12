@@ -4,6 +4,7 @@ import { json, type ClientActionFunction } from "@remix-run/react";
 import { ItemEntity, itemSchema } from "~/models/item";
 import { itemRepository } from "~/repositories/item";
 
+// TODO(toririm): テストを書く
 export const addItem: ClientActionFunction = async ({ request }) => {
   const formData = await request.formData();
   const submission = parseWithZod(formData, { schema: itemSchema });
