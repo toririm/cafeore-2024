@@ -17,8 +17,6 @@ export const orderSchema = z.object({
 
 export type Order = z.infer<typeof orderSchema>;
 
-export type OrderWithId = WithId<Order>;
-
 export class OrderEntity implements Order {
   // 全てのプロパティを private にして外部からの直接アクセスを禁止
   private constructor(
@@ -45,7 +43,7 @@ export class OrderEntity implements Order {
     );
   }
 
-  static fromOrder(order: OrderWithId): WithId<OrderEntity> {
+  static fromOrder(order: WithId<Order>): WithId<OrderEntity> {
     return new OrderEntity(
       order.id,
       order.orderId,

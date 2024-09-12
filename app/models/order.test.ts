@@ -1,6 +1,8 @@
 import { describe, expect, test } from "bun:test";
 
-import { type ItemWithId } from "./item";
+import { type WithId } from "~/lib/typeguard";
+
+import { type ItemEntity } from "./item";
 import { OrderEntity } from "./order";
 
 describe("[unit] order entity", () => {
@@ -8,7 +10,11 @@ describe("[unit] order entity", () => {
     const order = OrderEntity.createNew({ orderId: 2024 });
     expect(order.total).toBe(0);
 
-    const items: ItemWithId[] = [
+    // TODO(toririm):
+    // 現在はItemEntityにメソッドが生えていないためこれで正常に動くが
+    // メソッドが生えると型エラーが発生する。ちゃんと`fromItem`等を使って
+    // インスタンスを生成するように修正する
+    const items: WithId<ItemEntity>[] = [
       {
         id: "1",
         name: "item1",

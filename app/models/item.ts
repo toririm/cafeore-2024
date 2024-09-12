@@ -16,8 +16,6 @@ export const itemSchema = z.object({
 
 export type Item = z.infer<typeof itemSchema>;
 
-export type ItemWithId = WithId<Item>;
-
 export type ItemType = Pick<Item, "type">["type"];
 
 export const type2label = {
@@ -39,7 +37,7 @@ export class ItemEntity implements Item {
     return new ItemEntity(undefined, name, price, type);
   }
 
-  static fromItem(item: ItemWithId): WithId<ItemEntity> {
+  static fromItem(item: WithId<Item>): WithId<ItemEntity> {
     return new ItemEntity(
       item.id,
       item.name,
