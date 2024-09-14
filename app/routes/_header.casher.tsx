@@ -97,25 +97,23 @@ export default function Casher() {
             {queue?.map((item) => (
               <TableRow key={item.id}>
                 <TableCell className="parent">
-                  <div>{item.name}</div>
-                  <div>
-                    <Button
-                      type="button"
-                      className="right"
-                      onClick={(key) => {
-                        mockOrder.items.splice(indexOf(mockOrder.items, item));
-                        mockOrder.total = mockOrder.items.reduce(
-                          (acc, cur) => acc + cur.price,
-                          0,
-                        );
-                        setQueue(mockOrder.items);
-                        setTotal(mockOrder.total);
-                        console.log(mockOrder);
-                      }}
-                    >
-                      削除
-                    </Button>
-                  </div>
+                  {item.name}
+                  <Button
+                    type="button"
+                    className="right"
+                    onClick={(key) => {
+                      mockOrder.items.splice(indexOf(mockOrder.items, item));
+                      mockOrder.total = mockOrder.items.reduce(
+                        (acc, cur) => acc + cur.price,
+                        0,
+                      );
+                      setQueue(mockOrder.items);
+                      setTotal(mockOrder.total);
+                      console.log(mockOrder);
+                    }}
+                  >
+                    削除
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
@@ -158,7 +156,7 @@ export default function Casher() {
                           }
                         />
                       </p>
-                      <p>合計金額： {mockOrder.total} 円</p>
+                      <p>合計： {mockOrder.total} 円</p>
                       <p>
                         お釣り： {recieved - mockOrder.total < 0 && 0}
                         {recieved - mockOrder.total >= 0 &&
