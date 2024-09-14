@@ -2,6 +2,7 @@ import { parseWithZod } from "@conform-to/zod";
 import { AlertDialogCancel } from "@radix-ui/react-alert-dialog";
 import type { ActionFunction } from "@remix-run/node";
 import { json } from "@remix-run/react";
+import { indexOf } from "lodash";
 import { useState } from "react";
 import useSWRSubscription from "swr/subscription";
 import {
@@ -36,14 +37,10 @@ const mockOrder: Order = {
   servedAt: null,
   items: [
     // {
+    //   id: "1",
     //   type: "ice",
     //   name: "珈琲・俺ブレンド",
     //   price: 300,
-    // },
-    // {
-    //   type: "ice",
-    //   name: "珈琲・俺ブレンド",
-    //   price: 400,
     // },
   ],
   assignee: "1st",
@@ -65,24 +62,26 @@ export default function Casher() {
   // console.log(items?.[0]);
   return (
     <div>
-      <div>No.： {mockOrder.orderId}</div>
+      <div>No. {mockOrder.orderId}</div>
       <div>
         <ul>
           {items?.map((item) => (
-            <Button
-              key={item.id}
-              onClick={async () => {
-                mockOrder.items.push(item);
-                mockOrder.total = mockOrder.items.reduce(
-                  (acc, cur) => acc + cur.price,
-                  0,
-                );
-                setQueue(mockOrder.items);
-                setTotal(mockOrder.total);
-              }}
-            >
-              {item.name}
-            </Button>
+            <p key={item.id}>
+              <Button
+                onClick={async () => {
+                  mockOrder.items.push(item);
+                  mockOrder.total = mockOrder.items.reduce(
+                    (acc, cur) => acc + cur.price,
+                    0,
+                  );
+                  setQueue(mockOrder.items);
+                  setTotal(mockOrder.total);
+                  console.log(mockOrder);
+                }}
+              >
+                {item.name}
+              </Button>
+            </p>
           ))}
         </ul>
       </div>
@@ -96,8 +95,28 @@ export default function Casher() {
           </TableHeader>
           <TableBody>
             {queue?.map((item) => (
-              <TableRow>
-                <TableCell className="font-medium">{item.name}</TableCell>
+              <TableRow key={item.id}>
+                <TableCell className="parent">
+                  <div>{item.name}</div>
+                  <div>
+                    <Button
+                      type="button"
+                      className="right"
+                      onClick={(key) => {
+                        mockOrder.items.splice(indexOf(mockOrder.items, item));
+                        mockOrder.total = mockOrder.items.reduce(
+                          (acc, cur) => acc + cur.price,
+                          0,
+                        );
+                        setQueue(mockOrder.items);
+                        setTotal(mockOrder.total);
+                        console.log(mockOrder);
+                      }}
+                    >
+                      削除
+                    </Button>
+                  </div>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -111,29 +130,45 @@ export default function Casher() {
             {/* <h3>{mockOrder.reduce}</h3> */}
           </li>
           <li>
-            <h2>受領金額：</h2>
+            {/* <h2>受領金額：</h2> */}
             <form>
-              <Input
+              {/* <Input
                 type="number"
                 placeholder="受け取った金額を入力してください"
                 value={recieved}
                 onChange={(event) => setText(parseInt(event.target.value))}
-              />
+              /> */}
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button>次の画面へ</Button>
+                  <Button>確定</Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle>金額を確認してください</AlertDialogTitle>
                     <AlertDialogDescription>
-                      <p>受領額： {recieved} 円</p>
-                      <p>合計金額： (mockOrder.total) 円</p>
-                      <p>お釣り： (recieved - mockOrder.total) 円</p>
+                      {/* <p>受領額： {recieved} 円</p> */}
+                      <p>
+                        受領額：
+                        <Input
+                          type="number"
+                          placeholder="受け取った金額を入力してください"
+                          value={recieved}
+                          onChange={(event) =>
+                            setText(parseInt(event.target.value))
+                          }
+                        />
+                      </p>
+                      <p>合計金額： {mockOrder.total} 円</p>
+                      <p>
+                        お釣り： {recieved - mockOrder.total < 0 && 0}
+                        {recieved - mockOrder.total >= 0 &&
+                          recieved - mockOrder.total}{" "}
+                        円
+                      </p>
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>戻る</AlertDialogCancel>
+                    <AlertDialogCancel type="button">戻る</AlertDialogCancel>
                     <AlertDialogAction type="submit">送信</AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
