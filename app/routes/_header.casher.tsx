@@ -1,7 +1,7 @@
 import { parseWithZod } from "@conform-to/zod";
 import { AlertDialogCancel } from "@radix-ui/react-alert-dialog";
-import type { ActionFunction } from "@remix-run/node";
-import { json } from "@remix-run/react";
+import { TrashIcon } from "@radix-ui/react-icons";
+import { ClientActionFunction, json } from "@remix-run/react";
 import { indexOf } from "lodash";
 import { useState } from "react";
 import useSWRSubscription from "swr/subscription";
@@ -62,129 +62,141 @@ export default function Casher() {
   // console.log(items?.[0]);
   return (
     <div>
-      <div>No. {mockOrder.orderId}</div>
-      <div>
-        <ul>
-          {items?.map((item) => (
-            <p key={item.id}>
-              <Button
-                onClick={async () => {
-                  mockOrder.items.push(item);
-                  mockOrder.total = mockOrder.items.reduce(
-                    (acc, cur) => acc + cur.price,
-                    0,
-                  );
-                  setQueue(mockOrder.items);
-                  setTotal(mockOrder.total);
-                  console.log(mockOrder);
-                }}
-              >
-                {item.name}
-              </Button>
-            </p>
-          ))}
-        </ul>
-      </div>
-      <div>
-        <Table>
-          <TableCaption>注文内容</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[100px]">オーダー</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {queue?.map((item) => (
-              <TableRow key={item.id}>
-                <TableCell className="parent">
+      <div className="flex h-screen flex-row flex-wrap">
+        <div className="w-2/3">
+          <div className="grid h-screen grid-cols-2 space-y-5">
+            {items?.map((item) => (
+              <div key={item.id}>
+                <Button
+                  onClick={async () => {
+                    mockOrder.items.push(item);
+                    mockOrder.total = mockOrder.items.reduce(
+                      (acc, cur) => acc + cur.price,
+                      0,
+                    );
+                    setQueue(mockOrder.items);
+                    setTotal(mockOrder.total);
+                    console.log(mockOrder);
+                  }}
+                >
                   {item.name}
-                  <Button
-                    type="button"
-                    className="right"
-                    onClick={(key) => {
-                      mockOrder.items.splice(indexOf(mockOrder.items, item));
-                      mockOrder.total = mockOrder.items.reduce(
-                        (acc, cur) => acc + cur.price,
-                        0,
-                      );
-                      setQueue(mockOrder.items);
-                      setTotal(mockOrder.total);
-                      console.log(mockOrder);
-                    }}
-                  >
-                    削除
-                  </Button>
-                </TableCell>
-              </TableRow>
+                </Button>
+              </div>
             ))}
-          </TableBody>
-        </Table>
-      </div>
-      <div>
-        <ul>
-          <li>
-            <h2>合計金額：</h2>
-            <h3>{total}</h3>
-            {/* <h3>{mockOrder.reduce}</h3> */}
-          </li>
-          <li>
-            {/* <h2>受領金額：</h2> */}
-            <form>
-              {/* <Input
+          </div>
+        </div>
+        <div className="w-1/3">
+          <div>
+            <Table>
+              <TableCaption></TableCaption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-500">
+                    No. {mockOrder.orderId}
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {queue?.map((item) => (
+                  <TableRow
+                    key={indexOf(mockOrder.items, item)}
+                    className="relative h-[50px]"
+                  >
+                    <TableCell className="relative font-medium">
+                      <div className="absolute left-[50px]">{item.name}</div>
+                      <Button // ここで削除ボタンを押すと、mockOrder.itemsから削除する
+                        type="button"
+                        className="absolute right-[50px] p-[5px]"
+                        onClick={() => {
+                          mockOrder.items.splice(
+                            indexOf(mockOrder.items, item),
+                            1,
+                          );
+                          mockOrder.total = mockOrder.items.reduce(
+                            (acc, cur) => acc + cur.price,
+                            0,
+                          );
+                          setQueue(mockOrder.items);
+                          setTotal(mockOrder.total);
+                          console.log(mockOrder);
+                        }}
+                      >
+                        {trashIcon()}
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            <ul>
+              <li>
+                <h2 className="relative">合計金額：{total} 円</h2>
+                {/* <h3>{mockOrder.reduce}</h3> */}
+              </li>
+              <li>
+                {/* <h2>受領金額：</h2> */}
+                <form>
+                  {/* <Input
                 type="number"
                 placeholder="受け取った金額を入力してください"
                 value={recieved}
                 onChange={(event) => setText(parseInt(event.target.value))}
               /> */}
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button>確定</Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>金額を確認してください</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      {/* <p>受領額： {recieved} 円</p> */}
-                      <p>
-                        受領額：
-                        <Input
-                          type="number"
-                          placeholder="受け取った金額を入力してください"
-                          value={recieved}
-                          onChange={(event) =>
-                            setText(parseInt(event.target.value))
-                          }
-                        />
-                      </p>
-                      <p>合計： {mockOrder.total} 円</p>
-                      <p>
-                        お釣り： {recieved - mockOrder.total < 0 && 0}
-                        {recieved - mockOrder.total >= 0 &&
-                          recieved - mockOrder.total}{" "}
-                        円
-                      </p>
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel type="button">戻る</AlertDialogCancel>
-                    <AlertDialogAction type="submit">送信</AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </form>
-          </li>
-        </ul>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button className="absolute right-[100px]">確定</Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          金額を確認してください
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          {/* <p>受領額： {recieved} 円</p> */}
+                          <p>
+                            受領額：
+                            <Input
+                              type="number"
+                              placeholder="受け取った金額を入力してください"
+                              value={recieved}
+                              onChange={(event) =>
+                                setText(parseInt(event.target.value))
+                              }
+                            />
+                          </p>
+                          <p>合計： {mockOrder.total} 円</p>
+                          <p>
+                            お釣り： {recieved - mockOrder.total < 0 && 0}
+                            {recieved - mockOrder.total >= 0 &&
+                              recieved - mockOrder.total}{" "}
+                            円
+                          </p>
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel type="button">
+                          戻る
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                          type="submit"
+                          onClick={() => (mockOrder.items = [])}
+                        >
+                          送信
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </form>
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
-export function add_order(order: Order, coffee: Item) {
-  console.log(mockOrder);
-  return order;
-}
-
-export const clientAction: ActionFunction = async ({ request }) => {
+export const clientAction: ClientActionFunction = async ({ request }) => {
   const formData = await request.formData();
   const submission = parseWithZod(formData, { schema: itemSchema });
 
@@ -199,3 +211,11 @@ export const clientAction: ActionFunction = async ({ request }) => {
   console.log("Document written with ID: ", savedItem.id);
   return new Response(null, { status: 204 });
 };
+
+function trashIcon() {
+  return (
+    <div>
+      <TrashIcon />
+    </div>
+  );
+}
