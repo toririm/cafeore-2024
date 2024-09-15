@@ -2,7 +2,10 @@ import { type MetaFunction } from "@remix-run/react";
 
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import { useClientLoaderData } from "~/lib/custom-loader";
+import useSWRSubscription from "swr/subscription";
+import { orderConverter } from "~/firebase/converter";
+import { collectionSub } from "~/firebase/subscription";
+
 import { type2label } from "~/models/item";
 import { orderRepository } from "~/repositories/order";
 
@@ -16,7 +19,10 @@ export const clientLoader = async () => {
 };
 
 export default function Serve() {
-  const { orders } = useClientLoaderData<typeof clientLoader>();
+  const { data: orders } = useSWRSubscription(
+    "orders",
+    collectionSub(orderConverter),
+  );
 
   return (
     <div className="p-4 font-sans">
@@ -26,7 +32,7 @@ export default function Serve() {
       </div>
 
       <div className="grid grid-cols-4 gap-4">
-        {orders.map((order) => (
+        {orders?.map((order) => (
           <div key={order.id}>
             <Card>
               <CardHeader>
