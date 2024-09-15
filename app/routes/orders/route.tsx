@@ -19,6 +19,7 @@ export const clientLoader = async () => {
 };
 
 export default function Order() {
+  // TODO(toririm): useSWRSubscription を使う。clientLoader は削除
   const { orders } = useClientLoaderData<typeof clientLoader>();
 
   return (

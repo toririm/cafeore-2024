@@ -16,6 +16,8 @@ import { type ItemEntity } from "~/models/item";
 
 import { type ItemRepository } from "./type";
 
+// TODO(toririm): エラーハンドリングをやる
+// Result型を使う NeverThrow を使ってみたい
 export const itemRepoFactory = (db: Firestore): ItemRepository => {
   const update = async (
     item: WithId<ItemEntity>,
