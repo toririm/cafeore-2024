@@ -1,11 +1,10 @@
 import { type MetaFunction } from "@remix-run/react";
+import useSWRSubscription from "swr/subscription";
 
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import useSWRSubscription from "swr/subscription";
 import { orderConverter } from "~/firebase/converter";
 import { collectionSub } from "~/firebase/subscription";
-
 import { type2label } from "~/models/item";
 import { orderRepository } from "~/repositories/order";
 
