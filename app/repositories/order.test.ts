@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { beforeAll, describe, expect, test } from "bun:test";
 
 import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
 
@@ -7,19 +7,23 @@ import { type WithId } from "~/lib/typeguard";
 import { OrderEntity } from "~/models/order";
 
 import { orderRepoFactory } from "./order";
+import { type OrderRepository } from "./type";
 
 describe("[db] orderRepository", async () => {
   // To use this environment, firebase emulator must be running.
 
   let savedOrderHoge: WithId<OrderEntity>;
+  let orderRepository: OrderRepository;
 
-  const testDB = getFirestore();
-  connectFirestoreEmulator(
-    testDB,
-    "localhost",
-    firebasejson.emulators.firestore.port,
-  );
-  const orderRepository = orderRepoFactory(testDB);
+  beforeAll(() => {
+    const testDB = getFirestore();
+    connectFirestoreEmulator(
+      testDB,
+      "localhost",
+      firebasejson.emulators.firestore.port,
+    );
+    orderRepository = orderRepoFactory(testDB);
+  });
 
   test("orderRepository is defined", () => {
     expect(orderRepository).toBeDefined();
