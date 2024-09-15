@@ -1,6 +1,11 @@
 import { useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
-import { Form, useActionData, type MetaFunction } from "@remix-run/react";
+import {
+  Form,
+  useActionData,
+  useNavigation,
+  type MetaFunction,
+} from "@remix-run/react";
 import { useMemo } from "react";
 import useSWRSubscription from "swr/subscription";
 
@@ -14,7 +19,7 @@ import { itemSchema, itemtypes, type2label } from "~/models/item";
 // Add these imports
 import type { ItemEntity, ItemType } from "~/models/item"; // Adjust the path as needed
 
-import { type action as clientAction } from "./action";
+import { addItem } from "./actions/addItem";
 
 export { action as clientAction } from "./action";
 
@@ -27,9 +32,10 @@ export default function Item() {
     "items",
     collectionSub(itemConverter),
   );
-  const lastResult = useActionData<typeof clientAction>();
+  const navigation = useNavigation();
+  const lastResult = useActionData<typeof addItem>();
   const [form, fields] = useForm({
-    lastResult,
+    lastResult: navigation.state === "idle" ? lastResult : null,
     onValidate({ formData }) {
       return parseWithZod(formData, { schema: itemSchema });
     },
