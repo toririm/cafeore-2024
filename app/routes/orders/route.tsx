@@ -1,16 +1,12 @@
-import {
-  Form,
-  type ClientActionFunction,
-  type ClientActionFunctionArgs,
-  type MetaFunction,
-} from "@remix-run/react";
+import { Form, type MetaFunction } from "@remix-run/react";
 
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { useClientLoaderData } from "~/lib/custom-loader";
 import { type2label } from "~/models/item";
-import { OrderEntity } from "~/models/order";
 import { orderRepository } from "~/repositories/order";
+
+export { clientAction } from "./action";
 
 export const meta: MetaFunction = () => {
   return [{ title: "オーダー" }];
@@ -22,7 +18,7 @@ export const clientLoader = async () => {
   return { orders };
 };
 
-export default function Orders() {
+export default function Order() {
   const { orders } = useClientLoaderData<typeof clientLoader>();
 
   return (
@@ -64,52 +60,3 @@ export default function Orders() {
     </div>
   );
 }
-
-export const clientAction: ClientActionFunction = async (args) => {
-  const { request } = args;
-
-  switch (request.method) {
-    // TODO: func1, func2, func3 の命名を適切に、そしてすべて引数にargsを取るようにする
-    case "POST":
-      console.log("save(create)のテスト");
-      func1();
-      break;
-
-    case "DELETE":
-      func2(request);
-      break;
-
-    case "PUT":
-      func3(args);
-      break;
-  }
-
-  return null;
-};
-
-// できればファイル分割もしたい
-
-const func1 = async () => {
-  console.log("save(create)のテスト");
-  const newOrder = OrderEntity.createNew({ orderId: 1 });
-  const savedOrder = await orderRepository.save(newOrder);
-  console.log("created", savedOrder);
-};
-
-const func2 = async (request: Request) => {
-  const formData = await request.formData();
-  console.log("deleteのテスト");
-  const id = formData.get("id");
-  await orderRepository.delete(id as string);
-};
-
-const func3 = async ({ request }: ClientActionFunctionArgs) => {
-  const formData = await request.formData();
-  console.log("save(update)のテスト");
-  const id2 = formData.get("id");
-  const order = await orderRepository.findById(id2 as string);
-  if (order) {
-    order.beServed();
-    await orderRepository.save(order);
-  }
-};
