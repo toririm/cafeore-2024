@@ -179,7 +179,7 @@ export default function Casher() {
                         </AlertDialogCancel>
                         <AlertDialogAction
                           type="submit"
-                          onClick={() => (mockOrder.items = [])}
+                          onClick={() => mockOrderInitialize()}
                         >
                           送信
                         </AlertDialogAction>
@@ -218,4 +218,10 @@ function trashIcon() {
       <TrashIcon />
     </div>
   );
+}
+
+function mockOrderInitialize() {
+  mockOrder.items = [];
+  mockOrder.total = 0;
+  console.log(mockOrder);
 }
