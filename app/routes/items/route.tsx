@@ -19,7 +19,7 @@ import { itemSchema, itemtypes, type2label } from "~/models/item";
 // Add these imports
 import type { ItemEntity, ItemType } from "~/models/item"; // Adjust the path as needed
 
-import { addItem } from "./actions/addItem";
+import { type addItem } from "./actions/addItem";
 
 export { action as clientAction } from "./action";
 
