@@ -64,7 +64,7 @@ export default function Casher() {
     <div>
       <div className="flex h-screen flex-row flex-wrap">
         <div className="w-2/3">
-          <div className="grid h-screen grid-cols-2 space-y-5">
+          <div className="grid h-screen grid-cols-2">
             {items?.map((item) => (
               <div key={item.id}>
                 <Button
@@ -106,7 +106,7 @@ export default function Casher() {
                       <div className="absolute left-[50px]">{item.name}</div>
                       <Button // ここで削除ボタンを押すと、mockOrder.itemsから削除する
                         type="button"
-                        className="absolute right-[50px] p-[5px]"
+                        className="absolute right-[50px] h-[30px] w-[25px]"
                         onClick={() => {
                           mockOrder.items.splice(
                             indexOf(mockOrder.items, item),
