@@ -1,4 +1,12 @@
-import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  setDoc,
+} from "firebase/firestore";
 import { converter } from "~/firebase/converter";
 import { db } from "~/firebase/firestore";
 import { hasId } from "~/lib/typeguard";
@@ -14,7 +22,9 @@ export const itemRepository: ItemRepository = {
       await setDoc(docRef, item);
       return item;
     } else {
-      const colRef = collection(db, "items").withConverter(converter(itemSchema));
+      const colRef = collection(db, "items").withConverter(
+        converter(itemSchema),
+      );
       const docRef = await addDoc(colRef, item);
       const resultDoc = await getDoc(
         docRef.withConverter(converter(itemSchema.required())),
@@ -32,7 +42,7 @@ export const itemRepository: ItemRepository = {
 
   findById: async (id) => {
     const docRef = doc(db, "items", id).withConverter(
-      converter(itemSchema.required())
+      converter(itemSchema.required()),
     );
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
@@ -41,7 +51,7 @@ export const itemRepository: ItemRepository = {
       return null;
     }
   },
-  
+
   findAll: async () => {
     const colRef = collection(db, "items").withConverter(
       converter(itemSchema.required()),

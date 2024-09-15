@@ -9,7 +9,7 @@ import { Label } from "~/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import { collectionSub } from "~/firebase/subscription";
 import { itemSchema, itemtypes } from "~/models/item";
-import { itemRepository } from '~/repositories/item';
+import { itemRepository } from "~/repositories/item";
 
 export const meta: MetaFunction = () => {
   return [{ title: "アイテム" }];
@@ -38,7 +38,7 @@ export default function Item() {
   });
 
   return (
-    <div className="font-sans p-4">
+    <div className="p-4 font-sans">
       <h1 className="text-3xl">アイテム</h1>
       <ul>
         {items?.map((item) => (

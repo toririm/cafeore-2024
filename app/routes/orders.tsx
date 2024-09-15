@@ -27,7 +27,7 @@ export default function Orders() {
   const { orders } = useTypedLoaderData<typeof clientLoader>();
 
   return (
-    <div className="font-sans p-4">
+    <div className="p-4 font-sans">
       <h1 className="text-3xl">アイテム</h1>
       <ul>
         {orders.map((order) => (
