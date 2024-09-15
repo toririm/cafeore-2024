@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { type WithId } from "~/lib/typeguard";
+
 export const itemtypes = ["hot", "ice", "ore", "milk"] as const;
 
 export const itemSchema = z.object({
@@ -14,6 +16,36 @@ export const itemSchema = z.object({
 
 export type Item = z.infer<typeof itemSchema>;
 
-export type ItemWithId = Required<Item>;
-
 export type ItemType = Pick<Item, "type">["type"];
+
+export const type2label = {
+  hot: "ホット",
+  ice: "アイス",
+  ore: "オレ",
+  milk: "ミルク",
+} as const satisfies Record<ItemType, string>;
+
+export class ItemEntity implements Item {
+  // TODO(toririm)
+  // ゲッターやセッターを使う際にはすべてのプロパティにアンスコをつけてprivateにする
+  // 実装の詳細は OrderEntity を参照
+  private constructor(
+    public readonly id: string | undefined,
+    public readonly name: string,
+    public readonly price: number,
+    public readonly type: ItemType,
+  ) {}
+
+  static createNew({ name, price, type }: Item): ItemEntity {
+    return new ItemEntity(undefined, name, price, type);
+  }
+
+  static fromItem(item: WithId<Item>): WithId<ItemEntity> {
+    return new ItemEntity(
+      item.id,
+      item.name,
+      item.price,
+      item.type,
+    ) as WithId<ItemEntity>;
+  }
+}

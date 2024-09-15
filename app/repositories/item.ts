@@ -6,57 +6,66 @@ import {
   getDoc,
   getDocs,
   setDoc,
+  type Firestore,
 } from "firebase/firestore";
-import { converter } from "~/firebase/converter";
-import { db } from "~/firebase/firestore";
-import { hasId } from "~/lib/typeguard";
-import { itemSchema } from "~/models/item";
-import { ItemRepository } from "./type";
 
-export const itemRepository: ItemRepository = {
-  save: async (item) => {
-    if (hasId(item)) {
-      const docRef = doc(db, "items", item.id).withConverter(
-        converter(itemSchema.required()),
-      );
-      await setDoc(docRef, item);
-      return item;
-    } else {
-      const colRef = collection(db, "items").withConverter(
-        converter(itemSchema),
-      );
-      const docRef = await addDoc(colRef, item);
-      const resultDoc = await getDoc(
-        docRef.withConverter(converter(itemSchema.required())),
-      );
-      if (resultDoc.exists()) {
-        return resultDoc.data();
+import { itemConverter } from "~/firebase/converter";
+import { prodDB } from "~/firebase/firestore";
+import { hasId, type WithId } from "~/lib/typeguard";
+import { type ItemEntity } from "~/models/item";
+
+import { type ItemRepository } from "./type";
+
+// TODO(toririm): エラーハンドリングをやる
+// Result型を使う NeverThrow を使ってみたい
+export const itemRepoFactory = (db: Firestore): ItemRepository => {
+  const update = async (
+    item: WithId<ItemEntity>,
+  ): Promise<WithId<ItemEntity>> => {
+    const docRef = doc(db, "items", item.id).withConverter(itemConverter);
+    await setDoc(docRef, item);
+    return item;
+  };
+
+  const create = async (item: ItemEntity): Promise<WithId<ItemEntity>> => {
+    const colRef = collection(db, "items").withConverter(itemConverter);
+    const docRef = await addDoc(colRef, item);
+    const resultDoc = await getDoc(docRef.withConverter(itemConverter));
+    if (resultDoc.exists()) {
+      return resultDoc.data();
+    }
+    throw new Error("Failed to save item");
+  };
+
+  return {
+    save: async (item) => {
+      if (hasId(item)) {
+        return await update(item);
+      } else {
+        return await create(item);
       }
-      throw new Error("Failed to save item");
-    }
-  },
+    },
 
-  delete: async (id) => {
-    await deleteDoc(doc(db, "items", id));
-  },
+    delete: async (id) => {
+      await deleteDoc(doc(db, "items", id));
+    },
 
-  findById: async (id) => {
-    const docRef = doc(db, "items", id).withConverter(
-      converter(itemSchema.required()),
-    );
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      return docSnap.data();
-    } else {
-      return null;
-    }
-  },
+    findById: async (id) => {
+      const docRef = doc(db, "items", id).withConverter(itemConverter);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        return docSnap.data();
+      } else {
+        return null;
+      }
+    },
 
-  findAll: async () => {
-    const colRef = collection(db, "items").withConverter(
-      converter(itemSchema.required()),
-    );
-    const docSnaps = await getDocs(colRef);
-    return docSnaps.docs.map((doc) => doc.data());
-  },
+    findAll: async () => {
+      const colRef = collection(db, "items").withConverter(itemConverter);
+      const docSnaps = await getDocs(colRef);
+      return docSnaps.docs.map((doc) => doc.data());
+    },
+  };
 };
+
+export const itemRepository: ItemRepository = itemRepoFactory(prodDB);

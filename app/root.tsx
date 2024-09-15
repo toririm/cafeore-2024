@@ -5,6 +5,7 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
+
 import "./tailwind.css";
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -29,6 +30,7 @@ export default function App() {
   return <Outlet />;
 }
 
+// TODO(toririm): もっとリッチなローディング画面を作る
 export function HydrateFallback() {
   return <p>Loading...</p>;
 }

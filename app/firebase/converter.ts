@@ -1,18 +1,28 @@
 import {
+  Timestamp,
   type DocumentData,
+  type FirestoreDataConverter,
   type QueryDocumentSnapshot,
   type SnapshotOptions,
-  Timestamp,
 } from "firebase/firestore";
 import _ from "lodash";
-import type { ZodSchema } from "zod";
+import { type ZodSchema } from "zod";
 
-export const converter = <T>(schema: ZodSchema<T>) => {
+import { type WithId } from "~/lib/typeguard";
+import { ItemEntity, itemSchema } from "~/models/item";
+import { OrderEntity, orderSchema } from "~/models/order";
+
+export const converter = <T>(
+  schema: ZodSchema<T>,
+): FirestoreDataConverter<T> => {
   return {
     toFirestore: (data: T) => {
+      // Zod のパースを挟まないと、Entityオブジェクトのgetter/setterは無視され
+      // privateプロパティがFirestoreに保存されてしまう
+      const parsedData = schema.parse(data);
       // id は ドキュメントには含めない
-      const dataWithoutId = _.omit(data as object, "id");
-      return dataWithoutId as T;
+      const dataWithoutId = _.omit(parsedData as object, "id");
+      return dataWithoutId;
     },
     fromFirestore: (
       snapshot: QueryDocumentSnapshot,
@@ -33,7 +43,7 @@ export const converter = <T>(schema: ZodSchema<T>) => {
 // この関数の型注釈は若干嘘
 const parseDateProperty = (data: DocumentData): DocumentData => {
   const parsedData = _.mapValues(data, (value) =>
-    // toDate が存在する場合は Timestamp 型としてパースする
+    // firestore 固有の Timestamp 型を Date に変換
     value instanceof Timestamp ? value.toDate() : value,
   );
   const recursivelyParsedData = _.mapValues(parsedData, (value) => {
@@ -48,4 +58,35 @@ const parseDateProperty = (data: DocumentData): DocumentData => {
     }
   });
   return recursivelyParsedData;
+};
+
+export const itemConverter: FirestoreDataConverter<WithId<ItemEntity>> = {
+  toFirestore: converter(itemSchema).toFirestore,
+  fromFirestore: (
+    snapshot: QueryDocumentSnapshot,
+    options: SnapshotOptions,
+  ) => {
+    const convertedData = converter(itemSchema.required()).fromFirestore(
+      snapshot,
+      options,
+    );
+    return ItemEntity.fromItem(convertedData);
+  },
+};
+
+export const orderConverter: FirestoreDataConverter<WithId<OrderEntity>> = {
+  toFirestore: converter(orderSchema).toFirestore,
+  fromFirestore: (
+    snapshot: QueryDocumentSnapshot,
+    options: SnapshotOptions,
+  ): WithId<OrderEntity> => {
+    const convertedData = converter(orderSchema.required()).fromFirestore(
+      snapshot,
+      options,
+    );
+    convertedData.items = convertedData.items.map((item) =>
+      ItemEntity.fromItem(item),
+    );
+    return OrderEntity.fromOrder(convertedData);
+  },
 };

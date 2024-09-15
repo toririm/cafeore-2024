@@ -17,6 +17,7 @@ export const useOnlineStatus = () => {
   );
 };
 
+// TODO(toririm): デザインがダサいので何とかする
 export const OnlineStatus = () => {
   const online = useOnlineStatus();
   return online ? <p>✅オンライン</p> : <p>⛔オフライン</p>;

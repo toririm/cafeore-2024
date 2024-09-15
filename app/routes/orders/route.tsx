@@ -1,30 +1,26 @@
-import type { ActionFunction, MetaFunction } from "@remix-run/node";
-import { Form } from "@remix-run/react";
-import { typedjson, useTypedLoaderData } from "remix-typedjson";
+import { Form, type MetaFunction } from "@remix-run/react";
+
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import { Order } from "~/models/order";
+import { useClientLoaderData } from "~/lib/custom-loader";
+import { type2label } from "~/models/item";
 import { orderRepository } from "~/repositories/order";
+
+export { clientAction } from "./action";
 
 export const meta: MetaFunction = () => {
   return [{ title: "オーダー" }];
 };
 
-const type2label = {
-  hot: "ホット",
-  ice: "アイス",
-  ore: "オレ",
-  milk: "ミルク",
-};
-
 export const clientLoader = async () => {
   console.log("findAllのテスト");
   const orders = await orderRepository.findAll();
-  return typedjson({ orders });
+  return { orders };
 };
 
-export default function Orders() {
-  const { orders } = useTypedLoaderData<typeof clientLoader>();
+export default function Order() {
+  // TODO(toririm): useSWRSubscription を使う。clientLoader は削除
+  const { orders } = useClientLoaderData<typeof clientLoader>();
 
   return (
     <div className="p-4 font-sans">
@@ -65,52 +61,3 @@ export default function Orders() {
     </div>
   );
 }
-
-const testOrder = (orderId: number): Order => ({
-  orderId,
-  items: [
-    {
-      id: "1",
-      name: "テスト",
-      price: 100,
-      type: "hot",
-    },
-  ],
-  createdAt: new Date(),
-  servedAt: null,
-  assignee: null,
-  total: 100,
-  orderReady: false,
-});
-
-export const clientAction: ActionFunction = async ({ request }) => {
-  const formData = await request.formData();
-
-  switch (request.method) {
-    case "POST":
-      console.log("save(create)のテスト");
-      const orderId = Number(formData.get("orderId"));
-      const newOrder = testOrder(orderId);
-      const savedOrder = await orderRepository.save(newOrder);
-      console.log("created", savedOrder);
-      break;
-
-    case "DELETE":
-      console.log("deleteのテスト");
-      const id = formData.get("id");
-      await orderRepository.delete(id as string);
-      break;
-
-    case "PUT":
-      console.log("save(update)のテスト");
-      const id2 = formData.get("id");
-      const order = await orderRepository.findById(id2 as string);
-      if (order) {
-        order.servedAt = new Date();
-        await orderRepository.save(order);
-      }
-      break;
-  }
-
-  return null;
-};
