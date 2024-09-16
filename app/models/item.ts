@@ -16,7 +16,7 @@ export const itemSchema = z.object({
 
 export type Item = z.infer<typeof itemSchema>;
 
-export type ItemType = Pick<Item, "type">["type"];
+export type ItemType = Item["type"];
 
 export const type2label = {
   hot: "ホット",
