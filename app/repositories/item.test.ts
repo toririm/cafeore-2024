@@ -1,6 +1,7 @@
 import { beforeAll, describe, expect, test } from "bun:test";
 
-import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
+import { initializeTestEnvironment } from "@firebase/rules-unit-testing";
+import { type Firestore } from "firebase/firestore";
 
 import firebasejson from "~/../firebase.json";
 import { type WithId } from "~/lib/typeguard";
@@ -15,13 +16,17 @@ describe("[db] itemRepository", async () => {
   let savedItemHoge: WithId<ItemEntity>;
   let itemRepository: ItemRepository;
 
-  beforeAll(() => {
-    const testDB = getFirestore();
-    connectFirestoreEmulator(
-      testDB,
-      "localhost",
-      firebasejson.emulators.firestore.port,
-    );
+  beforeAll(async () => {
+    const testEnv = await initializeTestEnvironment({
+      projectId: "demo-firestore",
+      firestore: {
+        host: "localhost",
+        port: firebasejson.emulators.firestore.port,
+      },
+    });
+    const testDB = testEnv
+      .unauthenticatedContext()
+      .firestore() as unknown as Firestore;
     itemRepository = itemRepoFactory(testDB);
   });
 
