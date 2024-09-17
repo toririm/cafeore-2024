@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { beforeAll, describe, expect, test } from "bun:test";
 
 import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
 
@@ -7,19 +7,23 @@ import { type WithId } from "~/lib/typeguard";
 import { ItemEntity } from "~/models/item";
 
 import { itemRepoFactory } from "./item";
+import { type ItemRepository } from "./type";
 
 describe("[db] itemRepository", async () => {
   // To use this environment, firebase emulator must be running.
 
   let savedItemHoge: WithId<ItemEntity>;
+  let itemRepository: ItemRepository;
 
-  const testDB = getFirestore();
-  connectFirestoreEmulator(
-    testDB,
-    "localhost",
-    firebasejson.emulators.firestore.port,
-  );
-  const itemRepository = itemRepoFactory(testDB);
+  beforeAll(() => {
+    const testDB = getFirestore();
+    connectFirestoreEmulator(
+      testDB,
+      "localhost",
+      firebasejson.emulators.firestore.port,
+    );
+    itemRepository = itemRepoFactory(testDB);
+  });
 
   test("itemRepository is defined", () => {
     expect(itemRepository).toBeDefined();
