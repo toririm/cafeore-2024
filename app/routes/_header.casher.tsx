@@ -2,7 +2,6 @@ import { parseWithZod } from "@conform-to/zod";
 import { AlertDialogCancel } from "@radix-ui/react-alert-dialog";
 import { TrashIcon } from "@radix-ui/react-icons";
 import { json, type ClientActionFunction } from "@remix-run/react";
-import { indexOf } from "lodash";
 import { useState } from "react";
 import useSWRSubscription from "swr/subscription";
 
@@ -59,7 +58,8 @@ export default function Casher() {
   );
   const [recieved, setText] = useState(0);
   const [total, setTotal] = useState(0);
-  const [queue, setQueue] = useState<Item[]>([]);
+  const [queue, setQueue] = useState<WithId<Item>[]>([]);
+  let index;
 
   // console.log(mockOrder);
   // console.log(items?.[0]);
@@ -102,7 +102,7 @@ export default function Casher() {
               <TableBody>
                 {queue?.map((item) => (
                   <TableRow
-                    key={indexOf(mockOrder.items, item)}
+                    key={mockOrder.items.indexOf(item)}
                     className="relative h-[50px]"
                   >
                     <TableCell className="relative font-medium">
@@ -112,7 +112,7 @@ export default function Casher() {
                         className="absolute right-[50px] h-[30px] w-[25px]"
                         onClick={() => {
                           mockOrder.items.splice(
-                            indexOf(mockOrder.items, item),
+                            mockOrder.items.indexOf(item),
                             1,
                           );
                           mockOrder.total = mockOrder.items.reduce(
