@@ -30,7 +30,7 @@ export const meta: MetaFunction = () => {
 export default function Item() {
   const { data: items } = useSWRSubscription(
     "items",
-    collectionSub(itemConverter),
+    collectionSub({ converter: itemConverter }),
   );
   const navigation = useNavigation();
   const lastResult = useActionData<typeof addItem>();

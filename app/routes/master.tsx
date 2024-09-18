@@ -1,4 +1,5 @@
 import { type MetaFunction } from "@remix-run/react";
+import { orderBy } from "firebase/firestore";
 import useSWRSubscription from "swr/subscription";
 
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
@@ -10,10 +11,10 @@ export const meta: MetaFunction = () => {
   return [{ title: "マスター画面" }];
 };
 
-export default function Serve() {
+export default function FielsOfMaster() {
   const { data: orders } = useSWRSubscription(
     "orders",
-    collectionSub(orderConverter),
+    collectionSub({ converter: orderConverter }, orderBy("orderId", "desc")),
   );
 
   return (

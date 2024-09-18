@@ -19,11 +19,11 @@ const keys = ["a", "s", "d", "f", "g", "h", "j", "k", "l", ";"];
 export default function Cashier() {
   const { data: items } = useSWRSubscription(
     "items",
-    collectionSub(itemConverter),
+    collectionSub({ converter: itemConverter }),
   );
   const { data: orders } = useSWRSubscription(
     "orders",
-    collectionSub(orderConverter),
+    collectionSub({ converter: orderConverter }),
   );
   const [orderItems, setOrderItems] = useState<WithId<ItemEntity>[]>([]);
   const submit = useSubmit();
