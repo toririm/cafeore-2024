@@ -1,7 +1,7 @@
 import { parseWithZod } from "@conform-to/zod";
 import { AlertDialogCancel } from "@radix-ui/react-alert-dialog";
 import { TrashIcon } from "@radix-ui/react-icons";
-import { type ClientActionFunction, json } from "@remix-run/react";
+import { json, type ClientActionFunction } from "@remix-run/react";
 import { indexOf } from "lodash";
 import { useState } from "react";
 import useSWRSubscription from "swr/subscription";
@@ -30,7 +30,7 @@ import {
 import { itemConverter } from "~/firebase/converter";
 import { collectionSub } from "~/firebase/subscription";
 import { type WithId } from "~/lib/typeguard";
-import { type Item, itemSchema, type ItemType } from "~/models/item";
+import { itemSchema, type Item, type ItemType } from "~/models/item";
 import { type Order } from "~/models/order";
 import { itemRepository } from "~/repositories/item";
 
