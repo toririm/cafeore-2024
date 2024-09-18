@@ -5,15 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { orderConverter } from "~/firebase/converter";
 import { collectionSub } from "~/firebase/subscription";
 import { type2label } from "~/models/item";
-import { orderRepository } from "~/repositories/order";
 
 export const meta: MetaFunction = () => {
   return [{ title: "マスター画面" }];
-};
-
-export const clientLoader = async () => {
-  const orders = await orderRepository.findAll();
-  return { orders };
 };
 
 export default function Serve() {
