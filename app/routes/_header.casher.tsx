@@ -1,7 +1,7 @@
 import { parseWithZod } from "@conform-to/zod";
 import { AlertDialogCancel } from "@radix-ui/react-alert-dialog";
 import { TrashIcon } from "@radix-ui/react-icons";
-import { ClientActionFunction, json } from "@remix-run/react";
+import { type ClientActionFunction, json } from "@remix-run/react";
 import { indexOf } from "lodash";
 import { useState } from "react";
 import useSWRSubscription from "swr/subscription";
@@ -28,8 +28,8 @@ import {
   TableRow,
 } from "~/components/ui/table";
 import { collectionSub } from "~/firebase/subscription";
-import { Item, itemSchema } from "~/models/item";
-import { Order } from "~/models/order";
+import { type Item, itemSchema } from "~/models/item";
+import { type Order } from "~/models/order";
 import { itemRepository } from "~/repositories/item";
 
 const mockOrder: Order = {
