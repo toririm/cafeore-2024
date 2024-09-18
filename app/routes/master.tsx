@@ -13,7 +13,7 @@ export const meta: MetaFunction = () => {
 export default function Serve() {
   const { data: orders } = useSWRSubscription(
     "orders",
-    collectionSub(orderConverter),
+    collectionSub({ converter: orderConverter }),
   );
 
   return (
