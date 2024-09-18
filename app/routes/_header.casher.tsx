@@ -54,7 +54,7 @@ export default function Casher() {
   // const total = mockOrder.items.reduce((acc, cur) => acc + cur.price, 0);
   const { data: items } = useSWRSubscription(
     "items",
-    collectionSub(itemConverter),
+    collectionSub({ converter: itemConverter }),
   );
   const [recieved, setText] = useState(0);
   const [total, setTotal] = useState(0);
