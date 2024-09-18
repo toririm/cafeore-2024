@@ -27,8 +27,10 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
+import { itemConverter } from "~/firebase/converter";
 import { collectionSub } from "~/firebase/subscription";
-import { type Item, itemSchema } from "~/models/item";
+import { WithId } from "~/lib/typeguard";
+import { type Item, itemSchema, ItemType } from "~/models/item";
 import { type Order } from "~/models/order";
 import { itemRepository } from "~/repositories/item";
 
@@ -53,7 +55,7 @@ export default function Casher() {
   // const total = mockOrder.items.reduce((acc, cur) => acc + cur.price, 0);
   const { data: items } = useSWRSubscription(
     "items",
-    collectionSub(itemSchema),
+    collectionSub(itemConverter),
   );
   const [recieved, setText] = useState(0);
   const [total, setTotal] = useState(0);
@@ -207,7 +209,7 @@ export const clientAction: ClientActionFunction = async ({ request }) => {
 
   const newItem = submission.value;
   // あとでマシなエラーハンドリングにする
-  const savedItem = await itemRepository.save(newItem);
+  const savedItem = await itemRepository.save(ItemEntity.createNew(newItem));
 
   console.log("Document written with ID: ", savedItem.id);
   return new Response(null, { status: 204 });
@@ -225,4 +227,29 @@ function mockOrderInitialize() {
   mockOrder.items = [];
   mockOrder.total = 0;
   console.log(mockOrder);
+}
+
+export class ItemEntity implements Item {
+  // TODO(toririm)
+  // ゲッターやセッターを使う際にはすべてのプロパティにアンスコをつけてprivateにする
+  // 実装の詳細は OrderEntity を参照
+  private constructor(
+    public readonly id: string | undefined,
+    public readonly name: string,
+    public readonly price: number,
+    public readonly type: ItemType,
+  ) {}
+
+  static createNew({ name, price, type }: Item): ItemEntity {
+    return new ItemEntity(undefined, name, price, type);
+  }
+
+  static fromItem(item: WithId<Item>): WithId<ItemEntity> {
+    return new ItemEntity(
+      item.id,
+      item.name,
+      item.price,
+      item.type,
+    ) as WithId<ItemEntity>;
+  }
 }
