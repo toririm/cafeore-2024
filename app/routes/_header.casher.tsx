@@ -59,7 +59,6 @@ export default function Casher() {
   const [recieved, setText] = useState(0);
   const [total, setTotal] = useState(0);
   const [queue, setQueue] = useState<WithId<Item>[]>([]);
-  let index;
 
   // console.log(mockOrder);
   // console.log(items?.[0]);
