@@ -1,25 +1,48 @@
-import { describe, expect, test } from "bun:test";
+import { beforeAll, describe, expect, test } from "bun:test";
 
-import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
+import { initializeTestEnvironment } from "@firebase/rules-unit-testing";
+import { type Firestore } from "firebase/firestore";
 
 import firebasejson from "~/../firebase.json";
 import { type WithId } from "~/lib/typeguard";
 import { OrderEntity } from "~/models/order";
 
 import { orderRepoFactory } from "./order";
+import { type OrderRepository } from "./type";
+
+const isEmulatorRunning = async (): Promise<boolean> => {
+  try {
+    const res = await fetch(
+      `http://localhost:${firebasejson.emulators.firestore.port}`,
+    );
+    return res.ok;
+  } catch (e) {
+    return false;
+  }
+};
 
 describe("[db] orderRepository", async () => {
   // To use this environment, firebase emulator must be running.
 
   let savedOrderHoge: WithId<OrderEntity>;
+  let orderRepository: OrderRepository;
 
-  const testDB = getFirestore();
-  connectFirestoreEmulator(
-    testDB,
-    "localhost",
-    firebasejson.emulators.firestore.port,
-  );
-  const orderRepository = orderRepoFactory(testDB);
+  beforeAll(async () => {
+    const testEnv = await initializeTestEnvironment({
+      projectId: "demo-firestore",
+      firestore: {
+        host: "localhost",
+        port: firebasejson.emulators.firestore.port,
+      },
+    });
+    const testDB = testEnv
+      .unauthenticatedContext()
+      .firestore() as unknown as Firestore;
+    orderRepository = orderRepoFactory(testDB);
+    if (!(await isEmulatorRunning())) {
+      console.log("Emulator is not running");
+    }
+  });
 
   test("orderRepository is defined", () => {
     expect(orderRepository).toBeDefined();

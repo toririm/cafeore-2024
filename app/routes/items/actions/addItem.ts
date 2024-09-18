@@ -18,5 +18,5 @@ export const addItem: ClientActionFunction = async ({ request }) => {
   const savedItem = await itemRepository.save(newItem);
 
   console.log("Document written with ID: ", savedItem.id);
-  return new Response(null, { status: 204 });
+  return json(submission.reply({ resetForm: true }), { status: 200 });
 };
