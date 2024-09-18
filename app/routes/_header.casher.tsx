@@ -29,8 +29,8 @@ import {
 } from "~/components/ui/table";
 import { itemConverter } from "~/firebase/converter";
 import { collectionSub } from "~/firebase/subscription";
-import { WithId } from "~/lib/typeguard";
-import { type Item, itemSchema, ItemType } from "~/models/item";
+import { type WithId } from "~/lib/typeguard";
+import { type Item, itemSchema, type ItemType } from "~/models/item";
 import { type Order } from "~/models/order";
 import { itemRepository } from "~/repositories/item";
 
