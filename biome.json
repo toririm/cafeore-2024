@@ -1,0 +1,19 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.9.2/schema.json",
+  "files": {
+    "ignore": ["**/node_modules", "./build", "./public/build"]
+  },
+  "formatter": {
+    "indentStyle": "space"
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "nursery": {
+        "useSortedClasses": "warn"
+      }
+    }
+  },
+  "overrides": [{ "include": ["**/*.test.ts"] }]
+}
