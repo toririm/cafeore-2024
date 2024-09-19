@@ -1,5 +1,4 @@
 import type { ClientActionFunction } from "@remix-run/react";
-
 import { addItem } from "./actions/addItem";
 import { deleteItem } from "./actions/deleteItem";
 

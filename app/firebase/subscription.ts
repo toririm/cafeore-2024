@@ -6,7 +6,6 @@ import {
   query,
 } from "firebase/firestore";
 import type { SWRSubscription } from "swr/subscription";
-
 import { prodDB } from "./firestore";
 
 export const collectionSub = <T>(

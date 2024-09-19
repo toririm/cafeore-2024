@@ -4,7 +4,6 @@ import { TrashIcon } from "@radix-ui/react-icons";
 import { type ClientActionFunction, json } from "@remix-run/react";
 import { useState } from "react";
 import useSWRSubscription from "swr/subscription";
-
 import {
   AlertDialog,
   AlertDialogAction,

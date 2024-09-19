@@ -8,17 +8,14 @@ import {
 } from "@remix-run/react";
 import { useMemo } from "react";
 import useSWRSubscription from "swr/subscription";
-
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import { itemConverter } from "~/firebase/converter";
 import { collectionSub } from "~/firebase/subscription";
+import type { ItemEntity, ItemType } from "~/models/item";
 import { itemSchema, itemtypes, type2label } from "~/models/item";
-// Add these imports
-import type { ItemEntity, ItemType } from "~/models/item"; // Adjust the path as needed
-
 import type { addItem } from "./actions/addItem";
 
 export { action as clientAction } from "./action";

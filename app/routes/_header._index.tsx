@@ -1,6 +1,5 @@
 import { type MetaFunction, useLoaderData } from "@remix-run/react";
 import { collection, getDocs } from "firebase/firestore";
-
 import { Button } from "~/components/ui/button";
 import { converter } from "~/firebase/converter";
 import { prodDB } from "~/firebase/firestore";
