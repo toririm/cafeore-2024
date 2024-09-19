@@ -2,9 +2,9 @@ import { useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
 import {
   Form,
+  type MetaFunction,
   useActionData,
   useNavigation,
-  type MetaFunction,
 } from "@remix-run/react";
 import { useMemo } from "react";
 import useSWRSubscription from "swr/subscription";
@@ -19,7 +19,7 @@ import { itemSchema, itemtypes, type2label } from "~/models/item";
 // Add these imports
 import type { ItemEntity, ItemType } from "~/models/item"; // Adjust the path as needed
 
-import { type addItem } from "./actions/addItem";
+import type { addItem } from "./actions/addItem";
 
 export { action as clientAction } from "./action";
 

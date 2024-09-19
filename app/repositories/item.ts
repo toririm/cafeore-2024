@@ -1,4 +1,5 @@
 import {
+  type Firestore,
   addDoc,
   collection,
   deleteDoc,
@@ -6,15 +7,14 @@ import {
   getDoc,
   getDocs,
   setDoc,
-  type Firestore,
 } from "firebase/firestore";
 
 import { itemConverter } from "~/firebase/converter";
 import { prodDB } from "~/firebase/firestore";
-import { hasId, type WithId } from "~/lib/typeguard";
-import { type ItemEntity } from "~/models/item";
+import { type WithId, hasId } from "~/lib/typeguard";
+import type { ItemEntity } from "~/models/item";
 
-import { type ItemRepository } from "./type";
+import type { ItemRepository } from "./type";
 
 // TODO(toririm): エラーハンドリングをやる
 // Result型を使う NeverThrow を使ってみたい

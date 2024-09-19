@@ -1,4 +1,4 @@
-import { type MetaFunction } from "@remix-run/react";
+import type { MetaFunction } from "@remix-run/react";
 import useSWRSubscription from "swr/subscription";
 
 import { Button } from "~/components/ui/button";

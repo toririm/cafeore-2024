@@ -1,4 +1,4 @@
-import { type MetaFunction } from "@remix-run/react";
+import type { MetaFunction } from "@remix-run/react";
 import { orderBy } from "firebase/firestore";
 import useSWRSubscription from "swr/subscription";
 
