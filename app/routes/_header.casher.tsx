@@ -90,7 +90,7 @@ export default function Casher() {
         <div className="w-1/3">
           <div>
             <Table>
-              <TableCaption></TableCaption>
+              <TableCaption />
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-500">

@@ -41,9 +41,8 @@ export const itemRepoFactory = (db: Firestore): ItemRepository => {
     save: async (item) => {
       if (hasId(item)) {
         return await update(item);
-      } else {
-        return await create(item);
       }
+      return await create(item);
     },
 
     delete: async (id) => {
@@ -55,9 +54,8 @@ export const itemRepoFactory = (db: Firestore): ItemRepository => {
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         return docSnap.data();
-      } else {
-        return null;
       }
+      return null;
     },
 
     findAll: async () => {

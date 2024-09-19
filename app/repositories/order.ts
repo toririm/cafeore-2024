@@ -41,9 +41,8 @@ export const orderRepoFactory = (db: Firestore): OrderRepository => {
     save: async (order) => {
       if (hasId(order)) {
         return await update(order);
-      } else {
-        return await create(order);
       }
+      return await create(order);
     },
 
     delete: async (id) => {
