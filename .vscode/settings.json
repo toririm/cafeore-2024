@@ -3,7 +3,9 @@
   "editor.formatOnSave": true,
   "editor.formatOnSaveMode": "file",
   "editor.codeActionsOnSave": {
-    "source.organizeImports.biome": "always"
+    "source.organizeImports.biome": "explicit",
+    "source.fixAll.biome": "explicit",
+    "source.addMissingImports.ts": "explicit"
   },
   "editor.tabSize": 2,
   "typescript.tsserver.experimental.enableProjectDiagnostics": true
