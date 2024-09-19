@@ -1,4 +1,5 @@
 import {
+  type Firestore,
   addDoc,
   collection,
   deleteDoc,
@@ -6,15 +7,12 @@ import {
   getDoc,
   getDocs,
   setDoc,
-  type Firestore,
 } from "firebase/firestore";
-
 import { itemConverter } from "~/firebase/converter";
 import { prodDB } from "~/firebase/firestore";
-import { hasId, type WithId } from "~/lib/typeguard";
-import { type ItemEntity } from "~/models/item";
-
-import { type ItemRepository } from "./type";
+import { type WithId, hasId } from "~/lib/typeguard";
+import type { ItemEntity } from "~/models/item";
+import type { ItemRepository } from "./type";
 
 // TODO(toririm): エラーハンドリングをやる
 // Result型を使う NeverThrow を使ってみたい
@@ -41,9 +39,8 @@ export const itemRepoFactory = (db: Firestore): ItemRepository => {
     save: async (item) => {
       if (hasId(item)) {
         return await update(item);
-      } else {
-        return await create(item);
       }
+      return await create(item);
     },
 
     delete: async (id) => {
@@ -55,9 +52,8 @@ export const itemRepoFactory = (db: Firestore): ItemRepository => {
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         return docSnap.data();
-      } else {
-        return null;
       }
+      return null;
     },
 
     findAll: async () => {

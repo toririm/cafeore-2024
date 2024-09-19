@@ -1,8 +1,6 @@
 import { describe, expect, test } from "bun:test";
-
-import { type WithId } from "~/lib/typeguard";
-
-import { type ItemEntity } from "./item";
+import type { WithId } from "~/lib/typeguard";
+import type { ItemEntity } from "./item";
 import { OrderEntity } from "./order";
 
 describe("[unit] order entity", () => {

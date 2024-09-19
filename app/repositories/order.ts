@@ -1,4 +1,5 @@
 import {
+  type Firestore,
   addDoc,
   collection,
   deleteDoc,
@@ -6,15 +7,12 @@ import {
   getDoc,
   getDocs,
   setDoc,
-  type Firestore,
 } from "firebase/firestore";
-
 import { orderConverter } from "~/firebase/converter";
 import { prodDB } from "~/firebase/firestore";
-import { hasId, type WithId } from "~/lib/typeguard";
-import { type OrderEntity } from "~/models/order";
-
-import { type OrderRepository } from "./type";
+import { type WithId, hasId } from "~/lib/typeguard";
+import type { OrderEntity } from "~/models/order";
+import type { OrderRepository } from "./type";
 
 // TODO(toririm): エラーハンドリングをやる
 // Result型を使う NeverThrow を使ってみたい
@@ -41,9 +39,8 @@ export const orderRepoFactory = (db: Firestore): OrderRepository => {
     save: async (order) => {
       if (hasId(order)) {
         return await update(order);
-      } else {
-        return await create(order);
       }
+      return await create(order);
     },
 
     delete: async (id) => {

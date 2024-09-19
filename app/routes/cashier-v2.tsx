@@ -1,16 +1,15 @@
 import { parseWithZod } from "@conform-to/zod";
-import { useSubmit, type ClientActionFunction } from "@remix-run/react";
+import { type ClientActionFunction, useSubmit } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import useSWRSubscription from "swr/subscription";
 import { z } from "zod";
-
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { itemConverter, orderConverter } from "~/firebase/converter";
 import { collectionSub } from "~/firebase/subscription";
 import { stringToJSONSchema } from "~/lib/custom-zod";
-import { type WithId } from "~/lib/typeguard";
-import { type2label, type ItemEntity } from "~/models/item";
+import type { WithId } from "~/lib/typeguard";
+import { type ItemEntity, type2label } from "~/models/item";
 import { OrderEntity, orderSchema } from "~/models/order";
 import { orderRepository } from "~/repositories/order";
 

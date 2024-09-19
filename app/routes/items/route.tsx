@@ -2,24 +2,21 @@ import { useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
 import {
   Form,
+  type MetaFunction,
   useActionData,
   useNavigation,
-  type MetaFunction,
 } from "@remix-run/react";
 import { useMemo } from "react";
 import useSWRSubscription from "swr/subscription";
-
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import { itemConverter } from "~/firebase/converter";
 import { collectionSub } from "~/firebase/subscription";
+import type { ItemEntity, ItemType } from "~/models/item";
 import { itemSchema, itemtypes, type2label } from "~/models/item";
-// Add these imports
-import type { ItemEntity, ItemType } from "~/models/item"; // Adjust the path as needed
-
-import { type addItem } from "./actions/addItem";
+import type { addItem } from "./actions/addItem";
 
 export { action as clientAction } from "./action";
 
@@ -54,19 +51,19 @@ export default function Item() {
   }, [items]);
 
   return (
-    <div className="font-sans p-4 bg-white">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">アイテム管理</h1>
+    <div className="bg-white p-4 font-sans">
+      <h1 className="mb-6 font-bold text-3xl text-gray-800">アイテム管理</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <div>
-          <h2 className="text-2xl font-semibold text-gray-700 mb-4">
+          <h2 className="mb-4 font-semibold text-2xl text-gray-700">
             新規アイテム登録
           </h2>
           <Form
             method="POST"
             id={form.id}
             onSubmit={form.onSubmit}
-            className="space-y-4 bg-white p-6 rounded-lg shadow-md border border-gray-200"
+            className="space-y-4 rounded-lg border border-gray-200 bg-white p-6 shadow-md"
           >
             <div>
               <Label htmlFor={fields.name.id} className="text-gray-700">
@@ -80,7 +77,7 @@ export default function Item() {
                 defaultValue={fields.name.initialValue}
                 required
                 placeholder="アイテム名"
-                className="w-full mt-1"
+                className="mt-1 w-full"
               />
               {fields.name.errors && (
                 <span className="text-red-500 text-sm">
@@ -100,7 +97,7 @@ export default function Item() {
                 defaultValue={fields.price.initialValue}
                 required
                 placeholder="価格"
-                className="w-full mt-1"
+                className="mt-1 w-full"
               />
               {fields.price.errors && (
                 <span className="text-red-500 text-sm">
@@ -131,7 +128,7 @@ export default function Item() {
             </div>
             <Button
               type="submit"
-              className="w-full bg-purple-600 hover:bg-purple-700 text-white"
+              className="w-full bg-purple-600 text-white hover:bg-purple-700"
             >
               登録
             </Button>
@@ -139,22 +136,22 @@ export default function Item() {
         </div>
 
         <div>
-          <h2 className="text-2xl font-semibold text-gray-700 mb-4">
+          <h2 className="mb-4 font-semibold text-2xl text-gray-700">
             登録済みアイテム
           </h2>
           {itemtypes.map((type) => (
             <div key={type} className="mb-6">
-              <h3 className="text-xl font-semibold text-purple-700 mb-2">
+              <h3 className="mb-2 font-semibold text-purple-700 text-xl">
                 {type2label[type]}
               </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {sortedItems[type]?.map((item) => (
                   <div
                     key={item.id}
-                    className="bg-white shadow-sm hover:shadow-md transition-shadow rounded-lg overflow-hidden border border-gray-200"
+                    className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md"
                   >
                     <div className="bg-purple-100 p-4">
-                      <h4 className="text-lg font-medium text-purple-800">
+                      <h4 className="font-medium text-lg text-purple-800">
                         {item.name}
                       </h4>
                     </div>
@@ -166,7 +163,7 @@ export default function Item() {
                         <input type="hidden" name="itemId" value={item.id} />
                         <Button
                           type="submit"
-                          className="w-full bg-red-500 hover:bg-red-600 text-white"
+                          className="w-full bg-red-500 text-white hover:bg-red-600"
                         >
                           削除
                         </Button>

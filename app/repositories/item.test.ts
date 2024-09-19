@@ -1,14 +1,12 @@
 import { beforeAll, describe, expect, test } from "bun:test";
-
 import { initializeTestEnvironment } from "@firebase/rules-unit-testing";
-import { type Firestore } from "firebase/firestore";
-
+import type { Firestore } from "firebase/firestore";
 import firebasejson from "~/../firebase.json";
-import { type WithId } from "~/lib/typeguard";
+import type { WithId } from "~/lib/typeguard";
 import { ItemEntity } from "~/models/item";
 
 import { itemRepoFactory } from "./item";
-import { type ItemRepository } from "./type";
+import type { ItemRepository } from "./type";
 
 describe("[db] itemRepository", async () => {
   // To use this environment, firebase emulator must be running.

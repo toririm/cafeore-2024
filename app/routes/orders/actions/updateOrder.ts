@@ -1,4 +1,4 @@
-import { type ClientActionFunctionArgs } from "@remix-run/react";
+import type { ClientActionFunctionArgs } from "@remix-run/react";
 
 import { orderRepository } from "~/repositories/order";
 

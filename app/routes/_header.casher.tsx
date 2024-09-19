@@ -1,10 +1,9 @@
 import { parseWithZod } from "@conform-to/zod";
 import { AlertDialogCancel } from "@radix-ui/react-alert-dialog";
 import { TrashIcon } from "@radix-ui/react-icons";
-import { json, type ClientActionFunction } from "@remix-run/react";
+import { type ClientActionFunction, json } from "@remix-run/react";
 import { useState } from "react";
 import useSWRSubscription from "swr/subscription";
-
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,9 +27,9 @@ import {
 } from "~/components/ui/table";
 import { itemConverter } from "~/firebase/converter";
 import { collectionSub } from "~/firebase/subscription";
-import { type WithId } from "~/lib/typeguard";
-import { itemSchema, type Item, type ItemType } from "~/models/item";
-import { type Order } from "~/models/order";
+import type { WithId } from "~/lib/typeguard";
+import { type Item, type ItemType, itemSchema } from "~/models/item";
+import type { Order } from "~/models/order";
 import { itemRepository } from "~/repositories/item";
 
 const mockOrder: Order = {
@@ -90,7 +89,7 @@ export default function Casher() {
         <div className="w-1/3">
           <div>
             <Table>
-              <TableCaption></TableCaption>
+              <TableCaption />
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-500">
@@ -162,7 +161,7 @@ export default function Casher() {
                               placeholder="受け取った金額を入力してください"
                               value={recieved}
                               onChange={(event) =>
-                                setText(parseInt(event.target.value))
+                                setText(Number.parseInt(event.target.value))
                               }
                             />
                           </p>

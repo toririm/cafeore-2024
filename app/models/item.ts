@@ -1,6 +1,5 @@
 import { z } from "zod";
-
-import { type WithId } from "~/lib/typeguard";
+import type { WithId } from "~/lib/typeguard";
 
 export const itemtypes = ["hot", "ice", "ore", "milk"] as const;
 

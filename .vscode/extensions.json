@@ -1,8 +1,9 @@
 {
   "recommendations": [
-    "esbenp.prettier-vscode",
     "bradlc.vscode-tailwindcss",
     "bierner.github-markdown-preview",
-    "dbaeumer.vscode-eslint"
+    "biomejs.biome",
+    "yoavbls.pretty-ts-errors",
+    "fill-labs.dependi"
   ]
 }

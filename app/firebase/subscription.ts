@@ -1,12 +1,11 @@
 import {
+  type FirestoreDataConverter,
+  type QueryConstraint,
   collection,
   onSnapshot,
   query,
-  type FirestoreDataConverter,
-  type QueryConstraint,
 } from "firebase/firestore";
-import { type SWRSubscription } from "swr/subscription";
-
+import type { SWRSubscription } from "swr/subscription";
 import { prodDB } from "./firestore";
 
 export const collectionSub = <T>(
