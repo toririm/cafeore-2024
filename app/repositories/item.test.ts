@@ -1,5 +1,5 @@
-import { initializeTestEnvironment } from "@firebase/rules-unit-testing";
 import { beforeAll, describe, expect, test } from "bun:test";
+import { initializeTestEnvironment } from "@firebase/rules-unit-testing";
 import type { Firestore } from "firebase/firestore";
 import firebasejson from "~/../firebase.json";
 import type { WithId } from "~/lib/typeguard";

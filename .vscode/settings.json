@@ -3,7 +3,7 @@
   "editor.formatOnSave": true,
   "editor.formatOnSaveMode": "file",
   "editor.codeActionsOnSave": {
-    "source.organizeImports": "always"
+    "source.organizeImports.biome": "always"
   },
   "editor.tabSize": 2,
   "typescript.tsserver.experimental.enableProjectDiagnostics": true
