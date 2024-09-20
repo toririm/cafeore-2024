@@ -8,7 +8,6 @@ export const orderSchema = z.object({
   createdAt: z.date(),
   servedAt: z.date().nullable(),
   items: z.array(itemSchema.required()),
-  assignee: z.string().nullable(),
   total: z.number(),
   orderReady: z.boolean(),
 });
@@ -23,22 +22,12 @@ export class OrderEntity implements Order {
     private readonly _createdAt: Date,
     private _servedAt: Date | null,
     private _items: WithId<ItemEntity>[],
-    private _assignee: string | null,
     private _total: number,
     private _orderReady: boolean,
   ) {}
 
   static createNew({ orderId }: { orderId: number }): OrderEntity {
-    return new OrderEntity(
-      undefined,
-      orderId,
-      new Date(),
-      null,
-      [],
-      null,
-      0,
-      false,
-    );
+    return new OrderEntity(undefined, orderId, new Date(), null, [], 0, false);
   }
 
   static fromOrder(order: WithId<Order>): WithId<OrderEntity> {
@@ -48,7 +37,6 @@ export class OrderEntity implements Order {
       order.createdAt,
       order.servedAt,
       order.items,
-      order.assignee,
       order.total,
       order.orderReady,
     ) as WithId<OrderEntity>;
@@ -79,13 +67,6 @@ export class OrderEntity implements Order {
   }
   set items(items: WithId<ItemEntity>[]) {
     this._items = items;
-  }
-
-  get assignee() {
-    return this._assignee;
-  }
-  set assignee(assignee: string | null) {
-    this._assignee = assignee;
   }
 
   get total() {
@@ -121,7 +102,6 @@ export class OrderEntity implements Order {
       createdAt: this.createdAt,
       servedAt: this.servedAt,
       items: this.items,
-      assignee: this.assignee,
       total: this.total,
       orderReady: this.orderReady,
     };
