@@ -7,13 +7,11 @@ export const sendSlackMessage = async (message: string) => {
 
   const response = await fetch(webhookUrl, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify({ text: message }),
   });
 
   if (!response.ok) {
+    console.log(response);
     throw new Error("Failed to send message");
   }
 };
