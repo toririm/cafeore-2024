@@ -26,6 +26,8 @@ jobs:
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: bun install --frozen-lockfile
       - run: bun run build
+        env:
+          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
