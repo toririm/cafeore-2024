@@ -1,5 +1,6 @@
 import { parseWithZod } from "@conform-to/zod";
 import { type ClientActionFunction, json } from "@remix-run/react";
+import { sendSlackMessage } from "~/lib/webhook";
 import { ItemEntity, itemSchema } from "~/models/item";
 import { itemRepository } from "~/repositories/item";
 
@@ -14,7 +15,11 @@ export const addItem: ClientActionFunction = async ({ request }) => {
   }
 
   const newItem = ItemEntity.createNew(submission.value);
-  const savedItem = await itemRepository.save(newItem);
+  const itemSavePromise = itemRepository.save(newItem);
+  const webhookSendPromise = sendSlackMessage(
+    `新しいアイテムが追加されました！\n${newItem.name}`,
+  );
+  const [savedItem] = await Promise.all([itemSavePromise, webhookSendPromise]);
 
   console.log("Document written with ID: ", savedItem.id);
   return json(submission.reply({ resetForm: true }), { status: 200 });
