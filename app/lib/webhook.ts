@@ -1,5 +1,5 @@
 export const sendSlackMessage = async (message: string) => {
-  const webhookUrl = import.meta.env.WEBHOOK_URL;
+  const webhookUrl = import.meta.env.VITE_WEBHOOK_URL;
 
   if (!webhookUrl) {
     throw new Error("WEBHOOK_URL is not defined");
