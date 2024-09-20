@@ -8,7 +8,7 @@ export const orderSchema = z.object({
   createdAt: z.date(),
   servedAt: z.date().nullable(),
   items: z.array(itemSchema.required()),
-  assignee: z.string().nullable(),
+  assignee: z.array(z.string().nullable()),
   total: z.number(),
   orderReady: z.boolean(),
 });
@@ -23,7 +23,7 @@ export class OrderEntity implements Order {
     private readonly _createdAt: Date,
     private _servedAt: Date | null,
     private _items: WithId<ItemEntity>[],
-    private _assignee: string | null,
+    private _assignee: (string | null)[],
     private _total: number,
     private _orderReady: boolean,
   ) {}
@@ -35,7 +35,7 @@ export class OrderEntity implements Order {
       new Date(),
       null,
       [],
-      null,
+      [],
       0,
       false,
     );
@@ -84,7 +84,7 @@ export class OrderEntity implements Order {
   get assignee() {
     return this._assignee;
   }
-  set assignee(assignee: string | null) {
+  set assignee(assignee: (string | null)[]) {
     this._assignee = assignee;
   }
 
