@@ -64,7 +64,7 @@ export default function Dashboard() {
                   <TableCell>
                     {order.servedAt == null
                       ? "未提供"
-                      : `${order.servedAt?.toLocaleTimeString()}`}
+                      : order.servedAt?.toLocaleTimeString()}
                   </TableCell>
                   <TableCell>{diffTime(order)}</TableCell>
                 </TableRow>
@@ -85,6 +85,6 @@ const numOfCups = (order: OrderEntity): number => {
 const diffTime = (order: OrderEntity) => {
   if (order.servedAt == null) return "未提供";
   return dayjs(dayjs(order.servedAt).diff(dayjs(order.createdAt))).format(
-    "mm:ss",
+    "m:ss",
   );
 };
