@@ -10,6 +10,7 @@ export const orderSchema = z.object({
   items: z.array(itemSchema.required()),
   total: z.number(),
   orderReady: z.boolean(),
+  description: z.string(),
 });
 
 export type Order = z.infer<typeof orderSchema>;
@@ -24,10 +25,20 @@ export class OrderEntity implements Order {
     private _items: WithId<ItemEntity>[],
     private _total: number,
     private _orderReady: boolean,
+    private _description: string,
   ) {}
 
   static createNew({ orderId }: { orderId: number }): OrderEntity {
-    return new OrderEntity(undefined, orderId, new Date(), null, [], 0, false);
+    return new OrderEntity(
+      undefined,
+      orderId,
+      new Date(),
+      null,
+      [],
+      0,
+      false,
+      "",
+    );
   }
 
   static fromOrder(order: WithId<Order>): WithId<OrderEntity> {
@@ -39,6 +50,7 @@ export class OrderEntity implements Order {
       order.items,
       order.total,
       order.orderReady,
+      order.description,
     ) as WithId<OrderEntity>;
   }
 
@@ -81,6 +93,13 @@ export class OrderEntity implements Order {
     return this._orderReady;
   }
 
+  get description() {
+    return this._description;
+  }
+  set description(description: string) {
+    this._description = description;
+  }
+
   // --------------------------------------------------
   // methods
   // --------------------------------------------------
@@ -104,6 +123,7 @@ export class OrderEntity implements Order {
       items: this.items,
       total: this.total,
       orderReady: this.orderReady,
+      description: this.description,
     };
   }
 }
