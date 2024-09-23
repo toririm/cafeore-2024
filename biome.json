@@ -10,6 +10,9 @@
     "enabled": true,
     "rules": {
       "recommended": true,
+      "correctness": {
+        "noUnusedImports": "warn"
+      },
       "nursery": {
         "useSortedClasses": "warn"
       }
