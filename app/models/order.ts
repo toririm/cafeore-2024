@@ -8,9 +8,9 @@ export const orderSchema = z.object({
   createdAt: z.date(),
   servedAt: z.date().nullable(),
   items: z.array(itemSchema.required()),
-  assignee: z.string().nullable(),
   total: z.number(),
   orderReady: z.boolean(),
+  description: z.string(),
 });
 
 export type Order = z.infer<typeof orderSchema>;
@@ -23,9 +23,9 @@ export class OrderEntity implements Order {
     private readonly _createdAt: Date,
     private _servedAt: Date | null,
     private _items: WithId<ItemEntity>[],
-    private _assignee: string | null,
     private _total: number,
     private _orderReady: boolean,
+    private _description: string,
   ) {}
 
   static createNew({ orderId }: { orderId: number }): OrderEntity {
@@ -35,9 +35,9 @@ export class OrderEntity implements Order {
       new Date(),
       null,
       [],
-      null,
       0,
       false,
+      "",
     );
   }
 
@@ -48,9 +48,9 @@ export class OrderEntity implements Order {
       order.createdAt,
       order.servedAt,
       order.items,
-      order.assignee,
       order.total,
       order.orderReady,
+      order.description,
     ) as WithId<OrderEntity>;
   }
 
@@ -81,13 +81,6 @@ export class OrderEntity implements Order {
     this._items = items;
   }
 
-  get assignee() {
-    return this._assignee;
-  }
-  set assignee(assignee: string | null) {
-    this._assignee = assignee;
-  }
-
   get total() {
     // items の更新に合わせて total を自動で計算する
     // その代わり total は直接更新できない
@@ -98,6 +91,13 @@ export class OrderEntity implements Order {
 
   get orderReady() {
     return this._orderReady;
+  }
+
+  get description() {
+    return this._description;
+  }
+  set description(description: string) {
+    this._description = description;
   }
 
   // --------------------------------------------------
@@ -121,9 +121,9 @@ export class OrderEntity implements Order {
       createdAt: this.createdAt,
       servedAt: this.servedAt,
       items: this.items,
-      assignee: this.assignee,
       total: this.total,
       orderReady: this.orderReady,
+      description: this.description,
     };
   }
 }

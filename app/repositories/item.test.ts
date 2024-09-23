@@ -43,8 +43,10 @@ describe("[db] itemRepository", async () => {
   });
 
   test("itemRepository.save (update)", async () => {
+    savedItemHoge.assignee = "toririm";
     const savedItem = await itemRepository.save(savedItemHoge);
     expect(savedItem.id).toEqual(savedItemHoge.id);
+    expect(savedItem.assignee).toEqual("toririm");
   });
 
   test("itemRepository.findById", async () => {
