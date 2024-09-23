@@ -10,7 +10,7 @@ export const orderSchema = z.object({
   items: z.array(itemSchema.required()),
   total: z.number(),
   orderReady: z.boolean(),
-  description: z.string(),
+  description: z.string().nullable(),
 });
 
 export type Order = z.infer<typeof orderSchema>;
@@ -25,7 +25,7 @@ export class OrderEntity implements Order {
     private _items: WithId<ItemEntity>[],
     private _total: number,
     private _orderReady: boolean,
-    private _description: string,
+    private _description: string | null,
   ) {}
 
   static createNew({ orderId }: { orderId: number }): OrderEntity {
@@ -37,7 +37,7 @@ export class OrderEntity implements Order {
       [],
       0,
       false,
-      "",
+      null,
     );
   }
 
@@ -96,7 +96,7 @@ export class OrderEntity implements Order {
   get description() {
     return this._description;
   }
-  set description(description: string) {
+  set description(description: string | null) {
     this._description = description;
   }
 
