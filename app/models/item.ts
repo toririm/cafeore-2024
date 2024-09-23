@@ -34,7 +34,7 @@ export class ItemEntity implements Item {
     public readonly name: string,
     public readonly price: number,
     public readonly type: ItemType,
-    public assignee: string | null = null,
+    public assignee: string | null,
   ) {}
 
   static createNew({ name, price, type }: Omit<Item, "assignee">): ItemEntity {
@@ -47,6 +47,7 @@ export class ItemEntity implements Item {
       item.name,
       item.price,
       item.type,
+      item.assignee,
     ) as WithId<ItemEntity>;
   }
 }

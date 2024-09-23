@@ -44,9 +44,9 @@ const mockOrder: Order = {
     //   price: 300,
     // },
   ],
-  assignee: "1st",
   total: 0,
   orderReady: false,
+  description: "",
 };
 
 export default function Casher() {
@@ -207,7 +207,13 @@ export const clientAction: ClientActionFunction = async ({ request }) => {
 
   const newItem = submission.value;
   // あとでマシなエラーハンドリングにする
-  const savedItem = await itemRepository.save(ItemEntity.createNew(newItem));
+  const savedItem = await itemRepository.save(
+    ItemEntity.createNew({
+      name: newItem.name,
+      price: newItem.price,
+      type: newItem.type,
+    }),
+  );
 
   console.log("Document written with ID: ", savedItem.id);
   return new Response(null, { status: 204 });
@@ -236,10 +242,11 @@ export class ItemEntity implements Item {
     public readonly name: string,
     public readonly price: number,
     public readonly type: ItemType,
+    public assignee: string | null,
   ) {}
 
-  static createNew({ name, price, type }: Item): ItemEntity {
-    return new ItemEntity(undefined, name, price, type);
+  static createNew({ name, price, type }: Omit<Item, "assignee">): ItemEntity {
+    return new ItemEntity(undefined, name, price, type, null);
   }
 
   static fromItem(item: WithId<Item>): WithId<ItemEntity> {
@@ -248,6 +255,7 @@ export class ItemEntity implements Item {
       item.name,
       item.price,
       item.type,
+      item.assignee,
     ) as WithId<ItemEntity>;
   }
 }
