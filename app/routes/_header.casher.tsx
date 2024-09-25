@@ -122,7 +122,9 @@ export default function Casher() {
                           console.log(mockOrder);
                         }}
                       >
-                        <TrashIcon />
+                        <div>
+                          <TrashIcon />
+                        </div>
                       </Button>
                     </TableCell>
                   </TableRow>
