@@ -122,7 +122,7 @@ export default function Casher() {
                           console.log(mockOrder);
                         }}
                       >
-                        {trashIcon()}
+                        <TrashIcon />
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -212,14 +212,6 @@ export const clientAction: ClientActionFunction = async ({ request }) => {
   console.log("Document written with ID: ", savedItem.id);
   return new Response(null, { status: 204 });
 };
-
-function trashIcon() {
-  return (
-    <div>
-      <TrashIcon />
-    </div>
-  );
-}
 
 function mockOrderInitialize() {
   mockOrder.items = [];
