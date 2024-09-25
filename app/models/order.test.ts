@@ -18,12 +18,14 @@ describe("[unit] order entity", () => {
         name: "item1",
         price: 100,
         type: "hot",
+        assignee: null,
       },
       {
         id: "2",
         name: "item2",
         price: 341,
         type: "ice",
+        assignee: null,
       },
     ];
     order.items.push(...items);
@@ -34,6 +36,7 @@ describe("[unit] order entity", () => {
       name: "item3",
       price: 100,
       type: "ore",
+      assignee: null,
     });
     expect(order.total).toBe(541);
   });

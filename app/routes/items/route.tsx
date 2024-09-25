@@ -34,7 +34,9 @@ export default function Item() {
   const [form, fields] = useForm({
     lastResult: navigation.state === "idle" ? lastResult : null,
     onValidate({ formData }) {
-      return parseWithZod(formData, { schema: itemSchema });
+      return parseWithZod(formData, {
+        schema: itemSchema.omit({ assignee: true }),
+      });
     },
     shouldValidate: "onBlur",
     shouldRevalidate: "onInput",

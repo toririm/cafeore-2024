@@ -28,7 +28,7 @@ import {
 import { itemConverter } from "~/firebase/converter";
 import { collectionSub } from "~/firebase/subscription";
 import type { WithId } from "~/lib/typeguard";
-import { type Item, type ItemType, itemSchema } from "~/models/item";
+import { type Item, itemSchema } from "~/models/item";
 import { ItemEntity } from "~/models/item";
 import type { Order } from "~/models/order";
 import { itemRepository } from "~/repositories/item";
@@ -45,9 +45,9 @@ const mockOrder: Order = {
     //   price: 300,
     // },
   ],
-  assignee: "1st",
   total: 0,
   orderReady: false,
+  description: "",
 };
 
 export default function Casher() {
@@ -208,7 +208,13 @@ export const clientAction: ClientActionFunction = async ({ request }) => {
 
   const newItem = submission.value;
   // あとでマシなエラーハンドリングにする
-  const savedItem = await itemRepository.save(ItemEntity.createNew(newItem));
+  const savedItem = await itemRepository.save(
+    ItemEntity.createNew({
+      name: newItem.name,
+      price: newItem.price,
+      type: newItem.type,
+    }),
+  );
 
   console.log("Document written with ID: ", savedItem.id);
   return new Response(null, { status: 204 });

@@ -38,6 +38,9 @@ export default function Cashier() {
   const chargeView: string | number = charge < 0 ? "不足しています" : charge;
 
   const submitOrder = () => {
+    if (charge < 0) {
+      return;
+    }
     if (orderItems.length === 0) {
       return;
     }
