@@ -29,6 +29,7 @@ import { itemConverter } from "~/firebase/converter";
 import { collectionSub } from "~/firebase/subscription";
 import type { WithId } from "~/lib/typeguard";
 import { type Item, type ItemType, itemSchema } from "~/models/item";
+import { ItemEntity } from "~/models/item";
 import type { Order } from "~/models/order";
 import { itemRepository } from "~/repositories/item";
 
@@ -225,29 +226,4 @@ function mockOrderInitialize() {
   mockOrder.items = [];
   mockOrder.total = 0;
   console.log(mockOrder);
-}
-
-export class ItemEntity implements Item {
-  // TODO(toririm)
-  // ゲッターやセッターを使う際にはすべてのプロパティにアンスコをつけてprivateにする
-  // 実装の詳細は OrderEntity を参照
-  private constructor(
-    public readonly id: string | undefined,
-    public readonly name: string,
-    public readonly price: number,
-    public readonly type: ItemType,
-  ) {}
-
-  static createNew({ name, price, type }: Item): ItemEntity {
-    return new ItemEntity(undefined, name, price, type);
-  }
-
-  static fromItem(item: WithId<Item>): WithId<ItemEntity> {
-    return new ItemEntity(
-      item.id,
-      item.name,
-      item.price,
-      item.type,
-    ) as WithId<ItemEntity>;
-  }
 }
