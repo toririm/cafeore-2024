@@ -56,13 +56,8 @@ export default function Casher() {
     collectionSub({ converter: itemConverter }),
   );
   const [recieved, setText] = useState(0);
-  // const [total, setTotal] = useState(0);
-  // const [queue, setQueue] = useState<WithId<Item>[]>([]);
   const [order, setOrder] = useState<Order>(mockOrder);
-  // console.log("rendered", queue);
 
-  // console.log(mockOrder);
-  // console.log(items?.[0]);
   return (
     <div>
       <div className="flex h-screen flex-row flex-wrap">
@@ -116,10 +111,6 @@ export default function Casher() {
                         className="absolute right-[50px] h-[30px] w-[25px]"
                         onClick={() => {
                           setOrder((prev) => {
-                            // const newItems = prev.items.filter(
-                            //   () =>
-                            //     prev.items.indexOf(item) !== deleteItemIndex,
-                            // ); // 新しい配列を作成
                             const newItems = [...prev.items];
                             newItems.splice(index, 1);
                             const newTotal = newItems.reduce(
@@ -132,8 +123,6 @@ export default function Casher() {
                               total: newTotal,
                             };
                           });
-                          // setTotal(mockOrder.total);
-                          // console.log(queue);
                         }}
                       >
                         {trashIcon()}
@@ -146,17 +135,9 @@ export default function Casher() {
             <ul>
               <li>
                 <h2 className="relative">合計金額：{order.total} 円</h2>
-                {/* <h3>{mockOrder.reduce}</h3> */}
               </li>
               <li>
-                {/* <h2>受領金額：</h2> */}
                 <form>
-                  {/* <Input
-                type="number"
-                placeholder="受け取った金額を入力してください"
-                value={recieved}
-                onChange={(event) => setText(parseInt(event.target.value))}
-              /> */}
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button className="absolute right-[100px]">確定</Button>
@@ -167,7 +148,6 @@ export default function Casher() {
                           金額を確認してください
                         </AlertDialogTitle>
                         <AlertDialogDescription>
-                          {/* <p>受領額： {recieved} 円</p> */}
                           <p>
                             受領額：
                             <Input
