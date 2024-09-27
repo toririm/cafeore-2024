@@ -60,7 +60,7 @@ export default function main() {
   // const [total, setTotal] = useState(0);
   // const [queue, setQueue] = useState<WithId<Item>[]>([]);
   const [queue, setQueue] = useState<Order>(mockOrder);
-  console.log("rendered", queue);
+  // console.log("rendered", queue);
 
   // console.log(mockOrder);
   // console.log(items?.[0]);
@@ -117,14 +117,17 @@ export default function main() {
                         className="absolute right-[50px] h-[30px] w-[25px]"
                         onClick={() => {
                           setQueue((prev) => {
-                            const deleteItemIndex = prev.items.findIndex(
+                            const deleteItemIndex = prev.items.findLastIndex(
                               (data) => data.name === item.name,
                             );
                             console.log(deleteItemIndex);
+                            // const newItems = prev.items.filter(
+                            //   () =>
+                            //     prev.items.indexOf(item) !== deleteItemIndex,
+                            // ); // 新しい配列を作成
                             const newItems = prev.items.filter(
-                              () =>
-                                prev.items.indexOf(item) !== deleteItemIndex,
-                            ); // 新しい配列を作成
+                              (_, index) => index !== deleteItemIndex,
+                            );
                             const newTotal = newItems.reduce(
                               (acc, cur) => acc + cur.price,
                               0,
@@ -136,7 +139,7 @@ export default function main() {
                             };
                           });
                           // setTotal(mockOrder.total);
-                          console.log(queue);
+                          // console.log(queue);
                         }}
                       >
                         {trashIcon()}
