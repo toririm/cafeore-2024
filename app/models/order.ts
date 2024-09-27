@@ -8,12 +8,43 @@ export const orderSchema = z.object({
   createdAt: z.date(),
   servedAt: z.date().nullable(),
   items: z.array(itemSchema.required()),
-  total: z.number(),
+  total: z.number(), // sum of item.price
   orderReady: z.boolean(),
   description: z.string().nullable(),
+  billingAmount: z.number(), // total - discount
+  received: z.number(), // お預かり金額
+  discountInfo: z.object({
+    previousOrderId: z.number().nullable(),
+    validCups: z.number(), // min(this.items.length, previousOrder.items.length)
+    discount: z.number(), // validCups * 100
+  }),
 });
 
 export type Order = z.infer<typeof orderSchema>;
+type DiscountInfo = Order["discountInfo"];
+
+const DISCOUNT_RATE_PER_CUP = 100;
+
+// OrderEntity の内部でのみ使うクラス
+class DiscountInfoEntity implements DiscountInfo {
+  constructor(
+    readonly previousOrderId: number | null,
+    readonly validCups: number,
+  ) {}
+
+  get discount() {
+    return this.validCups * DISCOUNT_RATE_PER_CUP;
+  }
+
+  static fromDiscountInfo(
+    discountInfo: Omit<DiscountInfo, "discount">,
+  ): DiscountInfoEntity {
+    return new DiscountInfoEntity(
+      discountInfo.previousOrderId,
+      discountInfo.validCups,
+    );
+  }
+}
 
 export class OrderEntity implements Order {
   // 全てのプロパティを private にして外部からの直接アクセスを禁止
@@ -26,6 +57,9 @@ export class OrderEntity implements Order {
     private _total: number,
     private _orderReady: boolean,
     private _description: string | null,
+    private _billingAmount: number,
+    private _received: number,
+    private _discountInfo: DiscountInfoEntity = new DiscountInfoEntity(null, 0),
   ) {}
 
   static createNew({ orderId }: { orderId: number }): OrderEntity {
@@ -38,6 +72,8 @@ export class OrderEntity implements Order {
       0,
       false,
       null,
+      0,
+      0,
     );
   }
 
@@ -51,6 +87,9 @@ export class OrderEntity implements Order {
       order.total,
       order.orderReady,
       order.description,
+      order.billingAmount,
+      order.received,
+      DiscountInfoEntity.fromDiscountInfo(order.discountInfo),
     ) as WithId<OrderEntity>;
   }
 
@@ -100,9 +139,31 @@ export class OrderEntity implements Order {
     this._description = description;
   }
 
+  get billingAmount() {
+    this._billingAmount = this.total - this._discountInfo.discount;
+    return this._billingAmount;
+  }
+
+  get received() {
+    return this._received;
+  }
+  set received(received: number) {
+    this._received = received;
+  }
+
+  get discountInfo() {
+    return this._discountInfo;
+  }
+
   // --------------------------------------------------
   // methods
   // --------------------------------------------------
+
+  _getCoffeeCount() {
+    // milk 以外のアイテムの数を返す
+    // TODO(toririm): このメソッドは items が変更された時だけでいい
+    return this.items.filter((item) => item.type !== "milk").length;
+  }
 
   beReady() {
     // orderReady は false -> true にしか変更できないようにする
@@ -112,6 +173,20 @@ export class OrderEntity implements Order {
   beServed() {
     // servedAt は null -> Date にしか変更できないようにする
     this._servedAt = new Date();
+  }
+
+  /* このメソッドのみで discountInfo を更新する */
+  applyDiscount(previousOrder: OrderEntity) {
+    const validCups = Math.min(
+      this._getCoffeeCount(),
+      previousOrder._getCoffeeCount(),
+    );
+
+    this._discountInfo = DiscountInfoEntity.fromDiscountInfo({
+      previousOrderId: previousOrder.orderId,
+      validCups,
+    });
+    return this._discountInfo;
   }
 
   toOrder(): Order {
@@ -124,6 +199,9 @@ export class OrderEntity implements Order {
       total: this.total,
       orderReady: this.orderReady,
       description: this.description,
+      billingAmount: this.billingAmount,
+      received: this.received,
+      discountInfo: this.discountInfo,
     };
   }
 }
