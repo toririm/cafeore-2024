@@ -117,17 +117,12 @@ export default function Casher() {
                         className="absolute right-[50px] h-[30px] w-[25px]"
                         onClick={() => {
                           setOrder((prev) => {
-                            const deleteItemIndex = prev.items.findLastIndex(
-                              (data) => data.name === item.name,
-                            );
-                            console.log(deleteItemIndex);
                             // const newItems = prev.items.filter(
                             //   () =>
                             //     prev.items.indexOf(item) !== deleteItemIndex,
                             // ); // 新しい配列を作成
-                            const newItems = prev.items.filter(
-                              (_, index) => index !== deleteItemIndex,
-                            );
+                            const newItems = [...prev.items];
+                            newItems.splice(index, 1);
                             const newTotal = newItems.reduce(
                               (acc, cur) => acc + cur.price,
                               0,
