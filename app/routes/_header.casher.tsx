@@ -117,8 +117,13 @@ export default function main() {
                         className="absolute right-[50px] h-[30px] w-[25px]"
                         onClick={() => {
                           setQueue((prev) => {
+                            const deleteItemIndex = prev.items.findIndex(
+                              (data) => data.name === item.name,
+                            );
+                            console.log(deleteItemIndex);
                             const newItems = prev.items.filter(
-                              (i) => i.id !== item.id,
+                              () =>
+                                prev.items.indexOf(item) !== deleteItemIndex,
                             ); // 新しい配列を作成
                             const newTotal = newItems.reduce(
                               (acc, cur) => acc + cur.price,
