@@ -11,6 +11,7 @@ export const itemSchema = z.object({
     required_error: "種類が未選択です",
     invalid_type_error: "不正な種類です",
   }),
+  assignee: z.string().nullable(),
 });
 
 export type Item = z.infer<typeof itemSchema>;
@@ -25,18 +26,16 @@ export const type2label = {
 } as const satisfies Record<ItemType, string>;
 
 export class ItemEntity implements Item {
-  // TODO(toririm)
-  // ゲッターやセッターを使う際にはすべてのプロパティにアンスコをつけてprivateにする
-  // 実装の詳細は OrderEntity を参照
   private constructor(
     public readonly id: string | undefined,
     public readonly name: string,
     public readonly price: number,
     public readonly type: ItemType,
+    public assignee: string | null,
   ) {}
 
-  static createNew({ name, price, type }: Item): ItemEntity {
-    return new ItemEntity(undefined, name, price, type);
+  static createNew({ name, price, type }: Omit<Item, "assignee">): ItemEntity {
+    return new ItemEntity(undefined, name, price, type, null);
   }
 
   static fromItem(item: WithId<Item>): WithId<ItemEntity> {
@@ -45,6 +44,7 @@ export class ItemEntity implements Item {
       item.name,
       item.price,
       item.type,
+      item.assignee,
     ) as WithId<ItemEntity>;
   }
 }

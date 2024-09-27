@@ -25,6 +25,7 @@
     "@remix-run/react": "^2.12.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "dayjs": "^1.11.13",
     "firebase": "^10.13.2",
     "lodash": "^4.17.21",
     "lucide-react": "0.441.0",

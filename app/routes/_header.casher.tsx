@@ -27,9 +27,8 @@ import {
 } from "~/components/ui/table";
 import { itemConverter } from "~/firebase/converter";
 import { collectionSub } from "~/firebase/subscription";
-import type { WithId } from "~/lib/typeguard";
-import { type Item, type ItemType, itemSchema } from "~/models/item";
-import type { Order, OrderEntity } from "~/models/order";
+import { ItemEntity, itemSchema } from "~/models/item";
+import type { Order } from "~/models/order";
 import { itemRepository } from "~/repositories/item";
 
 const mockOrder: Order = {
@@ -44,9 +43,16 @@ const mockOrder: Order = {
     //   price: 300,
     // },
   ],
-  assignee: "1st",
   total: 0,
   orderReady: false,
+  description: "",
+  discountInfo: {
+    previousOrderId: null,
+    validCups: 0,
+    discount: 0,
+  },
+  received: 0,
+  billingAmount: 0,
 };
 
 export default function Casher() {
@@ -125,7 +131,9 @@ export default function Casher() {
                           });
                         }}
                       >
-                        {trashIcon()}
+                        <div>
+                          <TrashIcon />
+                        </div>
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -201,47 +209,20 @@ export const clientAction: ClientActionFunction = async ({ request }) => {
 
   const newItem = submission.value;
   // あとでマシなエラーハンドリングにする
-  const savedItem = await itemRepository.save(ItemEntity.createNew(newItem));
+  const savedItem = await itemRepository.save(
+    ItemEntity.createNew({
+      name: newItem.name,
+      price: newItem.price,
+      type: newItem.type,
+    }),
+  );
 
   console.log("Document written with ID: ", savedItem.id);
   return new Response(null, { status: 204 });
 };
 
-function trashIcon() {
-  return (
-    <div>
-      <TrashIcon />
-    </div>
-  );
-}
-
 function mockOrderInitialize() {
   mockOrder.items = [];
   mockOrder.total = 0;
   console.log(mockOrder);
-}
-
-export class ItemEntity implements Item {
-  // TODO(toririm)
-  // ゲッターやセッターを使う際にはすべてのプロパティにアンスコをつけてprivateにする
-  // 実装の詳細は OrderEntity を参照
-  private constructor(
-    public readonly id: string | undefined,
-    public readonly name: string,
-    public readonly price: number,
-    public readonly type: ItemType,
-  ) {}
-
-  static createNew({ name, price, type }: Item): ItemEntity {
-    return new ItemEntity(undefined, name, price, type);
-  }
-
-  static fromItem(item: WithId<Item>): WithId<ItemEntity> {
-    return new ItemEntity(
-      item.id,
-      item.name,
-      item.price,
-      item.type,
-    ) as WithId<ItemEntity>;
-  }
 }

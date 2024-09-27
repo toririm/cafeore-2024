@@ -7,7 +7,9 @@ import { itemRepository } from "~/repositories/item";
 // TODO(toririm): テストを書く
 export const addItem: ClientActionFunction = async ({ request }) => {
   const formData = await request.formData();
-  const submission = parseWithZod(formData, { schema: itemSchema });
+  const submission = parseWithZod(formData, {
+    schema: itemSchema.omit({ assignee: true }),
+  });
 
   if (submission.status !== "success") {
     console.error("Invalid form data", submission.reply());

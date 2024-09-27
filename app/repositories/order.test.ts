@@ -21,7 +21,7 @@ const isEmulatorRunning = async (): Promise<boolean> => {
 describe("[db] orderRepository", async () => {
   // To use this environment, firebase emulator must be running.
 
-  let savedOrderHoge: WithId<OrderEntity>;
+  let savedOrderChange: WithId<OrderEntity>;
   let orderRepository: OrderRepository;
 
   beforeAll(async () => {
@@ -47,15 +47,21 @@ describe("[db] orderRepository", async () => {
 
   test("orderRepository.save (create)", async () => {
     const order = OrderEntity.createNew({ orderId: 2024 });
-    savedOrderHoge = await orderRepository.save(order);
-    expect(savedOrderHoge.id).toBeDefined();
+    savedOrderChange = await orderRepository.save(order);
+    expect(savedOrderChange.id).toBeDefined();
   });
 
   test("orderRepository.save (update)", async () => {
-    savedOrderHoge.assignee = "hoge";
-    const savedOrder = await orderRepository.save(savedOrderHoge);
-    expect(savedOrder.id).toEqual(savedOrderHoge.id);
-    expect(savedOrder.assignee).toEqual("hoge");
+    savedOrderChange.items.push({
+      id: "1",
+      name: "item1",
+      price: 100,
+      type: "hot",
+      assignee: null,
+    });
+    const savedOrder = await orderRepository.save(savedOrderChange);
+    expect(savedOrder.id).toEqual(savedOrderChange.id);
+    expect(savedOrder.items).toEqual(savedOrderChange.items);
   });
 
   test("orderRepository.findById", async () => {
