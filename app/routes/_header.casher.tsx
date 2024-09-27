@@ -50,7 +50,7 @@ const mockOrder: Order = {
   orderReady: false,
 };
 
-export default function main() {
+export default function Casher() {
   // const total = mockOrder.items.reduce((acc, cur) => acc + cur.price, 0);
   const { data: items } = useSWRSubscription(
     "items",
