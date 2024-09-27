@@ -2,7 +2,6 @@ import { parseWithZod } from "@conform-to/zod";
 import { AlertDialogCancel } from "@radix-ui/react-alert-dialog";
 import { TrashIcon } from "@radix-ui/react-icons";
 import { type ClientActionFunction, json } from "@remix-run/react";
-import { set } from "lodash";
 import { useState } from "react";
 import useSWRSubscription from "swr/subscription";
 import {
