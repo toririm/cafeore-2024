@@ -30,18 +30,14 @@ class DiscountInfoEntity implements DiscountInfo {
   constructor(
     readonly previousOrderId: number | null,
     readonly validCups: number,
+    readonly discount: number,
   ) {}
 
-  get discount() {
-    return this.validCups * DISCOUNT_RATE_PER_CUP;
-  }
-
-  static fromDiscountInfo(
-    discountInfo: Omit<DiscountInfo, "discount">,
-  ): DiscountInfoEntity {
+  static fromDiscountInfo(discountInfo: DiscountInfo): DiscountInfoEntity {
     return new DiscountInfoEntity(
       discountInfo.previousOrderId,
       discountInfo.validCups,
+      discountInfo.discount,
     );
   }
 }
@@ -59,7 +55,11 @@ export class OrderEntity implements Order {
     private _description: string | null,
     private _billingAmount: number,
     private _received: number,
-    private _discountInfo: DiscountInfoEntity = new DiscountInfoEntity(null, 0),
+    private _discountInfo: DiscountInfoEntity = new DiscountInfoEntity(
+      null,
+      0,
+      0,
+    ),
   ) {}
 
   static createNew({ orderId }: { orderId: number }): OrderEntity {
@@ -181,10 +181,12 @@ export class OrderEntity implements Order {
       this._getCoffeeCount(),
       previousOrder._getCoffeeCount(),
     );
+    const discount = validCups * DISCOUNT_RATE_PER_CUP;
 
     this._discountInfo = DiscountInfoEntity.fromDiscountInfo({
       previousOrderId: previousOrder.orderId,
       validCups,
+      discount,
     });
     return this._discountInfo;
   }
