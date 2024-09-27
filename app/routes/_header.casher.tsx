@@ -2,6 +2,7 @@ import { parseWithZod } from "@conform-to/zod";
 import { AlertDialogCancel } from "@radix-ui/react-alert-dialog";
 import { TrashIcon } from "@radix-ui/react-icons";
 import { type ClientActionFunction, json } from "@remix-run/react";
+import { set } from "lodash";
 import { useState } from "react";
 import useSWRSubscription from "swr/subscription";
 import {
@@ -29,7 +30,7 @@ import { itemConverter } from "~/firebase/converter";
 import { collectionSub } from "~/firebase/subscription";
 import type { WithId } from "~/lib/typeguard";
 import { type Item, type ItemType, itemSchema } from "~/models/item";
-import type { Order } from "~/models/order";
+import type { Order, OrderEntity } from "~/models/order";
 import { itemRepository } from "~/repositories/item";
 
 const mockOrder: Order = {
@@ -49,15 +50,17 @@ const mockOrder: Order = {
   orderReady: false,
 };
 
-export default function Casher() {
+export default function main() {
   // const total = mockOrder.items.reduce((acc, cur) => acc + cur.price, 0);
   const { data: items } = useSWRSubscription(
     "items",
     collectionSub({ converter: itemConverter }),
   );
   const [recieved, setText] = useState(0);
-  const [total, setTotal] = useState(0);
-  const [queue, setQueue] = useState<WithId<Item>[]>([]);
+  // const [total, setTotal] = useState(0);
+  // const [queue, setQueue] = useState<WithId<Item>[]>([]);
+  const [queue, setQueue] = useState<Order>(mockOrder);
+  console.log("rendered", queue);
 
   // console.log(mockOrder);
   // console.log(items?.[0]);
@@ -70,14 +73,18 @@ export default function Casher() {
               <div key={item.id}>
                 <Button
                   onClick={async () => {
-                    mockOrder.items.push(item);
-                    mockOrder.total = mockOrder.items.reduce(
-                      (acc, cur) => acc + cur.price,
-                      0,
-                    );
-                    setQueue(mockOrder.items);
-                    setTotal(mockOrder.total);
-                    console.log(mockOrder);
+                    setQueue((prev) => {
+                      const newItems = [...prev.items, item]; // 新しい配列を作成
+                      const newTotal = newItems.reduce(
+                        (acc, cur) => acc + cur.price,
+                        0,
+                      ); // 新しい合計金額を計算
+                      return {
+                        ...prev, // 既存のオブジェクトの他の部分を維持
+                        items: newItems, // 更新されたitems
+                        total: newTotal, // 更新されたtotal
+                      };
+                    });
                   }}
                 >
                   {item.name}
@@ -98,9 +105,9 @@ export default function Casher() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {queue?.map((item) => (
+                {queue?.items.map((item, index) => (
                   <TableRow
-                    key={mockOrder.items.indexOf(item)}
+                    key={`${index}-${item.id}`}
                     className="relative h-[50px]"
                   >
                     <TableCell className="relative font-medium">
@@ -109,17 +116,22 @@ export default function Casher() {
                         type="button"
                         className="absolute right-[50px] h-[30px] w-[25px]"
                         onClick={() => {
-                          mockOrder.items.splice(
-                            mockOrder.items.indexOf(item),
-                            1,
-                          );
-                          mockOrder.total = mockOrder.items.reduce(
-                            (acc, cur) => acc + cur.price,
-                            0,
-                          );
-                          setQueue(mockOrder.items);
-                          setTotal(mockOrder.total);
-                          console.log(mockOrder);
+                          setQueue((prev) => {
+                            const newItems = prev.items.filter(
+                              (i) => i.id !== item.id,
+                            ); // 新しい配列を作成
+                            const newTotal = newItems.reduce(
+                              (acc, cur) => acc + cur.price,
+                              0,
+                            ); // 新しい合計金額を計算
+                            return {
+                              ...prev,
+                              items: newItems,
+                              total: newTotal,
+                            };
+                          });
+                          // setTotal(mockOrder.total);
+                          console.log(queue);
                         }}
                       >
                         {trashIcon()}
@@ -131,7 +143,7 @@ export default function Casher() {
             </Table>
             <ul>
               <li>
-                <h2 className="relative">合計金額：{total} 円</h2>
+                <h2 className="relative">合計金額：{queue.total} 円</h2>
                 {/* <h3>{mockOrder.reduce}</h3> */}
               </li>
               <li>
@@ -165,11 +177,11 @@ export default function Casher() {
                               }
                             />
                           </p>
-                          <p>合計： {mockOrder.total} 円</p>
+                          <p>合計： {queue.total} 円</p>
                           <p>
-                            お釣り： {recieved - mockOrder.total < 0 && 0}
-                            {recieved - mockOrder.total >= 0 &&
-                              recieved - mockOrder.total}{" "}
+                            お釣り： {recieved - queue.total < 0 && 0}
+                            {recieved - queue.total >= 0 &&
+                              recieved - queue.total}{" "}
                             円
                           </p>
                         </AlertDialogDescription>
