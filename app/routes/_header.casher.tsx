@@ -27,9 +27,7 @@ import {
 } from "~/components/ui/table";
 import { itemConverter } from "~/firebase/converter";
 import { collectionSub } from "~/firebase/subscription";
-import type { WithId } from "~/lib/typeguard";
-import { type Item, itemSchema } from "~/models/item";
-import { ItemEntity } from "~/models/item";
+import { ItemEntity, itemSchema } from "~/models/item";
 import type { Order } from "~/models/order";
 import { itemRepository } from "~/repositories/item";
 
@@ -64,11 +62,8 @@ export default function Casher() {
     collectionSub({ converter: itemConverter }),
   );
   const [recieved, setText] = useState(0);
-  const [total, setTotal] = useState(0);
-  const [queue, setQueue] = useState<WithId<Item>[]>([]);
+  const [order, setOrder] = useState<Order>(mockOrder);
 
-  // console.log(mockOrder);
-  // console.log(items?.[0]);
   return (
     <div>
       <div className="flex h-screen flex-row flex-wrap">
@@ -78,14 +73,18 @@ export default function Casher() {
               <div key={item.id}>
                 <Button
                   onClick={async () => {
-                    mockOrder.items.push(item);
-                    mockOrder.total = mockOrder.items.reduce(
-                      (acc, cur) => acc + cur.price,
-                      0,
-                    );
-                    setQueue(mockOrder.items);
-                    setTotal(mockOrder.total);
-                    console.log(mockOrder);
+                    setOrder((prev) => {
+                      const newItems = [...prev.items, item]; // 新しい配列を作成
+                      const newTotal = newItems.reduce(
+                        (acc, cur) => acc + cur.price,
+                        0,
+                      ); // 新しい合計金額を計算
+                      return {
+                        ...prev, // 既存のオブジェクトの他の部分を維持
+                        items: newItems, // 更新されたitems
+                        total: newTotal, // 更新されたtotal
+                      };
+                    });
                   }}
                 >
                   {item.name}
@@ -106,9 +105,9 @@ export default function Casher() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {queue?.map((item) => (
+                {order?.items.map((item, index) => (
                   <TableRow
-                    key={mockOrder.items.indexOf(item)}
+                    key={`${index}-${item.id}`}
                     className="relative h-[50px]"
                   >
                     <TableCell className="relative font-medium">
@@ -117,17 +116,19 @@ export default function Casher() {
                         type="button"
                         className="absolute right-[50px] h-[30px] w-[25px]"
                         onClick={() => {
-                          mockOrder.items.splice(
-                            mockOrder.items.indexOf(item),
-                            1,
-                          );
-                          mockOrder.total = mockOrder.items.reduce(
-                            (acc, cur) => acc + cur.price,
-                            0,
-                          );
-                          setQueue(mockOrder.items);
-                          setTotal(mockOrder.total);
-                          console.log(mockOrder);
+                          setOrder((prev) => {
+                            const newItems = [...prev.items];
+                            newItems.splice(index, 1);
+                            const newTotal = newItems.reduce(
+                              (acc, cur) => acc + cur.price,
+                              0,
+                            ); // 新しい合計金額を計算
+                            return {
+                              ...prev,
+                              items: newItems,
+                              total: newTotal,
+                            };
+                          });
                         }}
                       >
                         <div>
@@ -141,18 +142,10 @@ export default function Casher() {
             </Table>
             <ul>
               <li>
-                <h2 className="relative">合計金額：{total} 円</h2>
-                {/* <h3>{mockOrder.reduce}</h3> */}
+                <h2 className="relative">合計金額：{order.total} 円</h2>
               </li>
               <li>
-                {/* <h2>受領金額：</h2> */}
                 <form>
-                  {/* <Input
-                type="number"
-                placeholder="受け取った金額を入力してください"
-                value={recieved}
-                onChange={(event) => setText(parseInt(event.target.value))}
-              /> */}
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button className="absolute right-[100px]">確定</Button>
@@ -163,7 +156,6 @@ export default function Casher() {
                           金額を確認してください
                         </AlertDialogTitle>
                         <AlertDialogDescription>
-                          {/* <p>受領額： {recieved} 円</p> */}
                           <p>
                             受領額：
                             <Input
@@ -175,11 +167,11 @@ export default function Casher() {
                               }
                             />
                           </p>
-                          <p>合計： {mockOrder.total} 円</p>
+                          <p>合計： {order.total} 円</p>
                           <p>
-                            お釣り： {recieved - mockOrder.total < 0 && 0}
-                            {recieved - mockOrder.total >= 0 &&
-                              recieved - mockOrder.total}{" "}
+                            お釣り： {recieved - order.total < 0 && 0}
+                            {recieved - order.total >= 0 &&
+                              recieved - order.total}{" "}
                             円
                           </p>
                         </AlertDialogDescription>
