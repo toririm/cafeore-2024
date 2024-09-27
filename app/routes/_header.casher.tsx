@@ -59,7 +59,7 @@ export default function Casher() {
   const [recieved, setText] = useState(0);
   // const [total, setTotal] = useState(0);
   // const [queue, setQueue] = useState<WithId<Item>[]>([]);
-  const [queue, setQueue] = useState<Order>(mockOrder);
+  const [order, setOrder] = useState<Order>(mockOrder);
   // console.log("rendered", queue);
 
   // console.log(mockOrder);
@@ -73,7 +73,7 @@ export default function Casher() {
               <div key={item.id}>
                 <Button
                   onClick={async () => {
-                    setQueue((prev) => {
+                    setOrder((prev) => {
                       const newItems = [...prev.items, item]; // 新しい配列を作成
                       const newTotal = newItems.reduce(
                         (acc, cur) => acc + cur.price,
@@ -105,7 +105,7 @@ export default function Casher() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {queue?.items.map((item, index) => (
+                {order?.items.map((item, index) => (
                   <TableRow
                     key={`${index}-${item.id}`}
                     className="relative h-[50px]"
@@ -116,7 +116,7 @@ export default function Casher() {
                         type="button"
                         className="absolute right-[50px] h-[30px] w-[25px]"
                         onClick={() => {
-                          setQueue((prev) => {
+                          setOrder((prev) => {
                             const deleteItemIndex = prev.items.findLastIndex(
                               (data) => data.name === item.name,
                             );
@@ -151,7 +151,7 @@ export default function Casher() {
             </Table>
             <ul>
               <li>
-                <h2 className="relative">合計金額：{queue.total} 円</h2>
+                <h2 className="relative">合計金額：{order.total} 円</h2>
                 {/* <h3>{mockOrder.reduce}</h3> */}
               </li>
               <li>
@@ -185,11 +185,11 @@ export default function Casher() {
                               }
                             />
                           </p>
-                          <p>合計： {queue.total} 円</p>
+                          <p>合計： {order.total} 円</p>
                           <p>
-                            お釣り： {recieved - queue.total < 0 && 0}
-                            {recieved - queue.total >= 0 &&
-                              recieved - queue.total}{" "}
+                            お釣り： {recieved - order.total < 0 && 0}
+                            {recieved - order.total >= 0 &&
+                              recieved - order.total}{" "}
                             円
                           </p>
                         </AlertDialogDescription>
