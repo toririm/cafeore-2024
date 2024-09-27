@@ -48,6 +48,13 @@ const mockOrder: Order = {
   total: 0,
   orderReady: false,
   description: "",
+  discountInfo: {
+    previousOrderId: null,
+    validCups: 0,
+    discount: 0,
+  },
+  received: 0,
+  billingAmount: 0,
 };
 
 export default function Casher() {
