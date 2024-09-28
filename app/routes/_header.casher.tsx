@@ -29,9 +29,10 @@ import {
 import { itemConverter, orderConverter } from "~/firebase/converter";
 import { collectionSub } from "~/firebase/subscription";
 import { stringToJSONSchema } from "~/lib/custom-zod";
-import { WithId } from "~/lib/typeguard";
+import type { WithId } from "~/lib/typeguard";
 import { ItemEntity } from "~/models/item";
 import { OrderEntity, orderSchema } from "~/models/order";
+import { itemRepository } from "~/repositories/item";
 
 export default function Casher() {
   const { data: items } = useSWRSubscription(
@@ -80,7 +81,6 @@ export default function Casher() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {/* {order?.items.map((item, index) => ( */}
                 {queue?.map((item, index) => (
                   <TableRow
                     key={`${index}-${item.id}`}
@@ -177,9 +177,21 @@ export const clientAction: ClientActionFunction = async ({ request }) => {
     schema,
   });
   if (submission.status !== "success") {
-    console.error(submission.error);
-    return submission.reply();
+    // return json(submission.reply());
+    // console.error(submission.error);
+    // return submission.reply();
   }
 
-  return new Response("ok");
+  // const newItem = submission.value;
+  // あとでマシなエラーハンドリングにする
+  const savedItem = await itemRepository.save(
+    ItemEntity.createNew({
+      // name: newItem.name,
+      // price: newItem.price,
+      // type: newItem.type,
+    }),
+  );
+
+  console.log("Document written with ID: ", savedItem.id);
+  return new Response(null, { status: 204 });
 };
