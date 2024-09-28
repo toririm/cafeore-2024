@@ -34,6 +34,7 @@ export default function Cashier() {
   const [orderItems, setOrderItems] = useState<WithId<ItemEntity>[]>([]);
   const [received, setReceived] = useState("");
   const [discountOrderId, setDiscountOrderId] = useState("");
+  const [description, setDescription] = useState("");
 
   const discountOrderIdNum = Number(discountOrderId);
   const discountOrder = orders?.find(
@@ -48,6 +49,9 @@ export default function Cashier() {
   const receivedNum = Number(received);
   newOrder.items = orderItems;
   newOrder.received = receivedNum;
+  if (description !== "") {
+    newOrder.description = description;
+  }
   if (discountOrder) {
     newOrder.applyDiscount(discountOrder);
   }
@@ -68,11 +72,16 @@ export default function Cashier() {
     setOrderItems([]);
     setReceived("");
     setDiscountOrderId("");
+    setDescription("");
   };
 
   useEffect(() => {
     items?.forEach((item, idx) => {
       const handler = (event: KeyboardEvent) => {
+        const active = document.activeElement;
+        if (active?.id === "description") {
+          return;
+        }
         if (event.key === keys[idx]) {
           setOrderItems((prevItems) => [...prevItems, item]);
         }
@@ -165,6 +174,12 @@ export default function Cashier() {
             placeholder="お預かり金額を入力"
           />
           <Input disabled value={chargeView} />
+          <Input
+            id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="備考"
+          />
           {orderItems.map((item, idx) => (
             <div key={`${idx}-${item.id}`} className="grid grid-cols-2">
               <p className="font-bold text-lg">{idx + 1}</p>
