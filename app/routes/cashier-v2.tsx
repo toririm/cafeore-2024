@@ -1,10 +1,16 @@
 import { parseWithZod } from "@conform-to/zod";
 import { type ClientActionFunction, useSubmit } from "@remix-run/react";
+import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { useEffect, useState } from "react";
 import useSWRSubscription from "swr/subscription";
 import { z } from "zod";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "~/components/ui/input-otp";
 import { itemConverter, orderConverter } from "~/firebase/converter";
 import { collectionSub } from "~/firebase/subscription";
 import { stringToJSONSchema } from "~/lib/custom-zod";
@@ -24,17 +30,28 @@ export default function Cashier() {
     "orders",
     collectionSub({ converter: orderConverter }),
   );
-  const [orderItems, setOrderItems] = useState<WithId<ItemEntity>[]>([]);
   const submit = useSubmit();
-  console.log("orders", orders);
+  const [orderItems, setOrderItems] = useState<WithId<ItemEntity>[]>([]);
+  const [received, setReceived] = useState("");
+  const [discountOrderId, setDiscountOrderId] = useState("");
+
+  const discountOrderIdNum = Number(discountOrderId);
+  const discountOrder = orders?.find(
+    (order) => order.orderId === discountOrderIdNum,
+  );
+  const lastPurchasedCups = discountOrder?._getCoffeeCount() ?? 0;
 
   const curOrderId =
     orders?.reduce((acc, cur) => Math.max(acc, cur.orderId), 0) ?? 0;
   const nextOrderId = curOrderId + 1;
   const newOrder = OrderEntity.createNew({ orderId: nextOrderId });
+  const receivedNum = Number(received);
   newOrder.items = orderItems;
-  const [received, setReceived] = useState("");
-  const charge = Number(received) - newOrder.total;
+  newOrder.received = receivedNum;
+  if (discountOrder) {
+    newOrder.applyDiscount(discountOrder);
+  }
+  const charge = newOrder.received - newOrder.billingAmount;
   const chargeView: string | number = charge < 0 ? "不足しています" : charge;
 
   const submitOrder = () => {
@@ -50,6 +67,7 @@ export default function Cashier() {
     );
     setOrderItems([]);
     setReceived("");
+    setDiscountOrderId("");
   };
 
   useEffect(() => {
@@ -78,6 +96,8 @@ export default function Cashier() {
     const handler = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setOrderItems([]);
+        setReceived("");
+        setDiscountOrderId("");
       }
     };
     window.addEventListener("keydown", handler);
@@ -118,7 +138,25 @@ export default function Cashier() {
           <h1 className="text-lg">{`No. ${nextOrderId}`}</h1>
           <div className="border-8">
             <p>合計金額</p>
-            <p>{newOrder.total}</p>
+            <p>{newOrder.billingAmount}</p>
+          </div>
+          <div>
+            <p>割引券番号</p>
+            <InputOTP
+              maxLength={3}
+              pattern={REGEXP_ONLY_DIGITS}
+              value={discountOrderId}
+              onChange={(value) => setDiscountOrderId(value)}
+            >
+              <InputOTPGroup />
+              <InputOTPSlot index={0} />
+              <InputOTPSlot index={1} />
+              <InputOTPSlot index={2} />
+            </InputOTP>
+            <p>
+              {discountOrder === undefined ? "見つかりません" : null}
+              {discountOrder && `有効杯数: ${lastPurchasedCups}`}
+            </p>
           </div>
           <Input
             type="number"
@@ -137,6 +175,12 @@ export default function Cashier() {
               </div>
             </div>
           ))}
+          {discountOrder && (
+            <div className="grid grid-cols-2">
+              <p className="font-bold text-lg">割引</p>
+              <div>-&yen;{newOrder.discountInfo.discount}</div>
+            </div>
+          )}
         </div>
       </div>
     </>
@@ -159,8 +203,7 @@ export const clientAction: ClientActionFunction = async ({ request }) => {
   }
 
   const { newOrder } = submission.value;
-  const order = OrderEntity.createNew({ orderId: newOrder.orderId });
-  order.items = newOrder.items;
+  const order = OrderEntity.fromOrderWOId(newOrder);
 
   const savedOrder = await orderRepository.save(order);
 

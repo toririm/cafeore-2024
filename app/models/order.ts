@@ -93,6 +93,22 @@ export class OrderEntity implements Order {
     ) as WithId<OrderEntity>;
   }
 
+  static fromOrderWOId(order: Order): OrderEntity {
+    return new OrderEntity(
+      undefined,
+      order.orderId,
+      order.createdAt,
+      order.servedAt,
+      order.items,
+      order.total,
+      order.orderReady,
+      order.description,
+      order.billingAmount,
+      order.received,
+      DiscountInfoEntity.fromDiscountInfo(order.discountInfo),
+    );
+  }
+
   // --------------------------------------------------
   // getter / setter
   // --------------------------------------------------
