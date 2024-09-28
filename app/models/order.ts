@@ -8,12 +8,39 @@ export const orderSchema = z.object({
   createdAt: z.date(),
   servedAt: z.date().nullable(),
   items: z.array(itemSchema.required()),
-  assignee: z.string().nullable(),
-  total: z.number(),
+  total: z.number(), // sum of item.price
   orderReady: z.boolean(),
+  description: z.string().nullable(),
+  billingAmount: z.number(), // total - discount
+  received: z.number(), // お預かり金額
+  discountInfo: z.object({
+    previousOrderId: z.number().nullable(),
+    validCups: z.number(), // min(this.items.length, previousOrder.items.length)
+    discount: z.number(), // validCups * 100
+  }),
 });
 
 export type Order = z.infer<typeof orderSchema>;
+type DiscountInfo = Order["discountInfo"];
+
+const DISCOUNT_RATE_PER_CUP = 100;
+
+// OrderEntity の内部でのみ使うクラス
+class DiscountInfoEntity implements DiscountInfo {
+  constructor(
+    readonly previousOrderId: number | null,
+    readonly validCups: number,
+    readonly discount: number,
+  ) {}
+
+  static fromDiscountInfo(discountInfo: DiscountInfo): DiscountInfoEntity {
+    return new DiscountInfoEntity(
+      discountInfo.previousOrderId,
+      discountInfo.validCups,
+      discountInfo.discount,
+    );
+  }
+}
 
 export class OrderEntity implements Order {
   // 全てのプロパティを private にして外部からの直接アクセスを禁止
@@ -23,9 +50,16 @@ export class OrderEntity implements Order {
     private readonly _createdAt: Date,
     private _servedAt: Date | null,
     private _items: WithId<ItemEntity>[],
-    private _assignee: string | null,
     private _total: number,
     private _orderReady: boolean,
+    private _description: string | null,
+    private _billingAmount: number,
+    private _received: number,
+    private _discountInfo: DiscountInfoEntity = new DiscountInfoEntity(
+      null,
+      0,
+      0,
+    ),
   ) {}
 
   static createNew({ orderId }: { orderId: number }): OrderEntity {
@@ -35,9 +69,11 @@ export class OrderEntity implements Order {
       new Date(),
       null,
       [],
-      null,
       0,
       false,
+      null,
+      0,
+      0,
     );
   }
 
@@ -48,9 +84,12 @@ export class OrderEntity implements Order {
       order.createdAt,
       order.servedAt,
       order.items,
-      order.assignee,
       order.total,
       order.orderReady,
+      order.description,
+      order.billingAmount,
+      order.received,
+      DiscountInfoEntity.fromDiscountInfo(order.discountInfo),
     ) as WithId<OrderEntity>;
   }
 
@@ -81,13 +120,6 @@ export class OrderEntity implements Order {
     this._items = items;
   }
 
-  get assignee() {
-    return this._assignee;
-  }
-  set assignee(assignee: string | null) {
-    this._assignee = assignee;
-  }
-
   get total() {
     // items の更新に合わせて total を自動で計算する
     // その代わり total は直接更新できない
@@ -100,9 +132,38 @@ export class OrderEntity implements Order {
     return this._orderReady;
   }
 
+  get description() {
+    return this._description;
+  }
+  set description(description: string | null) {
+    this._description = description;
+  }
+
+  get billingAmount() {
+    this._billingAmount = this.total - this._discountInfo.discount;
+    return this._billingAmount;
+  }
+
+  get received() {
+    return this._received;
+  }
+  set received(received: number) {
+    this._received = received;
+  }
+
+  get discountInfo() {
+    return this._discountInfo;
+  }
+
   // --------------------------------------------------
   // methods
   // --------------------------------------------------
+
+  _getCoffeeCount() {
+    // milk 以外のアイテムの数を返す
+    // TODO(toririm): このメソッドは items が変更された時だけでいい
+    return this.items.filter((item) => item.type !== "milk").length;
+  }
 
   beReady() {
     // orderReady は false -> true にしか変更できないようにする
@@ -114,6 +175,22 @@ export class OrderEntity implements Order {
     this._servedAt = new Date();
   }
 
+  /* このメソッドのみで discountInfo を更新する */
+  applyDiscount(previousOrder: OrderEntity) {
+    const validCups = Math.min(
+      this._getCoffeeCount(),
+      previousOrder._getCoffeeCount(),
+    );
+    const discount = validCups * DISCOUNT_RATE_PER_CUP;
+
+    this._discountInfo = DiscountInfoEntity.fromDiscountInfo({
+      previousOrderId: previousOrder.orderId,
+      validCups,
+      discount,
+    });
+    return this._discountInfo;
+  }
+
   toOrder(): Order {
     return {
       id: this.id,
@@ -121,9 +198,12 @@ export class OrderEntity implements Order {
       createdAt: this.createdAt,
       servedAt: this.servedAt,
       items: this.items,
-      assignee: this.assignee,
       total: this.total,
       orderReady: this.orderReady,
+      description: this.description,
+      billingAmount: this.billingAmount,
+      received: this.received,
+      discountInfo: this.discountInfo,
     };
   }
 }
