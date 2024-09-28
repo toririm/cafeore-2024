@@ -49,6 +49,9 @@ export default function Cashier() {
   const receivedNum = Number(received);
   newOrder.items = orderItems;
   newOrder.received = receivedNum;
+  if (description !== "") {
+    newOrder.description = description;
+  }
   if (discountOrder) {
     newOrder.applyDiscount(discountOrder);
   }
@@ -69,6 +72,7 @@ export default function Cashier() {
     setOrderItems([]);
     setReceived("");
     setDiscountOrderId("");
+    setDescription("");
   };
 
   useEffect(() => {
