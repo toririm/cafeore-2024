@@ -27,6 +27,8 @@
     "clsx": "^2.1.1",
     "dayjs": "^1.11.13",
     "firebase": "^10.13.2",
+    "highcharts": "^11.4.8",
+    "highcharts-react-official": "^3.2.1",
     "lodash": "^4.17.21",
     "lucide-react": "0.441.0",
     "react": "^18.3.1",

@@ -1,8 +1,10 @@
 import type { MetaFunction } from "@remix-run/react";
-import { orderBy } from "firebase/firestore";
-import useSWRSubscription from "swr/subscription";
-
 import dayjs from "dayjs";
+import { orderBy } from "firebase/firestore";
+import Highcharts from "highcharts";
+import HighchartsReact from "highcharts-react-official";
+import { useRef } from "react";
+import useSWRSubscription from "swr/subscription";
 import {
   Table,
   TableBody,
@@ -13,7 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
-import { orderConverter } from "~/firebase/converter";
+import { itemConverter, orderConverter } from "~/firebase/converter";
 import { collectionSub } from "~/firebase/subscription";
 import type { OrderEntity } from "~/models/order";
 
@@ -21,10 +23,14 @@ export const meta: MetaFunction = () => {
   return [{ title: "注文状況" }];
 };
 
-export default function Dashboard() {
+const Dashboard = (props: HighchartsReact.Props) => {
   const { data: orders } = useSWRSubscription(
     "orders",
     collectionSub({ converter: orderConverter }, orderBy("orderId", "desc")),
+  );
+  const { data: items } = useSWRSubscription(
+    "items",
+    collectionSub({ converter: itemConverter }),
   );
   const unseved = orders?.reduce((acc, cur) => {
     if (cur.servedAt == null) {
@@ -32,6 +38,21 @@ export default function Dashboard() {
     }
     return acc;
   }, 0);
+  const chartComponentRef = useRef<HighchartsReact.RefObject>(null);
+  const itemNamesArray = items?.map((items) => items.name);
+  const options: Highcharts.Options = {
+    title: {
+      text: "種類別杯数",
+    },
+    series: [
+      {
+        type: "column",
+        data: [1, 2, 3, 4, 5, 6, 7, 8],
+      },
+    ],
+    xAxis: { categories: itemNamesArray },
+    yAxis: { type: "linear" },
+  };
 
   return (
     <div className="p-4 font-sans">
@@ -41,42 +62,46 @@ export default function Dashboard() {
       </div>
 
       <div>
-        <div>
-          <Table>
-            <TableCaption />
-            <TableHeader>
-              <TableRow>
-                <TableHead>No.</TableHead>
-                <TableHead>杯数</TableHead>
-                <TableHead>合計額</TableHead>
-                <TableHead>受付時刻</TableHead>
-                <TableHead>提供時刻</TableHead>
-                <TableHead>時間</TableHead>
+        <Table>
+          <TableCaption />
+          <TableHeader>
+            <TableRow>
+              <TableHead>No.</TableHead>
+              <TableHead>杯数</TableHead>
+              <TableHead>合計額</TableHead>
+              <TableHead>受付時刻</TableHead>
+              <TableHead>提供時刻</TableHead>
+              <TableHead>時間</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {orders?.map((order) => (
+              <TableRow key={order.orderId}>
+                <TableCell className="font-medium">{order.orderId}</TableCell>
+                <TableCell>{numOfCups(order)}</TableCell>
+                <TableCell>￥{order.total}</TableCell>
+                <TableCell>{order.createdAt.toLocaleTimeString()}</TableCell>
+                <TableCell>
+                  {order.servedAt == null
+                    ? "未提供"
+                    : order.servedAt?.toLocaleTimeString()}
+                </TableCell>
+                <TableCell>{diffTime(order)}</TableCell>
               </TableRow>
-            </TableHeader>
-            <TableBody>
-              {orders?.map((order) => (
-                <TableRow key={order.orderId}>
-                  <TableCell className="font-medium">{order.orderId}</TableCell>
-                  <TableCell>{numOfCups(order)}</TableCell>
-                  <TableCell>￥{order.total}</TableCell>
-                  <TableCell>{order.createdAt.toLocaleTimeString()}</TableCell>
-                  <TableCell>
-                    {order.servedAt == null
-                      ? "未提供"
-                      : order.servedAt?.toLocaleTimeString()}
-                  </TableCell>
-                  <TableCell>{diffTime(order)}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-            <TableFooter />
-          </Table>
-        </div>
+            ))}
+          </TableBody>
+          <TableFooter />
+        </Table>
       </div>
+      <HighchartsReact
+        highcharts={Highcharts}
+        options={options}
+        ref={chartComponentRef}
+        {...props}
+      />
     </div>
   );
-}
+};
 
 const numOfCups = (order: OrderEntity): number => {
   return order.items.length;
@@ -88,3 +113,5 @@ const diffTime = (order: OrderEntity) => {
     "m:ss",
   );
 };
+
+export default Dashboard;
