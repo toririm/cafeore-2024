@@ -167,31 +167,31 @@ export default function Casher() {
   );
 }
 
-export const clientAction: ClientActionFunction = async ({ request }) => {
-  const formData = await request.formData();
+// export const clientAction: ClientActionFunction = async ({ request }) => {
+//   const formData = await request.formData();
 
-  const schema = z.object({
-    newOrder: stringToJSONSchema.pipe(orderSchema),
-  });
-  const submission = parseWithZod(formData, {
-    schema,
-  });
-  if (submission.status !== "success") {
-    // return json(submission.reply());
-    // console.error(submission.error);
-    // return submission.reply();
-  }
+//   const schema = z.object({
+//     newOrder: stringToJSONSchema.pipe(orderSchema),
+//   });
+//   const submission = parseWithZod(formData, {
+//     schema,
+//   });
+//   if (submission.status !== "success") {
+//     // return json(submission.reply());
+//     // console.error(submission.error);
+//     // return submission.reply();
+//   }
 
-  // const newItem = submission.value;
-  // あとでマシなエラーハンドリングにする
-  const savedItem = await itemRepository.save(
-    ItemEntity.createNew({
-      // name: newItem.name,
-      // price: newItem.price,
-      // type: newItem.type,
-    }),
-  );
+//   // const newItem = submission.value;
+//   // あとでマシなエラーハンドリングにする
+//   const savedItem = await itemRepository.save(
+//     ItemEntity.createNew({
+//       // name: newItem.name,
+//       // price: newItem.price,
+//       // type: newItem.type,
+//     }),
+//   );
 
-  console.log("Document written with ID: ", savedItem.id);
-  return new Response(null, { status: 204 });
-};
+//   console.log("Document written with ID: ", savedItem.id);
+//   return new Response(null, { status: 204 });
+// };
