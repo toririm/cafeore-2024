@@ -12,16 +12,7 @@ import {
 } from "react";
 import useSWRSubscription from "swr/subscription";
 import { z } from "zod";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "~/components/ui/alert-dialog";
+import { OrderAlertDialog } from "~/components/organisms/OrderAlertDialog";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import {
@@ -403,48 +394,13 @@ export default function Cashier() {
           )}
         </div>
       </div>
-      <AlertDialog open={DialogOpen} onOpenChange={setDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>オーダーを確定しますか？</AlertDialogTitle>
-            <AlertDialogDescription>
-              以下の内容で提出します
-            </AlertDialogDescription>
-            {orderItems.map((item, idx) => (
-              <AlertDialogDescription key={`${idx}-${item.id}`}>
-                {`${idx + 1} ―― ${item.name}  ¥${item.price}  ${type2label[item.type]}`}
-              </AlertDialogDescription>
-            ))}
-            <AlertDialogDescription>
-              合計金額: &yen;{newOrder.total}
-            </AlertDialogDescription>
-            {discountOrder && (
-              <AlertDialogDescription>
-                割引: -&yen;{newOrder.discountInfo.discount}
-              </AlertDialogDescription>
-            )}
-            <AlertDialogDescription>
-              支払金額: &yen;{newOrder.billingAmount}
-            </AlertDialogDescription>
-            <AlertDialogDescription>
-              お預かり金額: &yen;{receivedNum}
-            </AlertDialogDescription>
-            <AlertDialogDescription>
-              お釣り: &yen;{chargeView}
-            </AlertDialogDescription>
-            <AlertDialogDescription>備考: {description}</AlertDialogDescription>
-            <AlertDialogDescription>
-              Tabで選択し、Enterで確定
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={proceedStatus}>
-              キャンセル
-            </AlertDialogCancel>
-            <AlertDialogAction onClick={submitOrder}>確定</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <OrderAlertDialog
+        open
+        onOpenChange={setDialogOpen}
+        order={newOrder}
+        chargeView={chargeView}
+        onSubmit={submitOrder}
+      />
     </>
   );
 }
