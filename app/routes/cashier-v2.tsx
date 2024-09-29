@@ -1,18 +1,13 @@
 import { parseWithZod } from "@conform-to/zod";
 import { type ClientActionFunction, useSubmit } from "@remix-run/react";
-import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import useSWRSubscription from "swr/subscription";
 import { z } from "zod";
+import { ThreeDigitsInput } from "~/components/molecules/ThreeDigitsInput";
 import { ItemAssign } from "~/components/organisms/ItemAssign";
 import { OrderAlertDialog } from "~/components/organisms/OrderAlertDialog";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "~/components/ui/input-otp";
 import { itemConverter, orderConverter } from "~/firebase/converter";
 import { collectionSub } from "~/firebase/subscription";
 import { stringToJSONSchema } from "~/lib/custom-zod";
@@ -244,19 +239,12 @@ export default function Cashier() {
           </div>
           <div>
             <p>割引券番号</p>
-            <InputOTP
+            <ThreeDigitsInput
               id="discountOrderId"
-              maxLength={3}
-              pattern={REGEXP_ONLY_DIGITS}
               value={discountOrderId}
               onChange={(value) => setDiscountOrderId(value)}
               disabled={inputStatus !== "discount"}
-            >
-              <InputOTPGroup />
-              <InputOTPSlot index={0} />
-              <InputOTPSlot index={1} />
-              <InputOTPSlot index={2} />
-            </InputOTP>
+            />
             <p>
               {discountOrder === undefined ? "見つかりません" : null}
               {discountOrder && `有効杯数: ${lastPurchasedCups}`}
