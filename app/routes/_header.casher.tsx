@@ -1,4 +1,4 @@
-import { parseWithZod } from "@conform-to/zod";
+// import { parseWithZod } from "@conform-to/zod";
 import { AlertDialogCancel } from "@radix-ui/react-alert-dialog";
 import { TrashIcon } from "@radix-ui/react-icons";
 // import type { ClientActionFunction } from "@remix-run/react";
@@ -149,7 +149,7 @@ export default function Casher() {
                         </AlertDialogCancel>
                         <AlertDialogAction
                           type="submit"
-                          onClick={async (event) => { }}
+                        // onClick={async (event) => { }}
                         >
                           送信
                         </AlertDialogAction>
@@ -166,31 +166,3 @@ export default function Casher() {
   );
 }
 
-// export const clientAction: ClientActionFunction = async ({ request }) => {
-//   const formData = await request.formData();
-
-//   const schema = z.object({
-//     newOrder: stringToJSONSchema.pipe(orderSchema),
-//   });
-//   const submission = parseWithZod(formData, {
-//     schema,
-//   });
-//   if (submission.status !== "success") {
-//     // return json(submission.reply());
-//     // console.error(submission.error);
-//     // return submission.reply();
-//   }
-
-//   // const newItem = submission.value;
-//   // あとでマシなエラーハンドリングにする
-//   const savedItem = await itemRepository.save(
-//     ItemEntity.createNew({
-//       // name: newItem.name,
-//       // price: newItem.price,
-//       // type: newItem.type,
-//     }),
-//   );
-
-//   console.log("Document written with ID: ", savedItem.id);
-//   return new Response(null, { status: 204 });
-// };
