@@ -79,9 +79,6 @@ export default function Cashier() {
   const charge = newOrder.received - newOrder.billingAmount;
   const chargeView: string | number = charge < 0 ? "不足しています" : charge;
 
-  const discountOrderDOM = useRef<HTMLElement>(
-    document.getElementById("discountOrderId"),
-  );
   const receivedDOM = useRef<HTMLInputElement>(null);
   const descriptionDOM = useRef<HTMLInputElement>(null);
 
@@ -118,7 +115,7 @@ export default function Cashier() {
   const moveFocus = useCallback(() => {
     switch (inputStatus) {
       case "discount":
-        discountOrderDOM.current?.focus();
+        document.getElementById("discountOrderId")?.focus();
         break;
       case "items":
         break;
