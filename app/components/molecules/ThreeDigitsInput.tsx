@@ -16,9 +16,9 @@ const ThreeDigitsInput = forwardRef<
   return (
     <InputOTP ref={ref} maxLength={3} pattern={REGEXP_ONLY_DIGITS} {...props}>
       <InputOTPGroup>
-        <InputOTPSlot index={0} />
-        <InputOTPSlot index={1} />
-        <InputOTPSlot index={2} />
+        <InputOTPSlot index={0} className="font-mono text-3xl" />
+        <InputOTPSlot index={1} className="font-mono text-3xl" />
+        <InputOTPSlot index={2} className="font-mono text-3xl" />
       </InputOTPGroup>
     </InputOTP>
   );
