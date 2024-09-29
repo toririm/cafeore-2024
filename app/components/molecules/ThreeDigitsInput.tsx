@@ -27,7 +27,6 @@ const ThreeDigitsInput = ({ id, value, onChange, disabled }: props) => {
         <InputOTPSlot index={1} />
         <InputOTPSlot index={2} />
       </InputOTPGroup>
-      o
     </InputOTP>
   );
 };
