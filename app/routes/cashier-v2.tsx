@@ -232,6 +232,7 @@ export default function Cashier() {
   const moveFocus = useCallback(() => {
     switch (inputStatus) {
       case "discount":
+        setDialogOpen(false);
         document.getElementById("discountOrderId")?.focus();
         setItemFocus(-1);
         break;
@@ -243,6 +244,7 @@ export default function Cashier() {
         break;
       case "description":
         descriptionDOM.current?.focus();
+        setDialogOpen(false);
         break;
       case "submit":
         setDialogOpen(true);
