@@ -1,7 +1,15 @@
 import { parseWithZod } from "@conform-to/zod";
 import { type ClientActionFunction, useSubmit } from "@remix-run/react";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  type Dispatch,
+  type SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import useSWRSubscription from "swr/subscription";
 import { z } from "zod";
 import {
@@ -25,6 +33,7 @@ import { itemConverter, orderConverter } from "~/firebase/converter";
 import { collectionSub } from "~/firebase/subscription";
 import { stringToJSONSchema } from "~/lib/custom-zod";
 import type { WithId } from "~/lib/typeguard";
+import { cn } from "~/lib/utils";
 import { type ItemEntity, type2label } from "~/models/item";
 import { OrderEntity, orderSchema } from "~/models/order";
 import { orderRepository } from "~/repositories/order";
@@ -38,6 +47,87 @@ const InputStatus = [
   "description",
   "submit",
 ] as const;
+
+const ItemAssign = ({
+  item,
+  idx,
+  setOrderItems,
+  focus,
+}: {
+  item: WithId<ItemEntity>;
+  idx: number;
+  setOrderItems: Dispatch<SetStateAction<WithId<ItemEntity>[]>>;
+  focus: boolean;
+}) => {
+  const [edit, setEdit] = useState(false);
+  const [assignee, setAssinee] = useState<string | null>(null);
+
+  const assignInputRef = useRef<HTMLInputElement>(null);
+
+  const closeAssignInput = useCallback(() => {
+    setOrderItems((prevItems) => {
+      const newItems = [...prevItems];
+      newItems[idx].assignee = assignee;
+      return newItems;
+    });
+    setEdit(false);
+  }, [idx, assignee, setOrderItems]);
+
+  const change = useCallback(() => {
+    if (edit) {
+      closeAssignInput();
+    } else {
+      setEdit(true);
+    }
+  }, [edit, closeAssignInput]);
+
+  useEffect(() => {
+    if (!focus) {
+      closeAssignInput();
+    }
+  }, [focus, closeAssignInput]);
+
+  useEffect(() => {
+    const handler = (event: KeyboardEvent) => {
+      if (event.key === "Enter") {
+        change();
+      }
+    };
+    if (focus) {
+      window.addEventListener("keydown", handler);
+    }
+    return () => {
+      window.removeEventListener("keydown", handler);
+    };
+  }, [focus, change]);
+
+  useEffect(() => {
+    if (edit) {
+      assignInputRef.current?.focus();
+    }
+  }, [edit]);
+
+  return (
+    <div className={cn("grid grid-cols-2", focus && "bg-orange-500")}>
+      <p className="font-bold text-lg">{idx + 1}</p>
+      <div>
+        <p>{item.name}</p>
+        <p>{item.price}</p>
+        <p>{type2label[item.type]}</p>
+        {edit ? (
+          <Input
+            ref={assignInputRef}
+            value={assignee ?? ""}
+            onChange={(e) => setAssinee(e.target.value || null)}
+            placeholder="指名"
+          />
+        ) : (
+          <p>{item.assignee ?? "指名なし"}</p>
+        )}
+      </div>
+    </div>
+  );
+};
 
 export default function Cashier() {
   const { data: items } = useSWRSubscription(
@@ -56,6 +146,7 @@ export default function Cashier() {
   const [inputStatus, setInputStatus] =
     useState<(typeof InputStatus)[number]>("discount");
   const [DialogOpen, setDialogOpen] = useState(false);
+  const [itemFocus, setItemFocus] = useState<number>(0);
 
   const discountOrderIdNum = Number(discountOrderId);
   const discountOrder = orders?.find(
@@ -81,6 +172,32 @@ export default function Cashier() {
 
   const receivedDOM = useRef<HTMLInputElement>(null);
   const descriptionDOM = useRef<HTMLInputElement>(null);
+
+  const proceedItemFocus = useCallback(() => {
+    setItemFocus((prev) => (prev + 1) % orderItems.length);
+  }, [orderItems]);
+
+  const prevousItemFocus = useCallback(() => {
+    setItemFocus((prev) => (prev - 1 + orderItems.length) % orderItems.length);
+  }, [orderItems]);
+
+  useEffect(() => {
+    const handler = (event: KeyboardEvent) => {
+      if (inputStatus !== "items") {
+        return;
+      }
+      if (event.key === "ArrowUp") {
+        prevousItemFocus();
+      }
+      if (event.key === "ArrowDown") {
+        proceedItemFocus();
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => {
+      window.removeEventListener("keydown", handler);
+    };
+  }, [proceedItemFocus, prevousItemFocus, inputStatus]);
 
   const proceedStatus = useCallback(() => {
     const idx = InputStatus.indexOf(inputStatus);
@@ -116,10 +233,12 @@ export default function Cashier() {
     switch (inputStatus) {
       case "discount":
         document.getElementById("discountOrderId")?.focus();
+        setItemFocus(-1);
         break;
       case "items":
         break;
       case "received":
+        setItemFocus(-1);
         receivedDOM.current?.focus();
         break;
       case "description":
@@ -155,7 +274,7 @@ export default function Cashier() {
           return;
         }
         if (event.key === keys[idx]) {
-          setOrderItems((prevItems) => [...prevItems, item]);
+          setOrderItems((prevItems) => [...prevItems, structuredClone(item)]);
         }
       };
       return handler;
@@ -262,14 +381,13 @@ export default function Cashier() {
         <div>
           <p>{inputStatus}</p>
           {orderItems.map((item, idx) => (
-            <div key={`${idx}-${item.id}`} className="grid grid-cols-2">
-              <p className="font-bold text-lg">{idx + 1}</p>
-              <div>
-                <p>{item.name}</p>
-                <p>{item.price}</p>
-                <p>{type2label[item.type]}</p>
-              </div>
-            </div>
+            <ItemAssign
+              key={`${idx}-${item.id}`}
+              item={item}
+              idx={idx}
+              setOrderItems={setOrderItems}
+              focus={idx === itemFocus}
+            />
           ))}
           {discountOrder && (
             <div className="grid grid-cols-2">
