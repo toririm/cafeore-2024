@@ -147,9 +147,7 @@ export default function Casher() {
                         <AlertDialogCancel type="button">
                           戻る
                         </AlertDialogCancel>
-                        <AlertDialogAction
-                          type="submit"
-                        >
+                        <AlertDialogAction type="submit">
                           送信
                         </AlertDialogAction>
                       </AlertDialogFooter>
