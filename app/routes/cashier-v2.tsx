@@ -3,7 +3,7 @@ import { type ClientActionFunction, useSubmit } from "@remix-run/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import useSWRSubscription from "swr/subscription";
 import { z } from "zod";
-import { ThreeDigitsInput } from "~/components/molecules/ThreeDigitsInput";
+import { DiscountInput } from "~/components/organisms/DiscountInput";
 import { ItemAssign } from "~/components/organisms/ItemAssign";
 import { OrderAlertDialog } from "~/components/organisms/OrderAlertDialog";
 import { Button } from "~/components/ui/button";
@@ -237,19 +237,14 @@ export default function Cashier() {
             <p>合計金額</p>
             <p>{newOrder.billingAmount}</p>
           </div>
-          <div>
-            <p>割引券番号</p>
-            <ThreeDigitsInput
-              id="discountOrderId"
-              value={discountOrderId}
-              onChange={(value) => setDiscountOrderId(value)}
-              disabled={inputStatus !== "discount"}
-            />
-            <p>
-              {discountOrder === undefined ? "見つかりません" : null}
-              {discountOrder && `有効杯数: ${lastPurchasedCups}`}
-            </p>
-          </div>
+          <DiscountInput
+            id="discountOrderId"
+            value={discountOrderId}
+            onChange={(value) => setDiscountOrderId(value)}
+            disabled={inputStatus !== "discount"}
+            discountOrder={discountOrder}
+            lastPurchasedCups={lastPurchasedCups}
+          />
           <Input
             type="number"
             value={received}
