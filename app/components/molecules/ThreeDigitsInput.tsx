@@ -1,27 +1,24 @@
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import {
+  type ComponentPropsWithoutRef,
+  type ElementRef,
+  forwardRef,
+} from "react";
+import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
 } from "~/components/ui/input-otp";
 
-type props = {
-  id: string;
-  value: string;
-  onChange: (value: string) => void;
-  disabled: boolean;
-};
-
-const ThreeDigitsInput = ({ id, value, onChange, disabled }: props) => {
+const ThreeDigitsInput = forwardRef<
+  ElementRef<typeof InputOTP>,
+  Omit<
+    ComponentPropsWithoutRef<typeof InputOTP>,
+    "maxLength" | "pattern" | "render"
+  >
+>(({ ...props }, ref) => {
   return (
-    <InputOTP
-      id={id}
-      maxLength={3}
-      pattern={REGEXP_ONLY_DIGITS}
-      value={value}
-      onChange={onChange}
-      disabled={disabled}
-    >
+    <InputOTP ref={ref} maxLength={3} pattern={REGEXP_ONLY_DIGITS} {...props}>
       <InputOTPGroup>
         <InputOTPSlot index={0} />
         <InputOTPSlot index={1} />
@@ -29,6 +26,6 @@ const ThreeDigitsInput = ({ id, value, onChange, disabled }: props) => {
       </InputOTPGroup>
     </InputOTP>
   );
-};
+});
 
 export { ThreeDigitsInput };

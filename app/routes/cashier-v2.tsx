@@ -69,6 +69,7 @@ export default function Cashier() {
 
   const receivedDOM = useRef<HTMLInputElement>(null);
   const descriptionDOM = useRef<HTMLInputElement>(null);
+  const discountInputDOM = useRef<HTMLInputElement>(null);
 
   const proceedItemFocus = useCallback(() => {
     setItemFocus((prev) => (prev + 1) % orderItems.length);
@@ -130,7 +131,7 @@ export default function Cashier() {
     switch (inputStatus) {
       case "discount":
         setDialogOpen(false);
-        document.getElementById("discountOrderId")?.focus();
+        discountInputDOM.current?.focus();
         setItemFocus(-1);
         break;
       case "items":
@@ -238,7 +239,7 @@ export default function Cashier() {
             <p>{newOrder.billingAmount}</p>
           </div>
           <DiscountInput
-            id="discountOrderId"
+            ref={discountInputDOM}
             value={discountOrderId}
             onChange={(value) => setDiscountOrderId(value)}
             disabled={inputStatus !== "discount"}
