@@ -1,6 +1,6 @@
 import { AlertDialogCancel } from "@radix-ui/react-alert-dialog";
 import { TrashIcon } from "@radix-ui/react-icons";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import useSWRSubscription from "swr/subscription";
 import {
   AlertDialog,
@@ -27,7 +27,13 @@ import { itemConverter, orderConverter } from "~/firebase/converter";
 import { collectionSub } from "~/firebase/subscription";
 import type { WithId } from "~/lib/typeguard";
 import type { ItemEntity } from "~/models/item";
-import { OrderEntity } from "~/models/order";
+import { OrderEntity, orderSchema } from "~/models/order";
+import { z } from "zod";
+import { parseWithZod } from "@conform-to/zod";
+import { orderRepository } from "~/repositories/order";
+import { stringToJSONSchema } from "~/lib/custom-zod";
+import { type ClientActionFunction, useSubmit } from "@remix-run/react";
+import { onSnapshot } from "firebase/firestore";
 
 export default function Casher() {
   const { data: items } = useSWRSubscription(
@@ -41,10 +47,32 @@ export default function Casher() {
   const curOrderId =
     orders?.reduce((acc, cur) => Math.max(acc, cur.orderId), 0) ?? 0;
   const nextOrderId = curOrderId + 1;
+  const submit = useSubmit();
   const order = OrderEntity.createNew({ orderId: nextOrderId });
-  const [recieved, setText] = useState(0);
+  const [recieved, setReceived] = useState(0);
   const [queue, setQueue] = useState<WithId<ItemEntity>[]>([]);
   order.items = queue;
+  const charge = recieved-order.total;
+
+  const submitOrder = (() => {
+    console.log(charge)
+    if (charge < 0) {
+      return;
+    }
+    if (queue.length === 0) {
+      return;
+    }
+    submit(
+      { newOrder: JSON.stringify(order.toOrder()) },
+      { method: "POST" },
+    );
+    console.log("送信");
+    setQueue([]);
+    setReceived(0);
+    // setDiscountOrderId("");
+    // setDescription("");
+    // setInputStatus("discount");
+  });
 
   return (
     <div>
@@ -70,7 +98,7 @@ export default function Casher() {
               <TableCaption />
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-500">No. {curOrderId}</TableHead>
+                  <TableHead className="w-500">No. {nextOrderId}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -120,28 +148,29 @@ export default function Casher() {
                           <p>
                             受領額：
                             <Input
+                              id="recieved"
+                              name="recieved"
                               type="number"
                               placeholder="受け取った金額を入力してください"
                               value={recieved}
-                              onChange={(event) =>
-                                setText(Number.parseInt(event.target.value))
-                              }
+                              onChange={(event) => {
+                                const value = Number.parseInt(event.target.value);
+                                setReceived(Number.isNaN(value) ? 0 : value); // NaN のチェック
+                                console.log(charge)
+                              }}
                             />
                           </p>
                           <p>合計： {order.total} 円</p>
                           <p>
-                            お釣り： {recieved - order.total < 0 && 0}
-                            {recieved - order.total >= 0 &&
-                              recieved - order.total}{" "}
-                            円
+                            お釣り： {Number.isNaN(charge) || charge < 0 ? 0 : charge}{" "}円
                           </p>
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel type="button">
+                        <AlertDialogCancel>
                           戻る
                         </AlertDialogCancel>
-                        <AlertDialogAction type="submit">
+                        <AlertDialogAction onClick={submitOrder}>
                           送信
                         </AlertDialogAction>
                       </AlertDialogFooter>
@@ -155,4 +184,48 @@ export default function Casher() {
       </div>
     </div>
   );
+}
+
+export const clientAction: ClientActionFunction = async ({ request }) => {
+  const formData = await request.formData();
+
+  const schema = z.object({
+    newOrder: stringToJSONSchema.pipe(orderSchema),
+  });
+  const submission = parseWithZod(formData, {
+    schema,
+  });
+  if (submission.status !== "success") {
+    console.error(submission.error);
+    return submission.reply();
+  }
+
+  const { newOrder } = submission.value;
+  const order = OrderEntity.fromOrderWOId(newOrder);
+
+  const savedOrder = await orderRepository.save(order);
+
+  console.log("savedOrder", savedOrder);
+
+  return new Response("ok");
+};
+
+function setOrderItems(arg0: never[]) {
+  throw new Error("Function not implemented.");
+}
+
+function setReceived(arg0: string) {
+  throw new Error("Function not implemented.");
+}
+
+function setDiscountOrderId(arg0: string) {
+  throw new Error("Function not implemented.");
+}
+
+function setDescription(arg0: string) {
+  throw new Error("Function not implemented.");
+}
+
+function setInputStatus(arg0: string) {
+  throw new Error("Function not implemented.");
 }
