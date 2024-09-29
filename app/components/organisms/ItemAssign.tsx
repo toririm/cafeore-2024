@@ -6,10 +6,10 @@ import {
   useRef,
   useState,
 } from "react";
-import { Input } from "~/components/ui/input";
 import type { WithId } from "~/lib/typeguard";
 import { cn } from "~/lib/utils";
 import { type ItemEntity, type2label } from "~/models/item";
+import { Input } from "../ui/input";
 
 type props = {
   item: WithId<ItemEntity>;

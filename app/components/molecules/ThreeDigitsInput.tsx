@@ -4,11 +4,7 @@ import {
   type ElementRef,
   forwardRef,
 } from "react";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "~/components/ui/input-otp";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
 
 const ThreeDigitsInput = forwardRef<
   ElementRef<typeof InputOTP>,

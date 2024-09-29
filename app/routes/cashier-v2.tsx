@@ -42,7 +42,7 @@ export default function Cashier() {
   const [description, setDescription] = useState("");
   const [inputStatus, setInputStatus] =
     useState<(typeof InputStatus)[number]>("discount");
-  const [DialogOpen, setDialogOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [itemFocus, setItemFocus] = useState<number>(0);
 
   const discountOrderIdNum = Number(discountOrderId);
@@ -290,7 +290,7 @@ export default function Cashier() {
         </div>
       </div>
       <OrderAlertDialog
-        open
+        open={dialogOpen}
         onOpenChange={setDialogOpen}
         order={newOrder}
         chargeView={chargeView}

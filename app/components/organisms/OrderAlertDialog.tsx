@@ -1,32 +1,27 @@
+import { type ComponentPropsWithoutRef, forwardRef } from "react";
+import { type2label } from "~/models/item";
+import type { OrderEntity } from "~/models/order";
 import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
   AlertDialogTitle,
-} from "@radix-ui/react-alert-dialog";
-import { type2label } from "~/models/item";
-import type { OrderEntity } from "~/models/order";
-import { AlertDialogFooter, AlertDialogHeader } from "../ui/alert-dialog";
+} from "../ui/alert-dialog";
 
-type props = {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  order: OrderEntity;
-  chargeView: number | string;
-  onSubmit: () => void;
-};
-
-const OrderAlertDialog = ({
-  open,
-  onOpenChange,
-  order,
-  chargeView,
-  onSubmit,
-}: props) => {
+const OrderAlertDialog = forwardRef<
+  null,
+  ComponentPropsWithoutRef<typeof AlertDialog> & {
+    order: OrderEntity;
+    chargeView: number | string;
+    onSubmit: () => void;
+  }
+>(({ order, chargeView, onSubmit, ...props }) => {
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
+    <AlertDialog {...props}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>オーダーを確定しますか？</AlertDialogTitle>
@@ -69,6 +64,6 @@ const OrderAlertDialog = ({
       </AlertDialogContent>
     </AlertDialog>
   );
-};
+});
 
 export { OrderAlertDialog };
