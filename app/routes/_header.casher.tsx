@@ -1,10 +1,10 @@
 import { parseWithZod } from "@conform-to/zod";
 import { AlertDialogCancel } from "@radix-ui/react-alert-dialog";
 import { TrashIcon } from "@radix-ui/react-icons";
-import type { ClientActionFunction } from "@remix-run/react";
+// import type { ClientActionFunction } from "@remix-run/react";
 import { useState } from "react";
 import useSWRSubscription from "swr/subscription";
-import { z } from "zod";
+// import { z } from "zod";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,11 +28,12 @@ import {
 } from "~/components/ui/table";
 import { itemConverter, orderConverter } from "~/firebase/converter";
 import { collectionSub } from "~/firebase/subscription";
-import { stringToJSONSchema } from "~/lib/custom-zod";
+// import { stringToJSONSchema } from "~/lib/custom-zod";
 import type { WithId } from "~/lib/typeguard";
-import { ItemEntity } from "~/models/item";
-import { OrderEntity, orderSchema } from "~/models/order";
-import { itemRepository } from "~/repositories/item";
+import type { ItemEntity } from "~/models/item";
+// import { OrderEntity, orderSchema } from "~/models/order";
+import { OrderEntity } from "~/models/order";
+// import { itemRepository } from "~/repositories/item";
 
 export default function Casher() {
   const { data: items } = useSWRSubscription(
@@ -75,9 +76,7 @@ export default function Casher() {
               <TableCaption />
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-500">
-                    No. {curOrderId}
-                  </TableHead>
+                  <TableHead className="w-500">No. {curOrderId}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
