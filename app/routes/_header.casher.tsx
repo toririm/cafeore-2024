@@ -149,7 +149,6 @@ export default function Casher() {
                         </AlertDialogCancel>
                         <AlertDialogAction
                           type="submit"
-                        // onClick={async (event) => { }}
                         >
                           送信
                         </AlertDialogAction>
