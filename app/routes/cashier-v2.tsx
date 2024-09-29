@@ -232,6 +232,7 @@ export default function Cashier() {
   const moveFocus = useCallback(() => {
     switch (inputStatus) {
       case "discount":
+        setDialogOpen(false);
         document.getElementById("discountOrderId")?.focus();
         setItemFocus(-1);
         break;
@@ -243,6 +244,7 @@ export default function Cashier() {
         break;
       case "description":
         descriptionDOM.current?.focus();
+        setDialogOpen(false);
         break;
       case "submit":
         setDialogOpen(true);
@@ -330,8 +332,7 @@ export default function Cashier() {
             お預かり金額入力欄にフォーカスを合わせたまま商品の追加やクリアができます
           </p>
           <ul>
-            <li>商品を追加: キーボードの a, s, d, f, g, h, j, k, l, ;</li>
-            <li>注文を提出: Enter</li>
+            <li>入力ステータスを移動　←・→</li>
             <li>注文をクリア: Esc</li>
           </ul>
           <Button onClick={submitOrder}>提出</Button>
@@ -379,7 +380,14 @@ export default function Cashier() {
           />
         </div>
         <div>
-          <p>{inputStatus}</p>
+          <p>入力ステータス: {inputStatus}</p>
+          {inputStatus === "items" && (
+            <>
+              <p>商品を追加: キーボードの a, s, d, f, g, h, j, k, l, ;</p>
+              <p>↑・↓でアイテムのフォーカスを移動</p>
+              <p>Enterで指名の入力欄を開く</p>
+            </>
+          )}
           {orderItems.map((item, idx) => (
             <ItemAssign
               key={`${idx}-${item.id}`}
@@ -427,6 +435,9 @@ export default function Cashier() {
               お釣り: &yen;{chargeView}
             </AlertDialogDescription>
             <AlertDialogDescription>備考: {description}</AlertDialogDescription>
+            <AlertDialogDescription>
+              Tabで選択し、Enterで確定
+            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={proceedStatus}>
