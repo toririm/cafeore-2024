@@ -12,14 +12,15 @@ import {
   AlertDialogTitle,
 } from "../ui/alert-dialog";
 
+// 確定前にオーダーの内容を表示するダイアログ
 const OrderAlertDialog = forwardRef<
   null,
   ComponentPropsWithoutRef<typeof AlertDialog> & {
     order: OrderEntity;
     chargeView: number | string;
-    onSubmit: () => void;
+    onConfirm: () => void;
   }
->(({ order, chargeView, onSubmit, ...props }) => {
+>(({ order, chargeView, onConfirm, ...props }) => {
   return (
     <AlertDialog {...props}>
       <AlertDialogContent>
@@ -59,7 +60,7 @@ const OrderAlertDialog = forwardRef<
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>キャンセル</AlertDialogCancel>
-          <AlertDialogAction onClick={onSubmit}>確定</AlertDialogAction>
+          <AlertDialogAction onClick={onConfirm}>確定</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

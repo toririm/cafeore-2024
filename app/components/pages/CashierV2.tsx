@@ -266,7 +266,7 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
         onOpenChange={setDialogOpen}
         order={newOrder}
         chargeView={chargeView}
-        onSubmit={submitOrder}
+        onConfirm={submitOrder}
       />
     </>
   );

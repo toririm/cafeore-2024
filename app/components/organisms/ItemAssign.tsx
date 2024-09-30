@@ -33,6 +33,7 @@ const ItemAssign = ({ item, idx, setOrderItems, focus }: props) => {
     setEdit(false);
   }, [idx, assignee, setOrderItems]);
 
+  // edit の状態に応じて assign 入力欄を開くか閉じる
   const change = useCallback(() => {
     if (edit) {
       closeAssignInput();
@@ -41,12 +42,14 @@ const ItemAssign = ({ item, idx, setOrderItems, focus }: props) => {
     }
   }, [edit, closeAssignInput]);
 
+  // focus が変化したときに assign 入力欄を閉じる
   useEffect(() => {
     if (!focus) {
       closeAssignInput();
     }
   }, [focus, closeAssignInput]);
 
+  // Enter が押されたときに assign 入力欄を開く
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
       if (event.key === "Enter") {
@@ -61,6 +64,7 @@ const ItemAssign = ({ item, idx, setOrderItems, focus }: props) => {
     };
   }, [focus, change]);
 
+  // edit が true に変化したとき assign 入力欄にフォーカスする
   useEffect(() => {
     if (edit) {
       assignInputRef.current?.focus();

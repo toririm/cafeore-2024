@@ -7,6 +7,7 @@ import type { WithId } from "~/lib/typeguard";
 import type { OrderEntity } from "~/models/order";
 import { ThreeDigitsInput } from "../molecules/ThreeDigitsInput";
 
+// 割引券番号を入力するためのコンポーネント
 const DiscountInput = forwardRef<
   ElementRef<typeof ThreeDigitsInput>,
   ComponentPropsWithoutRef<typeof ThreeDigitsInput> & {

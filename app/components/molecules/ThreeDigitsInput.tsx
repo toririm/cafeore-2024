@@ -6,6 +6,7 @@ import {
 } from "react";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
 
+// 3桁の数字を入力するためのコンポーネント
 const ThreeDigitsInput = forwardRef<
   ElementRef<typeof InputOTP>,
   Omit<

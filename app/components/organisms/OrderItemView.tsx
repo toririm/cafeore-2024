@@ -12,6 +12,7 @@ type props = {
   discountOrder: boolean;
 };
 
+// オーダーのアイテムや割引情報を表示するコンポーネント
 const OrderItemView = ({
   inputStatus,
   discountOrder,
