@@ -166,7 +166,8 @@ export default function Casher() {
                           </p>
                           <p>合計： {order.total} 円</p>
                           <p>
-                            お釣り： {Number.isNaN(charge) || charge < 0 ? 0 : charge} 円
+                            お釣り：{" "}
+                            {Number.isNaN(charge) || charge < 0 ? 0 : charge} 円
                           </p>
                         </AlertDialogDescription>
                       </AlertDialogHeader>
