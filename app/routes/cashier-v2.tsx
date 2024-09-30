@@ -4,8 +4,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import useSWRSubscription from "swr/subscription";
 import { z } from "zod";
 import { DiscountInput } from "~/components/organisms/DiscountInput";
-import { ItemAssign } from "~/components/organisms/ItemAssign";
 import { OrderAlertDialog } from "~/components/organisms/OrderAlertDialog";
+import { OrderItemView } from "~/components/organisms/OrderItemView";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { itemConverter, orderConverter } from "~/firebase/converter";
@@ -265,28 +265,14 @@ export default function Cashier() {
         </div>
         <div>
           <p>入力ステータス: {inputStatus}</p>
-          {inputStatus === "items" && (
-            <>
-              <p>商品を追加: キーボードの a, s, d, f, g, h, j, k, l, ;</p>
-              <p>↑・↓でアイテムのフォーカスを移動</p>
-              <p>Enterで指名の入力欄を開く</p>
-            </>
-          )}
-          {orderItems.map((item, idx) => (
-            <ItemAssign
-              key={`${idx}-${item.id}`}
-              item={item}
-              idx={idx}
-              setOrderItems={setOrderItems}
-              focus={idx === itemFocus}
-            />
-          ))}
-          {discountOrder && (
-            <div className="grid grid-cols-2">
-              <p className="font-bold text-lg">割引</p>
-              <div>-&yen;{newOrder.discountInfo.discount}</div>
-            </div>
-          )}
+          <OrderItemView
+            order={newOrder}
+            setOrderItems={setOrderItems}
+            inputStatus={inputStatus}
+            itemFocus={itemFocus}
+            setItemFocus={setItemFocus}
+            discountOrder={Boolean(discountOrder)}
+          />
         </div>
       </div>
       <OrderAlertDialog
