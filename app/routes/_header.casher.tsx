@@ -1,6 +1,6 @@
 import { AlertDialogCancel } from "@radix-ui/react-alert-dialog";
 import { TrashIcon } from "@radix-ui/react-icons";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import useSWRSubscription from "swr/subscription";
 import {
   AlertDialog,
@@ -33,7 +33,6 @@ import { parseWithZod } from "@conform-to/zod";
 import { orderRepository } from "~/repositories/order";
 import { stringToJSONSchema } from "~/lib/custom-zod";
 import { type ClientActionFunction, useSubmit } from "@remix-run/react";
-import { onSnapshot } from "firebase/firestore";
 
 export default function Casher() {
   const { data: items } = useSWRSubscription(
@@ -53,6 +52,8 @@ export default function Casher() {
   const [queue, setQueue] = useState<WithId<ItemEntity>[]>([]);
   order.items = queue;
   const charge = recieved-order.total;
+  const [description, setDescription] = useState("");
+  order.description = description;
 
   const submitOrder = (() => {
     console.log(charge)
@@ -69,13 +70,11 @@ export default function Casher() {
     console.log("送信");
     setQueue([]);
     setReceived(0);
-    // setDiscountOrderId("");
-    // setDescription("");
-    // setInputStatus("discount");
+    setDescription("");
   });
 
   return (
-    <div>
+    <div className="p-[15px]">
       <div className="flex h-screen flex-row flex-wrap">
         <div className="w-2/3">
           <div className="grid h-screen grid-cols-2">
@@ -131,7 +130,15 @@ export default function Casher() {
             </Table>
             <ul>
               <li>
-                <h2 className="relative">合計金額：{order.total} 円</h2>
+                <Input 
+                  id="description"
+                  name="description"
+                  type="string"
+                  placeholder="備考欄"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+                <p className="relative">合計金額：{order.total} 円</p>
               </li>
               <li>
                 <form>
@@ -142,9 +149,10 @@ export default function Casher() {
                     <AlertDialogContent>
                       <AlertDialogHeader>
                         <AlertDialogTitle>
-                          金額を確認してください
+                          金額・備考欄を確認してください
                         </AlertDialogTitle>
                         <AlertDialogDescription>
+                          <p>備考欄：{order.description}</p>
                           <p>
                             受領額：
                             <Input
@@ -153,10 +161,9 @@ export default function Casher() {
                               type="number"
                               placeholder="受け取った金額を入力してください"
                               value={recieved}
-                              onChange={(event) => {
-                                const value = Number.parseInt(event.target.value);
+                              onChange={(e) => {
+                                const value = Number.parseInt(e.target.value);
                                 setReceived(Number.isNaN(value) ? 0 : value); // NaN のチェック
-                                console.log(charge)
                               }}
                             />
                           </p>
