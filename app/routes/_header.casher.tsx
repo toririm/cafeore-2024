@@ -1,7 +1,10 @@
+import { parseWithZod } from "@conform-to/zod";
 import { AlertDialogCancel } from "@radix-ui/react-alert-dialog";
 import { TrashIcon } from "@radix-ui/react-icons";
+import { type ClientActionFunction, useSubmit } from "@remix-run/react";
 import { useState } from "react";
 import useSWRSubscription from "swr/subscription";
+import { z } from "zod";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,14 +28,11 @@ import {
 } from "~/components/ui/table";
 import { itemConverter, orderConverter } from "~/firebase/converter";
 import { collectionSub } from "~/firebase/subscription";
+import { stringToJSONSchema } from "~/lib/custom-zod";
 import type { WithId } from "~/lib/typeguard";
 import type { ItemEntity } from "~/models/item";
 import { OrderEntity, orderSchema } from "~/models/order";
-import { z } from "zod";
-import { parseWithZod } from "@conform-to/zod";
 import { orderRepository } from "~/repositories/order";
-import { stringToJSONSchema } from "~/lib/custom-zod";
-import { type ClientActionFunction, useSubmit } from "@remix-run/react";
 
 export default function Casher() {
   const { data: items } = useSWRSubscription(
@@ -51,22 +51,19 @@ export default function Casher() {
   const [recieved, setReceived] = useState(0);
   const [queue, setQueue] = useState<WithId<ItemEntity>[]>([]);
   order.items = queue;
-  const charge = recieved-order.total;
+  const charge = recieved - order.total;
   const [description, setDescription] = useState("");
   order.description = description;
 
   const submitOrder = (() => {
-    console.log(charge)
+    console.log(charge);
     if (charge < 0) {
       return;
     }
     if (queue.length === 0) {
       return;
     }
-    submit(
-      { newOrder: JSON.stringify(order.toOrder()) },
-      { method: "POST" },
-    );
+    submit({ newOrder: JSON.stringify(order.toOrder()) }, { method: "POST" });
     console.log("送信");
     setQueue([]);
     setReceived(0);
@@ -130,7 +127,7 @@ export default function Casher() {
             </Table>
             <ul>
               <li>
-                <Input 
+                <Input
                   id="description"
                   name="description"
                   type="string"
@@ -169,14 +166,12 @@ export default function Casher() {
                           </p>
                           <p>合計： {order.total} 円</p>
                           <p>
-                            お釣り： {Number.isNaN(charge) || charge < 0 ? 0 : charge}{" "}円
+                            お釣り：{" "}{Number.isNaN(charge) || charge < 0 ? 0 : charge}{" "}円
                           </p>
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel>
-                          戻る
-                        </AlertDialogCancel>
+                        <AlertDialogCancel>戻る</AlertDialogCancel>
                         <AlertDialogAction onClick={submitOrder}>
                           送信
                         </AlertDialogAction>
