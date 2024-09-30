@@ -1,7 +1,10 @@
+import { parseWithZod } from "@conform-to/zod";
 import { AlertDialogCancel } from "@radix-ui/react-alert-dialog";
 import { TrashIcon } from "@radix-ui/react-icons";
+import { type ClientActionFunction, useSubmit } from "@remix-run/react";
 import { useState } from "react";
 import useSWRSubscription from "swr/subscription";
+import { z } from "zod";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,9 +28,11 @@ import {
 } from "~/components/ui/table";
 import { itemConverter, orderConverter } from "~/firebase/converter";
 import { collectionSub } from "~/firebase/subscription";
+import { stringToJSONSchema } from "~/lib/custom-zod";
 import type { WithId } from "~/lib/typeguard";
 import type { ItemEntity } from "~/models/item";
-import { OrderEntity } from "~/models/order";
+import { OrderEntity, orderSchema } from "~/models/order";
+import { orderRepository } from "~/repositories/order";
 
 export default function Casher() {
   const { data: items } = useSWRSubscription(
@@ -41,13 +46,32 @@ export default function Casher() {
   const curOrderId =
     orders?.reduce((acc, cur) => Math.max(acc, cur.orderId), 0) ?? 0;
   const nextOrderId = curOrderId + 1;
+  const submit = useSubmit();
   const order = OrderEntity.createNew({ orderId: nextOrderId });
-  const [recieved, setText] = useState(0);
+  const [recieved, setReceived] = useState(0);
   const [queue, setQueue] = useState<WithId<ItemEntity>[]>([]);
   order.items = queue;
+  const charge = recieved - order.total;
+  const [description, setDescription] = useState("");
+  order.description = description;
+
+  const submitOrder = () => {
+    console.log(charge);
+    if (charge < 0) {
+      return;
+    }
+    if (queue.length === 0) {
+      return;
+    }
+    submit({ newOrder: JSON.stringify(order.toOrder()) }, { method: "POST" });
+    console.log("送信");
+    setQueue([]);
+    setReceived(0);
+    setDescription("");
+  };
 
   return (
-    <div>
+    <div className="p-[15px]">
       <div className="flex h-screen flex-row flex-wrap">
         <div className="w-2/3">
           <div className="grid h-screen grid-cols-2">
@@ -70,7 +94,7 @@ export default function Casher() {
               <TableCaption />
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-500">No. {curOrderId}</TableHead>
+                  <TableHead className="w-500">No. {nextOrderId}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -103,7 +127,15 @@ export default function Casher() {
             </Table>
             <ul>
               <li>
-                <h2 className="relative">合計金額：{order.total} 円</h2>
+                <Input
+                  id="description"
+                  name="description"
+                  type="string"
+                  placeholder="備考欄"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+                <p className="relative">合計金額：{order.total} 円</p>
               </li>
               <li>
                 <form>
@@ -114,34 +146,34 @@ export default function Casher() {
                     <AlertDialogContent>
                       <AlertDialogHeader>
                         <AlertDialogTitle>
-                          金額を確認してください
+                          金額・備考欄を確認してください
                         </AlertDialogTitle>
                         <AlertDialogDescription>
+                          <p>備考欄：{order.description}</p>
                           <p>
                             受領額：
                             <Input
+                              id="recieved"
+                              name="recieved"
                               type="number"
                               placeholder="受け取った金額を入力してください"
                               value={recieved}
-                              onChange={(event) =>
-                                setText(Number.parseInt(event.target.value))
-                              }
+                              onChange={(e) => {
+                                const value = Number.parseInt(e.target.value);
+                                setReceived(Number.isNaN(value) ? 0 : value); // NaN のチェック
+                              }}
                             />
                           </p>
                           <p>合計： {order.total} 円</p>
                           <p>
-                            お釣り： {recieved - order.total < 0 && 0}
-                            {recieved - order.total >= 0 &&
-                              recieved - order.total}{" "}
-                            円
+                            お釣り：{" "}
+                            {Number.isNaN(charge) || charge < 0 ? 0 : charge} 円
                           </p>
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel type="button">
-                          戻る
-                        </AlertDialogCancel>
-                        <AlertDialogAction type="submit">
+                        <AlertDialogCancel>戻る</AlertDialogCancel>
+                        <AlertDialogAction onClick={submitOrder}>
                           送信
                         </AlertDialogAction>
                       </AlertDialogFooter>
@@ -156,3 +188,27 @@ export default function Casher() {
     </div>
   );
 }
+
+export const clientAction: ClientActionFunction = async ({ request }) => {
+  const formData = await request.formData();
+
+  const schema = z.object({
+    newOrder: stringToJSONSchema.pipe(orderSchema),
+  });
+  const submission = parseWithZod(formData, {
+    schema,
+  });
+  if (submission.status !== "success") {
+    console.error(submission.error);
+    return submission.reply();
+  }
+
+  const { newOrder } = submission.value;
+  const order = OrderEntity.fromOrderWOId(newOrder);
+
+  const savedOrder = await orderRepository.save(order);
+
+  console.log("savedOrder", savedOrder);
+
+  return new Response("ok");
+};
