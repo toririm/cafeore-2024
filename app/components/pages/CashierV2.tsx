@@ -31,7 +31,7 @@ type props = {
 };
 
 export type Action =
-  | { type: "clear" }
+  | { type: "clear"; effectFn?: () => void }
   | { type: "updateOrderId"; orderId: number }
   | {
       type: "addItem";
@@ -86,10 +86,16 @@ const reducer = (state: OrderEntity, action: Action): OrderEntity => {
     updated.description = description;
     return updated;
   };
+  const clear = (effectFn?: () => void) => {
+    if (effectFn) {
+      effectFn();
+    }
+    return OrderEntity.createNew({ orderId: state.orderId });
+  };
 
   switch (action.type) {
     case "clear":
-      return OrderEntity.createNew({ orderId: state.orderId });
+      return clear(action.effectFn);
     case "applyDiscount":
       return applyDiscount(action.discountOrder);
     case "removeDiscount":
@@ -122,6 +128,7 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
   const [inputStatus, setInputStatus] =
     useState<(typeof InputStatus)[number]>("discount");
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [inputSession, setInputSession] = useState(new Date());
 
   const nextOrderId = useMemo(() => latestOrderId(orders) + 1, [orders]);
   useEffect(() => {
@@ -152,7 +159,7 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
     if (newOrder.items.length === 0) {
       return;
     }
-    dispatch({ type: "clear" });
+    dispatch({ type: "clear", effectFn: () => setInputSession(new Date()) });
     submitPayload(newOrder);
   }, [charge, newOrder, submitPayload]);
 
@@ -230,6 +237,7 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
             <p>{newOrder.billingAmount}</p>
           </div>
           <DiscountInput
+            key={`DiscountInput-${inputSession.toJSON()}`}
             ref={discountInputDOM}
             disabled={inputStatus !== "discount"}
             orders={orders}
@@ -244,6 +252,7 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
             )}
           />
           <AttractiveTextBox
+            key={`Received-${inputSession.toJSON()}`}
             type="number"
             onTextSet={useCallback(
               (text) => dispatch({ type: "setReceived", received: text }),
@@ -253,6 +262,7 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
           />
           <Input disabled value={chargeView} />
           <AttractiveTextBox
+            key={`Description-${inputSession.toJSON()}`}
             onTextSet={useCallback(
               (text) => dispatch({ type: "setDescription", description: text }),
               [],
