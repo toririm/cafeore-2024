@@ -46,8 +46,8 @@ export class OrderEntity implements Order {
   // 全てのプロパティを private にして外部からの直接アクセスを禁止
   private constructor(
     private readonly _id: string | undefined,
-    private readonly _orderId: number,
-    private readonly _createdAt: Date,
+    private _orderId: number,
+    private _createdAt: Date,
     private _servedAt: Date | null,
     private _items: WithId<ItemEntity>[],
     private _total: number,
@@ -77,25 +77,13 @@ export class OrderEntity implements Order {
     );
   }
 
-  static fromOrder(order: WithId<Order>): WithId<OrderEntity> {
+  static fromOrder(order: WithId<Order>): WithId<OrderEntity>;
+  static fromOrder(order: Order): OrderEntity;
+  static fromOrder(
+    order: WithId<Order> | Order,
+  ): WithId<OrderEntity> | OrderEntity {
     return new OrderEntity(
       order.id,
-      order.orderId,
-      order.createdAt,
-      order.servedAt,
-      order.items,
-      order.total,
-      order.orderReady,
-      order.description,
-      order.billingAmount,
-      order.received,
-      DiscountInfoEntity.fromDiscountInfo(order.discountInfo),
-    ) as WithId<OrderEntity>;
-  }
-
-  static fromOrderWOId(order: Order): OrderEntity {
-    return new OrderEntity(
-      undefined,
       order.orderId,
       order.createdAt,
       order.servedAt,
@@ -119,6 +107,9 @@ export class OrderEntity implements Order {
 
   get orderId() {
     return this._orderId;
+  }
+  set orderId(orderId: number) {
+    this._orderId = orderId;
   }
 
   get createdAt() {
@@ -175,7 +166,7 @@ export class OrderEntity implements Order {
   // methods
   // --------------------------------------------------
 
-  _getCoffeeCount() {
+  getCoffeeCount() {
     // milk 以外のアイテムの数を返す
     // TODO(toririm): このメソッドは items が変更された時だけでいい
     return this.items.filter((item) => item.type !== "milk").length;
@@ -191,11 +182,10 @@ export class OrderEntity implements Order {
     this._servedAt = new Date();
   }
 
-  /* このメソッドのみで discountInfo を更新する */
   applyDiscount(previousOrder: OrderEntity) {
     const validCups = Math.min(
-      this._getCoffeeCount(),
-      previousOrder._getCoffeeCount(),
+      this.getCoffeeCount(),
+      previousOrder.getCoffeeCount(),
     );
     const discount = validCups * DISCOUNT_RATE_PER_CUP;
 
@@ -204,7 +194,15 @@ export class OrderEntity implements Order {
       validCups,
       discount,
     });
-    return this._discountInfo;
+  }
+
+  removeDiscount() {
+    this._discountInfo = new DiscountInfoEntity(null, 0, 0);
+  }
+
+  nowCreated() {
+    // createdAt を更新
+    this._createdAt = new Date();
   }
 
   toOrder(): Order {
@@ -221,5 +219,11 @@ export class OrderEntity implements Order {
       received: this.received,
       discountInfo: this.discountInfo,
     };
+  }
+
+  clone(): WithId<OrderEntity>;
+  clone(): OrderEntity;
+  clone(): WithId<OrderEntity> | OrderEntity {
+    return OrderEntity.fromOrder(this.toOrder());
   }
 }
