@@ -68,12 +68,17 @@ const reducer = (state: OrderEntity, action: Action): OrderEntity => {
     updated.items[idx] = action(updated.items[idx]);
     return updated;
   };
+  const updateOrderId = (orderId: number) => {
+    const updated = state.clone();
+    updated.orderId = orderId;
+    return updated;
+  };
 
   switch (action.type) {
     case "clear":
       return OrderEntity.createNew({ orderId: state.orderId });
     case "updateOrderId":
-      return OrderEntity.createNew({ orderId: action.orderId });
+      return updateOrderId(action.orderId);
     case "applyDiscount":
       return applyDiscount(action.discountOrder);
     case "removeDiscount":
