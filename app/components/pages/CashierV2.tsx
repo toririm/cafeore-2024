@@ -10,6 +10,7 @@ import { Input } from "~/components/ui/input";
 import type { WithId } from "~/lib/typeguard";
 import { type ItemEntity, type2label } from "~/models/item";
 import { OrderEntity } from "~/models/order";
+import { AttractiveTextBox } from "../molecules/AttractiveTextBox";
 import { DiscountInput } from "../organisms/DiscountInput";
 import { OrderAlertDialog } from "../organisms/OrderAlertDialog";
 import { OrderItemView } from "../organisms/OrderItemView";
@@ -42,7 +43,9 @@ export type Action =
       action: (prev: WithId<ItemEntity>) => WithId<ItemEntity>;
     }
   | { type: "applyDiscount"; discountOrder: WithId<OrderEntity> }
-  | { type: "removeDiscount" };
+  | { type: "removeDiscount" }
+  | { type: "setReceived"; received: string }
+  | { type: "setDescription"; description: string };
 
 const reducer = (state: OrderEntity, action: Action): OrderEntity => {
   const addItem = (item: WithId<ItemEntity>) => {
@@ -73,6 +76,16 @@ const reducer = (state: OrderEntity, action: Action): OrderEntity => {
     updated.orderId = orderId;
     return updated;
   };
+  const setReceived = (received: string) => {
+    const updated = state.clone();
+    updated.received = Number(received);
+    return updated;
+  };
+  const setDescription = (description: string) => {
+    const updated = state.clone();
+    updated.description = description;
+    return updated;
+  };
 
   switch (action.type) {
     case "clear":
@@ -87,6 +100,10 @@ const reducer = (state: OrderEntity, action: Action): OrderEntity => {
       return addItem(action.item);
     case "mutateItem":
       return mutateItem(action.idx, action.action);
+    case "setReceived":
+      return setReceived(action.received);
+    case "setDescription":
+      return setDescription(action.description);
   }
 };
 
@@ -112,7 +129,6 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
   const charge = newOrder.received - newOrder.billingAmount;
   const chargeView: string | number = charge < 0 ? "不足しています" : charge;
 
-  const receivedDOM = useRef<HTMLInputElement>(null);
   const descriptionDOM = useRef<HTMLInputElement>(null);
   const discountInputDOM = useRef<HTMLInputElement>(null);
 
@@ -148,7 +164,6 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
       case "items":
         break;
       case "received":
-        receivedDOM.current?.focus();
         break;
       case "description":
         descriptionDOM.current?.focus();
@@ -228,21 +243,21 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
               [],
             )}
           />
-          <Input
+          <AttractiveTextBox
             type="number"
-            value={received}
-            onChange={(e) => setReceived(e.target.value)}
-            placeholder="お預かり金額を入力"
-            disabled={inputStatus !== "received"}
-            ref={receivedDOM}
+            onTextSet={useCallback(
+              (text) => dispatch({ type: "setReceived", received: text }),
+              [],
+            )}
+            focus={inputStatus === "received"}
           />
           <Input disabled value={chargeView} />
-          <Input
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="備考"
-            disabled={inputStatus !== "description"}
-            ref={descriptionDOM}
+          <AttractiveTextBox
+            onTextSet={useCallback(
+              (text) => dispatch({ type: "setDescription", description: text }),
+              [],
+            )}
+            focus={inputStatus === "description"}
           />
         </div>
         <div>
