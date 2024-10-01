@@ -1,4 +1,10 @@
-import { type ChangeEventHandler, useCallback, useEffect, useRef } from "react";
+import {
+  type ChangeEventHandler,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Input, type InputProps } from "../ui/input";
 
 type props = InputProps & {
@@ -8,14 +14,17 @@ type props = InputProps & {
 
 // focus が true のときにフォーカスを当てるテキストボックス
 const AttractiveTextBox = ({ focus, onTextSet, ...props }: props) => {
+  const [text, setText] = useState("");
   const DOMRef = useRef<HTMLInputElement>(null);
 
-  const handler: ChangeEventHandler<HTMLInputElement> = useCallback(
-    (event) => {
-      onTextSet(event.target.value);
-    },
-    [onTextSet],
+  const onChangeHandler: ChangeEventHandler<HTMLInputElement> = useCallback(
+    (event) => setText(event.target.value),
+    [],
   );
+
+  useEffect(() => {
+    onTextSet(text);
+  }, [text, onTextSet]);
 
   useEffect(() => {
     if (focus) {
@@ -23,7 +32,15 @@ const AttractiveTextBox = ({ focus, onTextSet, ...props }: props) => {
     }
   }, [focus]);
 
-  return <Input onChange={handler} ref={DOMRef} {...props} />;
+  return (
+    <Input
+      value={text}
+      onChange={onChangeHandler}
+      ref={DOMRef}
+      disabled={!focus}
+      {...props}
+    />
+  );
 };
 
 export { AttractiveTextBox };

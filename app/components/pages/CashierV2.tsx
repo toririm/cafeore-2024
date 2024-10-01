@@ -90,8 +90,6 @@ const reducer = (state: OrderEntity, action: Action): OrderEntity => {
   switch (action.type) {
     case "clear":
       return OrderEntity.createNew({ orderId: state.orderId });
-    case "updateOrderId":
-      return updateOrderId(action.orderId);
     case "applyDiscount":
       return applyDiscount(action.discountOrder);
     case "removeDiscount":
@@ -104,6 +102,8 @@ const reducer = (state: OrderEntity, action: Action): OrderEntity => {
       return setReceived(action.received);
     case "setDescription":
       return setDescription(action.description);
+    case "updateOrderId":
+      return updateOrderId(action.orderId);
   }
 };
 
@@ -115,19 +115,22 @@ const latestOrderId = (orders: WithId<OrderEntity>[] | undefined): number => {
 };
 
 const CashierV2 = ({ items, orders, submitPayload }: props) => {
-  const nextOrderId = useMemo(() => latestOrderId(orders) + 1, [orders]);
   const [newOrder, dispatch] = useReducer(
     reducer,
-    OrderEntity.createNew({ orderId: nextOrderId }),
+    OrderEntity.createNew({ orderId: -1 }),
   );
   const [inputStatus, setInputStatus] =
     useState<(typeof InputStatus)[number]>("discount");
   const [dialogOpen, setDialogOpen] = useState(false);
 
+  const nextOrderId = useMemo(() => latestOrderId(orders) + 1, [orders]);
+  useEffect(() => {
+    dispatch({ type: "updateOrderId", orderId: nextOrderId });
+  }, [nextOrderId]);
+
   const charge = newOrder.received - newOrder.billingAmount;
   const chargeView: string | number = charge < 0 ? "不足しています" : charge;
 
-  const descriptionDOM = useRef<HTMLInputElement>(null);
   const discountInputDOM = useRef<HTMLInputElement>(null);
 
   const proceedStatus = useCallback(() => {
@@ -164,7 +167,6 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
       case "received":
         break;
       case "description":
-        descriptionDOM.current?.focus();
         setDialogOpen(false);
         break;
       case "submit":
@@ -222,7 +224,7 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
             <li>注文をクリア: Esc</li>
           </ul>
           <Button onClick={submitOrder}>提出</Button>
-          <h1 className="text-lg">{`No. ${nextOrderId}`}</h1>
+          <h1 className="text-lg">{`No. ${newOrder.orderId}`}</h1>
           <div className="border-8">
             <p>合計金額</p>
             <p>{newOrder.billingAmount}</p>
