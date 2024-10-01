@@ -120,8 +120,6 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
     reducer,
     OrderEntity.createNew({ orderId: nextOrderId }),
   );
-  const [received, setReceived] = useState("");
-  const [description, setDescription] = useState("");
   const [inputStatus, setInputStatus] =
     useState<(typeof InputStatus)[number]>("discount");
   const [dialogOpen, setDialogOpen] = useState(false);
