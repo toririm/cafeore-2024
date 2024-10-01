@@ -98,7 +98,6 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
     reducer,
     OrderEntity.createNew({ orderId: nextOrderId }),
   );
-  const [orderItems, setOrderItems] = useState<WithId<ItemEntity>[]>([]);
   const [received, setReceived] = useState("");
   const [description, setDescription] = useState("");
   const [inputStatus, setInputStatus] =
@@ -194,13 +193,6 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
               <p>{item.name}</p>
               <p>{item.price}</p>
               <p>{type2label[item.type]}</p>
-              <Button
-                onClick={() => {
-                  setOrderItems((prevItems) => [...prevItems, item]);
-                }}
-              >
-                追加
-              </Button>
             </div>
           ))}
         </div>
@@ -212,7 +204,6 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
             <li>注文をクリア: Esc</li>
           </ul>
           <Button onClick={submitOrder}>提出</Button>
-          <Button onClick={() => setOrderItems([])}>クリア</Button>
           <h1 className="text-lg">{`No. ${nextOrderId}`}</h1>
           <div className="border-8">
             <p>合計金額</p>
