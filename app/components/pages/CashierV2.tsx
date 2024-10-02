@@ -4,6 +4,7 @@ import type { WithId } from "~/lib/typeguard";
 import { type ItemEntity, type2label } from "~/models/item";
 import type { OrderEntity } from "~/models/order";
 import { useOrderState } from "../functional/useOrderState";
+import { useUISession } from "../functional/useUISession";
 import { AttractiveTextBox } from "../molecules/AttractiveTextBox";
 import { DiscountInput } from "../organisms/DiscountInput";
 import { OrderAlertDialog } from "../organisms/OrderAlertDialog";
@@ -36,7 +37,7 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
   const [inputStatus, setInputStatus] =
     useState<(typeof InputStatus)[number]>("discount");
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [inputSession, setInputSession] = useState(new Date());
+  const [UISession, renewUISession] = useUISession();
 
   const nextOrderId = useMemo(() => latestOrderId(orders) + 1, [orders]);
   useEffect(() => {
@@ -69,10 +70,10 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
     }
     newOrderDispatch({
       type: "clear",
-      effectFn: () => setInputSession(new Date()),
+      effectFn: renewUISession,
     });
     submitPayload(newOrder);
-  }, [charge, newOrder, submitPayload, newOrderDispatch]);
+  }, [charge, newOrder, submitPayload, newOrderDispatch, renewUISession]);
 
   const moveFocus = useCallback(() => {
     switch (inputStatus) {
@@ -148,7 +149,7 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
             <p>{newOrder.billingAmount}</p>
           </div>
           <DiscountInput
-            key={`DiscountInput-${inputSession.toJSON()}`}
+            key={`DiscountInput-${UISession.key}`}
             ref={discountInputDOM}
             disabled={inputStatus !== "discount"}
             orders={orders}
@@ -163,7 +164,7 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
             )}
           />
           <AttractiveTextBox
-            key={`Received-${inputSession.toJSON()}`}
+            key={`Received-${UISession.key}`}
             type="number"
             onTextSet={useCallback(
               (text) =>
@@ -174,7 +175,7 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
           />
           <Input disabled value={chargeView} />
           <AttractiveTextBox
-            key={`Description-${inputSession.toJSON()}`}
+            key={`Description-${UISession.key}`}
             onTextSet={useCallback(
               (text) =>
                 newOrderDispatch({ type: "setDescription", description: text }),
