@@ -37,9 +37,9 @@ const OrderAlertDialog = forwardRef<
           <AlertDialogDescription>
             合計金額: &yen;{order.total}
           </AlertDialogDescription>
-          {order.discountInfo.previousOrderId !== null && (
+          {order.discountOrderId !== null && (
             <AlertDialogDescription>
-              割引: -&yen;{order.discountInfo.discount}
+              割引: -&yen;{order.discount}
             </AlertDialogDescription>
           )}
           <AlertDialogDescription>
