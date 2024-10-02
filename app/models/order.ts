@@ -200,6 +200,10 @@ export class OrderEntity implements Order {
     this._createdAt = new Date();
   }
 
+  getCharge() {
+    return this.received - this.billingAmount;
+  }
+
   toOrder(): Order {
     return {
       id: this.id,

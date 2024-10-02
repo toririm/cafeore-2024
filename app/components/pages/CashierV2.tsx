@@ -37,8 +37,13 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
     newOrderDispatch({ type: "updateOrderId", orderId: nextOrderId });
   }, [nextOrderId, newOrderDispatch]);
 
-  const charge = newOrder.received - newOrder.billingAmount;
-  const chargeView: string | number = charge < 0 ? "不足しています" : charge;
+  const chargeView: string | number = useMemo(() => {
+    const charge = newOrder.getCharge();
+    if (charge < 0) {
+      return "不足しています";
+    }
+    return charge;
+  }, [newOrder]);
 
   const proceedStatus = useCallback(() => {
     const idx = InputStatus.indexOf(inputStatus);
@@ -53,7 +58,7 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
   }, [inputStatus]);
 
   const submitOrder = useCallback(() => {
-    if (charge < 0) {
+    if (newOrder.getCharge() < 0) {
       return;
     }
     if (newOrder.items.length === 0) {
@@ -64,7 +69,7 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
       effectFn: renewUISession,
     });
     submitPayload(newOrder);
-  }, [charge, newOrder, submitPayload, newOrderDispatch, renewUISession]);
+  }, [newOrder, submitPayload, newOrderDispatch, renewUISession]);
 
   const keyEventHandlers = useMemo(() => {
     return {
