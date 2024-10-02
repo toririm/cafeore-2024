@@ -19,8 +19,9 @@ const OrderAlertDialog = forwardRef<
     order: OrderEntity;
     chargeView: number | string;
     onConfirm: () => void;
+    onCanceled: () => void;
   }
->(({ order, chargeView, onConfirm, ...props }) => {
+>(({ order, chargeView, onConfirm, onCanceled, ...props }) => {
   return (
     <AlertDialog {...props}>
       <AlertDialogContent>
@@ -59,7 +60,7 @@ const OrderAlertDialog = forwardRef<
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>キャンセル</AlertDialogCancel>
+          <AlertDialogCancel onClick={onCanceled}>キャンセル</AlertDialogCancel>
           <AlertDialogAction onClick={onConfirm}>確定</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

@@ -30,7 +30,6 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
   const [newOrder, newOrderDispatch] = useOrderState();
   const [inputStatus, setInputStatus] =
     useState<(typeof InputStatus)[number]>("discount");
-  const [dialogOpen, setDialogOpen] = useState(false);
   const [UISession, renewUISession] = useUISession();
   const { nextOrderId } = useLatestOrderId(orders);
 
@@ -67,33 +66,12 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
     submitPayload(newOrder);
   }, [charge, newOrder, submitPayload, newOrderDispatch, renewUISession]);
 
-  const moveFocus = useCallback(() => {
-    switch (inputStatus) {
-      case "discount":
-        setDialogOpen(false);
-        break;
-      case "items":
-        break;
-      case "received":
-        break;
-      case "description":
-        setDialogOpen(false);
-        break;
-      case "submit":
-        setDialogOpen(true);
-        break;
-    }
-  }, [inputStatus]);
-
-  useEffect(moveFocus);
-
   const keyEventHandlers = useMemo(() => {
     return {
       ArrowRight: proceedStatus,
       ArrowLeft: prevousStatus,
       Escape: () => {
         setInputStatus("discount");
-        setDialogOpen(false);
         newOrderDispatch({ type: "clear" });
       },
     };
@@ -197,11 +175,11 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
         </div>
       </div>
       <OrderAlertDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
+        open={inputStatus === "submit"}
         order={newOrder}
         chargeView={chargeView}
         onConfirm={submitOrder}
+        onCanceled={useCallback(() => setInputStatus("description"), [])}
       />
     </>
   );
