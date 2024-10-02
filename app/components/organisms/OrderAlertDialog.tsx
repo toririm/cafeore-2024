@@ -17,11 +17,10 @@ const OrderAlertDialog = forwardRef<
   null,
   ComponentPropsWithoutRef<typeof AlertDialog> & {
     order: OrderEntity;
-    chargeView: number | string;
     onConfirm: () => void;
     onCanceled: () => void;
   }
->(({ order, chargeView, onConfirm, onCanceled, ...props }) => {
+>(({ order, onConfirm, onCanceled, ...props }) => {
   return (
     <AlertDialog {...props}>
       <AlertDialogContent>
@@ -50,7 +49,7 @@ const OrderAlertDialog = forwardRef<
             お預かり金額: &yen;{order.received}
           </AlertDialogDescription>
           <AlertDialogDescription>
-            お釣り: &yen;{chargeView}
+            お釣り: &yen;{order.getCharge()}
           </AlertDialogDescription>
           <AlertDialogDescription>
             備考: {order.description}

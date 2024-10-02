@@ -1,24 +1,17 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Input } from "~/components/ui/input";
+import { useCallback, useEffect, useMemo } from "react";
 import type { WithId } from "~/lib/typeguard";
 import { type ItemEntity, type2label } from "~/models/item";
 import type { OrderEntity } from "~/models/order";
+import { useInputStatus } from "../functional/useInputStatus";
 import { useLatestOrderId } from "../functional/useLatestOrderId";
 import { useOrderState } from "../functional/useOrderState";
 import { useUISession } from "../functional/useUISession";
 import { AttractiveTextBox } from "../molecules/AttractiveTextBox";
+import { ChargeView } from "../organisms/ChargeView";
 import { DiscountInput } from "../organisms/DiscountInput";
 import { OrderAlertDialog } from "../organisms/OrderAlertDialog";
 import { OrderItemView } from "../organisms/OrderItemView";
 import { Button } from "../ui/button";
-
-const InputStatus = [
-  "discount",
-  "items",
-  "received",
-  "description",
-  "submit",
-] as const;
 
 type props = {
   items: WithId<ItemEntity>[] | undefined;
@@ -28,8 +21,8 @@ type props = {
 
 const CashierV2 = ({ items, orders, submitPayload }: props) => {
   const [newOrder, newOrderDispatch] = useOrderState();
-  const [inputStatus, setInputStatus] =
-    useState<(typeof InputStatus)[number]>("discount");
+  const { inputStatus, proceedStatus, previousStatus, setInputStatus } =
+    useInputStatus();
   const [UISession, renewUISession] = useUISession();
   const { nextOrderId } = useLatestOrderId(orders);
 
@@ -37,25 +30,11 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
     newOrderDispatch({ type: "updateOrderId", orderId: nextOrderId });
   }, [nextOrderId, newOrderDispatch]);
 
-  const chargeView: string | number = useMemo(() => {
-    const charge = newOrder.getCharge();
-    if (charge < 0) {
-      return "不足しています";
-    }
-    return charge;
-  }, [newOrder]);
-
-  const proceedStatus = useCallback(() => {
-    const idx = InputStatus.indexOf(inputStatus);
-    setInputStatus(InputStatus[(idx + 1) % InputStatus.length]);
-  }, [inputStatus]);
-
-  const prevousStatus = useCallback(() => {
-    const idx = InputStatus.indexOf(inputStatus);
-    setInputStatus(
-      InputStatus[(idx - 1 + InputStatus.length) % InputStatus.length],
-    );
-  }, [inputStatus]);
+  const resetAll = useCallback(() => {
+    newOrderDispatch({ type: "clear" });
+    setInputStatus("discount");
+    renewUISession();
+  }, [newOrderDispatch, setInputStatus, renewUISession]);
 
   const submitOrder = useCallback(() => {
     if (newOrder.getCharge() < 0) {
@@ -64,23 +43,19 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
     if (newOrder.items.length === 0) {
       return;
     }
-    newOrderDispatch({
-      type: "clear",
-      effectFn: renewUISession,
-    });
     submitPayload(newOrder);
-  }, [newOrder, submitPayload, newOrderDispatch, renewUISession]);
+    resetAll();
+  }, [newOrder, submitPayload, resetAll]);
 
   const keyEventHandlers = useMemo(() => {
     return {
       ArrowRight: proceedStatus,
-      ArrowLeft: prevousStatus,
+      ArrowLeft: previousStatus,
       Escape: () => {
-        setInputStatus("discount");
-        newOrderDispatch({ type: "clear" });
+        resetAll();
       },
     };
-  }, [proceedStatus, prevousStatus, newOrderDispatch]);
+  }, [proceedStatus, previousStatus, resetAll]);
 
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
@@ -146,7 +121,7 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
             )}
             focus={inputStatus === "received"}
           />
-          <Input disabled value={chargeView} />
+          <ChargeView order={newOrder} />
           <AttractiveTextBox
             key={`Description-${UISession.key}`}
             onTextSet={useCallback(
@@ -182,9 +157,8 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
       <OrderAlertDialog
         open={inputStatus === "submit"}
         order={newOrder}
-        chargeView={chargeView}
         onConfirm={submitOrder}
-        onCanceled={useCallback(() => setInputStatus("description"), [])}
+        onCanceled={previousStatus}
       />
     </>
   );
