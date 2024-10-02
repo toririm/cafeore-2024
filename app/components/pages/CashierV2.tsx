@@ -3,6 +3,7 @@ import { Input } from "~/components/ui/input";
 import type { WithId } from "~/lib/typeguard";
 import { type ItemEntity, type2label } from "~/models/item";
 import type { OrderEntity } from "~/models/order";
+import { useLatestOrderId } from "../functional/useLatestOrderId";
 import { useOrderState } from "../functional/useOrderState";
 import { useUISession } from "../functional/useUISession";
 import { AttractiveTextBox } from "../molecules/AttractiveTextBox";
@@ -25,21 +26,14 @@ type props = {
   submitPayload: (order: OrderEntity) => void;
 };
 
-const latestOrderId = (orders: WithId<OrderEntity>[] | undefined): number => {
-  if (!orders) {
-    return 0;
-  }
-  return orders.reduce((acc, cur) => Math.max(acc, cur.orderId), 0);
-};
-
 const CashierV2 = ({ items, orders, submitPayload }: props) => {
   const [newOrder, newOrderDispatch] = useOrderState();
   const [inputStatus, setInputStatus] =
     useState<(typeof InputStatus)[number]>("discount");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [UISession, renewUISession] = useUISession();
+  const { nextOrderId } = useLatestOrderId(orders);
 
-  const nextOrderId = useMemo(() => latestOrderId(orders) + 1, [orders]);
   useEffect(() => {
     newOrderDispatch({ type: "updateOrderId", orderId: nextOrderId });
   }, [nextOrderId, newOrderDispatch]);
