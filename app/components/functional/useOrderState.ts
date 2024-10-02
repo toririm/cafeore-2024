@@ -3,24 +3,26 @@ import type { WithId } from "~/lib/typeguard";
 import type { ItemEntity } from "~/models/item";
 import { OrderEntity } from "~/models/order";
 
-type Clear = { type: "clear"; effectFn?: () => void };
-type UpdateOrderId = { type: "updateOrderId"; orderId: number };
-type AddItem = {
-  type: "addItem";
-  item: WithId<ItemEntity>;
-};
-type MutateItem = {
-  type: "mutateItem";
-  idx: number;
-  action: (prev: WithId<ItemEntity>) => WithId<ItemEntity>;
-};
-type ApplyDiscount = {
-  type: "applyDiscount";
-  discountOrder: WithId<OrderEntity>;
-};
-type RemoveDiscount = { type: "removeDiscount" };
-type SetReceived = { type: "setReceived"; received: string };
-type SetDescription = { type: "setDescription"; description: string };
+type BaseAction<TypeName extends string> = { type: TypeName };
+type Action<
+  TypeName extends string,
+  U = Record<never, never>,
+> = BaseAction<TypeName> & U;
+
+type Clear = Action<"clear", { effectFn?: () => void }>;
+type UpdateOrderId = Action<"updateOrderId", { orderId: number }>;
+type AddItem = Action<"addItem", { item: WithId<ItemEntity> }>;
+type MutateItem = Action<
+  "mutateItem",
+  { idx: number; action: (prev: WithId<ItemEntity>) => WithId<ItemEntity> }
+>;
+type ApplyDiscount = Action<
+  "applyDiscount",
+  { discountOrder: WithId<OrderEntity> }
+>;
+type RemoveDiscount = Action<"removeDiscount">;
+type SetReceived = Action<"setReceived", { received: string }>;
+type SetDescription = Action<"setDescription", { description: string }>;
 
 export type OrderAction =
   | Clear
