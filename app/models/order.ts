@@ -13,34 +13,16 @@ export const orderSchema = z.object({
   description: z.string().nullable(),
   billingAmount: z.number(), // total - discount
   received: z.number(), // お預かり金額
-  discountInfo: z.object({
-    previousOrderId: z.number().nullable(),
-    validCups: z.number(), // min(this.items.length, previousOrder.items.length)
-    discount: z.number(), // validCups * 100
-  }),
+  discountOrderId: z.number().nullable(),
+  discountOrderCups: z.number(),
+  DISCOUNT_PER_CUP: z.number(),
+  discount: z.number(), // min(this.items.length, discountOrderCups) * DISCOUNT_PER_CUP
 });
 
 export type Order = z.infer<typeof orderSchema>;
-type DiscountInfo = Order["discountInfo"];
 
-const DISCOUNT_RATE_PER_CUP = 100;
-
-// OrderEntity の内部でのみ使うクラス
-class DiscountInfoEntity implements DiscountInfo {
-  constructor(
-    readonly previousOrderId: number | null,
-    readonly validCups: number,
-    readonly discount: number,
-  ) {}
-
-  static fromDiscountInfo(discountInfo: DiscountInfo): DiscountInfoEntity {
-    return new DiscountInfoEntity(
-      discountInfo.previousOrderId,
-      discountInfo.validCups,
-      discountInfo.discount,
-    );
-  }
-}
+// 途中から割引額を変更する場合はこの値を変更する
+const STATIC_DISCOUNT_PER_CUP = 100;
 
 export class OrderEntity implements Order {
   // 全てのプロパティを private にして外部からの直接アクセスを禁止
@@ -55,11 +37,10 @@ export class OrderEntity implements Order {
     private _description: string | null,
     private _billingAmount: number,
     private _received: number,
-    private _discountInfo: DiscountInfoEntity = new DiscountInfoEntity(
-      null,
-      0,
-      0,
-    ),
+    private _discountOrderId: number | null,
+    private _discountOrderCups: number,
+    private readonly _DISCOUNT_PER_CUP: number,
+    private _discount: number,
   ) {}
 
   static createNew({ orderId }: { orderId: number }): OrderEntity {
@@ -73,6 +54,10 @@ export class OrderEntity implements Order {
       false,
       null,
       0,
+      0,
+      null,
+      0,
+      STATIC_DISCOUNT_PER_CUP,
       0,
     );
   }
@@ -93,7 +78,10 @@ export class OrderEntity implements Order {
       order.description,
       order.billingAmount,
       order.received,
-      DiscountInfoEntity.fromDiscountInfo(order.discountInfo),
+      order.discountOrderId,
+      order.discountOrderCups,
+      order.DISCOUNT_PER_CUP,
+      order.discount,
     );
   }
 
@@ -147,7 +135,7 @@ export class OrderEntity implements Order {
   }
 
   get billingAmount() {
-    this._billingAmount = this.total - this._discountInfo.discount;
+    this._billingAmount = this.total - this.discount;
     return this._billingAmount;
   }
 
@@ -158,8 +146,23 @@ export class OrderEntity implements Order {
     this._received = received;
   }
 
-  get discountInfo() {
-    return this._discountInfo;
+  get discountOrderId() {
+    return this._discountOrderId;
+  }
+
+  get discountOrderCups() {
+    return this._discountOrderCups;
+  }
+
+  get DISCOUNT_PER_CUP() {
+    return this._DISCOUNT_PER_CUP;
+  }
+
+  get discount() {
+    this._discount =
+      Math.min(this._items.length, this._discountOrderCups) *
+      this._DISCOUNT_PER_CUP;
+    return this._discount;
   }
 
   // --------------------------------------------------
@@ -183,21 +186,13 @@ export class OrderEntity implements Order {
   }
 
   applyDiscount(previousOrder: OrderEntity) {
-    const validCups = Math.min(
-      this.getCoffeeCount(),
-      previousOrder.getCoffeeCount(),
-    );
-    const discount = validCups * DISCOUNT_RATE_PER_CUP;
-
-    this._discountInfo = DiscountInfoEntity.fromDiscountInfo({
-      previousOrderId: previousOrder.orderId,
-      validCups,
-      discount,
-    });
+    this._discountOrderId = previousOrder.orderId;
+    this._discountOrderCups = previousOrder.getCoffeeCount();
   }
 
   removeDiscount() {
-    this._discountInfo = new DiscountInfoEntity(null, 0, 0);
+    this._discountOrderId = null;
+    this._discountOrderCups = 0;
   }
 
   nowCreated() {
@@ -217,7 +212,10 @@ export class OrderEntity implements Order {
       description: this.description,
       billingAmount: this.billingAmount,
       received: this.received,
-      discountInfo: this.discountInfo,
+      discountOrderId: this.discountOrderId,
+      discountOrderCups: this.discountOrderCups,
+      DISCOUNT_PER_CUP: this.DISCOUNT_PER_CUP,
+      discount: this.discount,
     };
   }
 
