@@ -16,7 +16,7 @@ export const orderSchema = z.object({
   discountOrderId: z.number().nullable(),
   discountOrderCups: z.number(),
   DISCOUNT_PER_CUP: z.number(),
-  discount: z.number(), // min(this.items.length, discountOrderCups) * DISCOUNT_PER_CUP
+  discount: z.number(), // min(this.getCoffeeCount(), discountOrderCups) * DISCOUNT_PER_CUP
 });
 
 export type Order = z.infer<typeof orderSchema>;
@@ -160,7 +160,7 @@ export class OrderEntity implements Order {
 
   get discount() {
     this._discount =
-      Math.min(this._items.length, this._discountOrderCups) *
+      Math.min(this.getCoffeeCount(), this._discountOrderCups) *
       this._DISCOUNT_PER_CUP;
     return this._discount;
   }
