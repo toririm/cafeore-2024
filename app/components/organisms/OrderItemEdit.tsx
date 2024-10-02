@@ -27,7 +27,7 @@ const OrderItemEdit = ({
   order,
   items,
 }: props) => {
-  const [itemFocus, setItemFocus] = useState<number>(0);
+  const [itemFocus, setItemFocus] = useState<number>(-1);
 
   const proceedItemFocus = useCallback(() => {
     setItemFocus((prev) => (prev + 1) % order.items.length);
@@ -41,44 +41,45 @@ const OrderItemEdit = ({
 
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
-      if (!focus) {
-        return;
-      }
-      if (event.key === "ArrowUp") {
-        prevousItemFocus();
-      }
-      if (event.key === "ArrowDown") {
-        proceedItemFocus();
+      switch (event.key) {
+        case "ArrowUp":
+          prevousItemFocus();
+          break;
+        case "ArrowDown":
+          proceedItemFocus();
+          break;
       }
     };
-    window.addEventListener("keydown", handler);
+    if (focus) {
+      window.addEventListener("keydown", handler);
+    }
     return () => {
       window.removeEventListener("keydown", handler);
     };
   }, [proceedItemFocus, prevousItemFocus, focus]);
 
   useEffect(() => {
-    const handlers = items?.map((item, idx) => {
-      const handler = (event: KeyboardEvent) => {
-        if (!focus) {
-          return;
-        }
+    if (!items) return;
+    const handler = (event: KeyboardEvent) => {
+      for (const [idx, item] of items.entries()) {
         if (event.key === keys[idx]) {
           onAddItem(item);
         }
-      };
-      return handler;
-    });
-    for (const handler of handlers ?? []) {
-      window.addEventListener("keydown", handler);
-    }
-
-    return () => {
-      for (const handler of handlers ?? []) {
-        window.removeEventListener("keydown", handler);
       }
     };
+    if (focus) {
+      window.addEventListener("keydown", handler);
+    }
+    return () => {
+      window.removeEventListener("keydown", handler);
+    };
   }, [items, focus, onAddItem]);
+
+  useEffect(() => {
+    if (!focus) {
+      setItemFocus(-1);
+    }
+  }, [focus]);
 
   return (
     <>
