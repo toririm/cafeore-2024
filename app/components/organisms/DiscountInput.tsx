@@ -1,13 +1,12 @@
 import {
   type ComponentPropsWithoutRef,
-  type ElementRef,
-  forwardRef,
   useEffect,
   useMemo,
   useState,
 } from "react";
 import type { WithId } from "~/lib/typeguard";
 import { OrderEntity } from "~/models/order";
+import { useFocusRef } from "../functional/useFocusRef";
 import { ThreeDigitsInput } from "../molecules/ThreeDigitsInput";
 
 const findByOrderId = (
@@ -17,16 +16,23 @@ const findByOrderId = (
   return orders?.find((order) => order.orderId === orderId);
 };
 
+type props = ComponentPropsWithoutRef<typeof ThreeDigitsInput> & {
+  focus: boolean;
+  orders: WithId<OrderEntity>[] | undefined;
+  onDiscountOrderFind: (order: WithId<OrderEntity>) => void;
+  onDiscountOrderRemoved: () => void;
+};
+
 // 割引券番号を入力するためのコンポーネント
-const DiscountInput = forwardRef<
-  ElementRef<typeof ThreeDigitsInput>,
-  ComponentPropsWithoutRef<typeof ThreeDigitsInput> & {
-    orders: WithId<OrderEntity>[] | undefined;
-    onDiscountOrderFind: (discountOrder: WithId<OrderEntity>) => void;
-    onDiscountOrderRemoved: () => void;
-  }
->(({ orders, onDiscountOrderFind, onDiscountOrderRemoved, ...props }, ref) => {
+const DiscountInput = ({
+  focus,
+  orders,
+  onDiscountOrderFind,
+  onDiscountOrderRemoved,
+  ...props
+}: props) => {
   const [discountOrderId, setDiscountOrderId] = useState("");
+  const ref = useFocusRef(focus);
 
   const isComplete = useMemo(
     () => discountOrderId.length === 3,
@@ -58,6 +64,7 @@ const DiscountInput = forwardRef<
         ref={ref}
         value={discountOrderId}
         onChange={(value) => setDiscountOrderId(value)}
+        disabled={!focus}
         {...props}
       />
       <p>
@@ -69,6 +76,6 @@ const DiscountInput = forwardRef<
       </p>
     </div>
   );
-});
+};
 
 export { DiscountInput };

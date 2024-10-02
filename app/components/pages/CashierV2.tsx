@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Input } from "~/components/ui/input";
 import type { WithId } from "~/lib/typeguard";
 import { type ItemEntity, type2label } from "~/models/item";
@@ -41,8 +41,6 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
   const charge = newOrder.received - newOrder.billingAmount;
   const chargeView: string | number = charge < 0 ? "不足しています" : charge;
 
-  const discountInputDOM = useRef<HTMLInputElement>(null);
-
   const proceedStatus = useCallback(() => {
     const idx = InputStatus.indexOf(inputStatus);
     setInputStatus(InputStatus[(idx + 1) % InputStatus.length]);
@@ -73,7 +71,6 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
     switch (inputStatus) {
       case "discount":
         setDialogOpen(false);
-        discountInputDOM.current?.focus();
         break;
       case "items":
         break;
@@ -144,8 +141,7 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
           </div>
           <DiscountInput
             key={`DiscountInput-${UISession.key}`}
-            ref={discountInputDOM}
-            disabled={inputStatus !== "discount"}
+            focus={inputStatus === "discount"}
             orders={orders}
             onDiscountOrderFind={useCallback(
               (discountOrder) =>
