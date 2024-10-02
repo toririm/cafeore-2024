@@ -10,7 +10,7 @@ import { AttractiveTextBox } from "../molecules/AttractiveTextBox";
 import { ChargeView } from "../organisms/ChargeView";
 import { DiscountInput } from "../organisms/DiscountInput";
 import { OrderAlertDialog } from "../organisms/OrderAlertDialog";
-import { OrderItemView } from "../organisms/OrderItemView";
+import { OrderItemEdit } from "../organisms/OrderItemEdit";
 import { Button } from "../ui/button";
 
 type props = {
@@ -134,7 +134,7 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
         </div>
         <div>
           <p>入力ステータス: {inputStatus}</p>
-          <OrderItemView
+          <OrderItemEdit
             items={items}
             order={newOrder}
             onAddItem={useCallback(

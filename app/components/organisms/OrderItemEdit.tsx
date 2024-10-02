@@ -19,7 +19,7 @@ type props = {
 };
 
 // オーダーのアイテムや割引情報を表示するコンポーネント
-const OrderItemView = ({
+const OrderItemEdit = ({
   focus,
   discountOrder,
   onAddItem,
@@ -108,4 +108,4 @@ const OrderItemView = ({
   );
 };
 
-export { OrderItemView };
+export { OrderItemEdit };
