@@ -59,6 +59,9 @@ const parseDateProperty = (data: DocumentData): DocumentData => {
   return recursivelyParsedData;
 };
 
+/**
+ * Firestore のデータを ItemEntity に変換する
+ */
 export const itemConverter: FirestoreDataConverter<WithId<ItemEntity>> = {
   toFirestore: converter(itemSchema).toFirestore,
   fromFirestore: (
@@ -73,6 +76,9 @@ export const itemConverter: FirestoreDataConverter<WithId<ItemEntity>> = {
   },
 };
 
+/**
+ * Firestore のデータを OrderEntity に変換する
+ */
 export const orderConverter: FirestoreDataConverter<WithId<OrderEntity>> = {
   toFirestore: converter(orderSchema).toFirestore,
   fromFirestore: (

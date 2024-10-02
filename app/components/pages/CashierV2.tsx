@@ -20,6 +20,11 @@ type props = {
   submitPayload: (order: OrderEntity) => void;
 };
 
+/**
+ * キャッシャー画面のコンポーネント
+ *
+ * データの入出力は親コンポーネントに任せる
+ */
 const CashierV2 = ({ items, orders, submitPayload }: props) => {
   const [newOrder, newOrderDispatch] = useOrderState();
   const { inputStatus, proceedStatus, previousStatus, setInputStatus } =

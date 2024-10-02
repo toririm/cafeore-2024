@@ -110,6 +110,19 @@ const reducer: OrderReducer<OrderAction> = (state, action): OrderEntity => {
   }
 };
 
+/**
+ * オーダーの状態を管理する
+ * reducer が受け付ける状態には下記がある：
+ * - clear
+ * - applyDiscount
+ * - removeDiscount
+ * - addItem
+ * - mutateItem
+ * - setReceived
+ * - setDescription
+ * - updateOrderId
+ * @returns オーダーの状態とそれを更新する関数
+ */
 const useOrderState = () =>
   useReducer(reducer, OrderEntity.createNew({ orderId: -1 }));
 

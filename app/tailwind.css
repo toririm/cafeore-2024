@@ -68,6 +68,7 @@
   }
 }
 
+/* input要素でtype="number"のものについては、数値の上下を変更するボタンを非表示にする */
 @layer base {
   input[type="number"]::-webkit-outer-spin-button,
   input[type="number"]::-webkit-inner-spin-button,

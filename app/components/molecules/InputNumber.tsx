@@ -3,6 +3,9 @@ import { AttractiveTextBox } from "./AttractiveTextBox";
 
 type props = ComponentPropsWithRef<typeof AttractiveTextBox>;
 
+/**
+ * 上下キーで数値を増減させない数値専用のテキストボックス
+ */
 const InputNumber = ({ ...props }: props) => {
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {

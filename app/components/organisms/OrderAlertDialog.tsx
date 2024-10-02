@@ -12,7 +12,10 @@ import {
   AlertDialogTitle,
 } from "../ui/alert-dialog";
 
-// 確定前にオーダーの内容を表示するダイアログ
+// TODO: 表示内容が整ってないので、きれいにする
+/**
+ * 確定前にオーダーの内容を表示するダイアログ
+ */
 const OrderAlertDialog = forwardRef<
   null,
   ComponentPropsWithoutRef<typeof AlertDialog> & {

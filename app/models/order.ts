@@ -169,41 +169,69 @@ export class OrderEntity implements Order {
   // methods
   // --------------------------------------------------
 
+  /**
+   * コーヒーの数を取得する
+   * @returns 割引の対象となるコーヒーの数
+   */
   getCoffeeCount() {
     // milk 以外のアイテムの数を返す
     // TODO(toririm): このメソッドは items が変更された時だけでいい
     return this.items.filter((item) => item.type !== "milk").length;
   }
 
+  /**
+   * オーダーを準備完了状態に変更する
+   */
   beReady() {
     // orderReady は false -> true にしか変更できないようにする
     this._orderReady = true;
   }
 
+  /**
+   * オーダーを提供済み状態に変更する
+   */
   beServed() {
     // servedAt は null -> Date にしか変更できないようにする
     this._servedAt = new Date();
   }
 
+  /**
+   * 割引を適用する
+   * @param previousOrder 割引の参照となる前回のオーダー
+   */
   applyDiscount(previousOrder: OrderEntity) {
     this._discountOrderId = previousOrder.orderId;
     this._discountOrderCups = previousOrder.getCoffeeCount();
   }
 
+  /**
+   * 割引を解除する
+   */
   removeDiscount() {
     this._discountOrderId = null;
     this._discountOrderCups = 0;
   }
 
+  /**
+   * オーダーを作成した時刻を更新する
+   */
   nowCreated() {
     // createdAt を更新
     this._createdAt = new Date();
   }
 
+  /**
+   * お釣りを計算する
+   * @returns お釣り
+   */
   getCharge() {
     return this.received - this.billingAmount;
   }
 
+  /**
+   * メソッドを持たない Order オブジェクトに変換する
+   * @returns Order オブジェクト
+   */
   toOrder(): Order {
     return {
       id: this.id,
@@ -223,6 +251,10 @@ export class OrderEntity implements Order {
     };
   }
 
+  /**
+   * オーダーを複製する
+   * ただし、items は参照を共有することに注意
+   */
   clone(): WithId<OrderEntity>;
   clone(): OrderEntity;
   clone(): WithId<OrderEntity> | OrderEntity {

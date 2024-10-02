@@ -23,7 +23,9 @@ type props = ComponentPropsWithoutRef<typeof ThreeDigitsInput> & {
   onDiscountOrderRemoved: () => void;
 };
 
-// 割引券番号を入力するためのコンポーネント
+/**
+ * 割引券番号を入力するためのコンポーネント
+ */
 const DiscountInput = ({
   focus,
   orders,

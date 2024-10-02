@@ -8,6 +8,10 @@ const InputStatusList = [
   "submit",
 ] as const;
 
+/**
+ * CashierV2 のドメイン固有のフック
+ * 入力ステータスを管理する
+ */
 const useInputStatus = () => {
   const [inputStatus, setInputStatus] =
     useState<(typeof InputStatusList)[number]>("discount");

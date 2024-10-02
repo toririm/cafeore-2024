@@ -18,7 +18,9 @@ type props = {
   discountOrder: boolean;
 };
 
-// オーダーのアイテムや割引情報を表示するコンポーネント
+/**
+ * オーダーのアイテムや割引情報を表示するコンポーネント
+ */
 const OrderItemEdit = ({
   focus,
   discountOrder,

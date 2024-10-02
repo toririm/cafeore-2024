@@ -12,7 +12,9 @@ type props = InputProps & {
   focus: boolean;
 };
 
-// focus が true のときにフォーカスを当てるテキストボックス
+/**
+ * focus が true のときに自動でフォーカスを当てるテキストボックス
+ */
 const AttractiveTextBox = ({ focus, onTextSet, ...props }: props) => {
   const [text, setText] = useState("");
   const DOMRef = useFocusRef(focus);
