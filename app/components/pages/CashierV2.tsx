@@ -1,24 +1,18 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Input } from "~/components/ui/input";
+import { useCallback, useEffect, useMemo } from "react";
 import type { WithId } from "~/lib/typeguard";
 import { type ItemEntity, type2label } from "~/models/item";
 import type { OrderEntity } from "~/models/order";
+import { useInputStatus } from "../functional/useInputStatus";
 import { useLatestOrderId } from "../functional/useLatestOrderId";
 import { useOrderState } from "../functional/useOrderState";
 import { useUISession } from "../functional/useUISession";
 import { AttractiveTextBox } from "../molecules/AttractiveTextBox";
+import { InputNumber } from "../molecules/InputNumber";
+import { ChargeView } from "../organisms/ChargeView";
 import { DiscountInput } from "../organisms/DiscountInput";
 import { OrderAlertDialog } from "../organisms/OrderAlertDialog";
-import { OrderItemView } from "../organisms/OrderItemView";
+import { OrderItemEdit } from "../organisms/OrderItemEdit";
 import { Button } from "../ui/button";
-
-const InputStatus = [
-  "discount",
-  "items",
-  "received",
-  "description",
-  "submit",
-] as const;
 
 type props = {
   items: WithId<ItemEntity>[] | undefined;
@@ -26,11 +20,15 @@ type props = {
   submitPayload: (order: OrderEntity) => void;
 };
 
+/**
+ * キャッシャー画面のコンポーネント
+ *
+ * データの入出力は親コンポーネントに任せる
+ */
 const CashierV2 = ({ items, orders, submitPayload }: props) => {
   const [newOrder, newOrderDispatch] = useOrderState();
-  const [inputStatus, setInputStatus] =
-    useState<(typeof InputStatus)[number]>("discount");
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const { inputStatus, proceedStatus, previousStatus, setInputStatus } =
+    useInputStatus();
   const [UISession, renewUISession] = useUISession();
   const { nextOrderId } = useLatestOrderId(orders);
 
@@ -38,69 +36,32 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
     newOrderDispatch({ type: "updateOrderId", orderId: nextOrderId });
   }, [nextOrderId, newOrderDispatch]);
 
-  const charge = newOrder.received - newOrder.billingAmount;
-  const chargeView: string | number = charge < 0 ? "不足しています" : charge;
-
-  const discountInputDOM = useRef<HTMLInputElement>(null);
-
-  const proceedStatus = useCallback(() => {
-    const idx = InputStatus.indexOf(inputStatus);
-    setInputStatus(InputStatus[(idx + 1) % InputStatus.length]);
-  }, [inputStatus]);
-
-  const prevousStatus = useCallback(() => {
-    const idx = InputStatus.indexOf(inputStatus);
-    setInputStatus(
-      InputStatus[(idx - 1 + InputStatus.length) % InputStatus.length],
-    );
-  }, [inputStatus]);
+  const resetAll = useCallback(() => {
+    newOrderDispatch({ type: "clear" });
+    setInputStatus("discount");
+    renewUISession();
+  }, [newOrderDispatch, setInputStatus, renewUISession]);
 
   const submitOrder = useCallback(() => {
-    if (charge < 0) {
+    if (newOrder.getCharge() < 0) {
       return;
     }
     if (newOrder.items.length === 0) {
       return;
     }
-    newOrderDispatch({
-      type: "clear",
-      effectFn: renewUISession,
-    });
     submitPayload(newOrder);
-  }, [charge, newOrder, submitPayload, newOrderDispatch, renewUISession]);
-
-  const moveFocus = useCallback(() => {
-    switch (inputStatus) {
-      case "discount":
-        setDialogOpen(false);
-        discountInputDOM.current?.focus();
-        break;
-      case "items":
-        break;
-      case "received":
-        break;
-      case "description":
-        setDialogOpen(false);
-        break;
-      case "submit":
-        setDialogOpen(true);
-        break;
-    }
-  }, [inputStatus]);
-
-  useEffect(moveFocus);
+    resetAll();
+  }, [newOrder, submitPayload, resetAll]);
 
   const keyEventHandlers = useMemo(() => {
     return {
       ArrowRight: proceedStatus,
-      ArrowLeft: prevousStatus,
+      ArrowLeft: previousStatus,
       Escape: () => {
-        setInputStatus("discount");
-        setDialogOpen(false);
-        newOrderDispatch({ type: "clear" });
+        resetAll();
       },
     };
-  }, [proceedStatus, prevousStatus, newOrderDispatch]);
+  }, [proceedStatus, previousStatus, resetAll]);
 
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
@@ -144,8 +105,7 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
           </div>
           <DiscountInput
             key={`DiscountInput-${UISession.key}`}
-            ref={discountInputDOM}
-            disabled={inputStatus !== "discount"}
+            focus={inputStatus === "discount"}
             orders={orders}
             onDiscountOrderFind={useCallback(
               (discountOrder) =>
@@ -157,9 +117,8 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
               [newOrderDispatch],
             )}
           />
-          <AttractiveTextBox
+          <InputNumber
             key={`Received-${UISession.key}`}
-            type="number"
             onTextSet={useCallback(
               (text) =>
                 newOrderDispatch({ type: "setReceived", received: text }),
@@ -167,7 +126,7 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
             )}
             focus={inputStatus === "received"}
           />
-          <Input disabled value={chargeView} />
+          <ChargeView order={newOrder} />
           <AttractiveTextBox
             key={`Description-${UISession.key}`}
             onTextSet={useCallback(
@@ -180,7 +139,7 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
         </div>
         <div>
           <p>入力ステータス: {inputStatus}</p>
-          <OrderItemView
+          <OrderItemEdit
             items={items}
             order={newOrder}
             onAddItem={useCallback(
@@ -201,11 +160,10 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
         </div>
       </div>
       <OrderAlertDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
+        open={inputStatus === "submit"}
         order={newOrder}
-        chargeView={chargeView}
         onConfirm={submitOrder}
+        onCanceled={previousStatus}
       />
     </>
   );

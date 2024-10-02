@@ -2,9 +2,9 @@ import {
   type ChangeEventHandler,
   useCallback,
   useEffect,
-  useRef,
   useState,
 } from "react";
+import { useFocusRef } from "../functional/useFocusRef";
 import { Input, type InputProps } from "../ui/input";
 
 type props = InputProps & {
@@ -12,10 +12,12 @@ type props = InputProps & {
   focus: boolean;
 };
 
-// focus が true のときにフォーカスを当てるテキストボックス
+/**
+ * focus が true のときに自動でフォーカスを当てるテキストボックス
+ */
 const AttractiveTextBox = ({ focus, onTextSet, ...props }: props) => {
   const [text, setText] = useState("");
-  const DOMRef = useRef<HTMLInputElement>(null);
+  const DOMRef = useFocusRef(focus);
 
   const onChangeHandler: ChangeEventHandler<HTMLInputElement> = useCallback(
     (event) => setText(event.target.value),
@@ -25,12 +27,6 @@ const AttractiveTextBox = ({ focus, onTextSet, ...props }: props) => {
   useEffect(() => {
     onTextSet(text);
   }, [text, onTextSet]);
-
-  useEffect(() => {
-    if (focus) {
-      DOMRef.current?.focus();
-    }
-  }, [focus]);
 
   return (
     <Input

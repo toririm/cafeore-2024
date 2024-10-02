@@ -14,6 +14,9 @@ type props = {
   focus: boolean;
 };
 
+/**
+ * Enterでアサイン入力欄を開けて、アイテムのアサインを変更できるコンポーネント
+ */
 const ItemAssign = ({ item, idx, mutateItem, focus }: props) => {
   const [editable, setEditable] = useState(false);
   const [assignee, setAssinee] = useState<string | null>(null);

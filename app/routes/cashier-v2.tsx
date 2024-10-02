@@ -10,6 +10,7 @@ import { stringToJSONSchema } from "~/lib/custom-zod";
 import { OrderEntity, orderSchema } from "~/models/order";
 import { orderRepository } from "~/repositories/order";
 
+// コンポーネントではデータの取得と更新のみを行う
 export default function Cashier() {
   const { data: items } = useSWRSubscription(
     "items",
