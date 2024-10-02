@@ -7,6 +7,7 @@ import { useLatestOrderId } from "../functional/useLatestOrderId";
 import { useOrderState } from "../functional/useOrderState";
 import { useUISession } from "../functional/useUISession";
 import { AttractiveTextBox } from "../molecules/AttractiveTextBox";
+import { InputNumber } from "../molecules/InputNumber";
 import { ChargeView } from "../organisms/ChargeView";
 import { DiscountInput } from "../organisms/DiscountInput";
 import { OrderAlertDialog } from "../organisms/OrderAlertDialog";
@@ -111,9 +112,8 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
               [newOrderDispatch],
             )}
           />
-          <AttractiveTextBox
+          <InputNumber
             key={`Received-${UISession.key}`}
-            type="number"
             onTextSet={useCallback(
               (text) =>
                 newOrderDispatch({ type: "setReceived", received: text }),
