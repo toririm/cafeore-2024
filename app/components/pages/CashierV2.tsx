@@ -285,7 +285,7 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
             )}
             focus={inputStatus === "items"}
             discountOrder={useMemo(
-              () => newOrder.discountInfo.previousOrderId !== null,
+              () => newOrder.discountOrderId !== null,
               [newOrder],
             )}
           />

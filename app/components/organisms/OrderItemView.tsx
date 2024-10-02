@@ -101,7 +101,7 @@ const OrderItemView = ({
       {discountOrder && (
         <div className="grid grid-cols-2">
           <p className="font-bold text-lg">割引</p>
-          <div>-&yen;{order.discountInfo.discount}</div>
+          <div>-&yen;{order.discount}</div>
         </div>
       )}
     </>

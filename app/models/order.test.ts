@@ -94,17 +94,16 @@ describe("[unit] order entity", () => {
       description: null,
       billingAmount: 900,
       received: 0,
-      discountInfo: {
-        previousOrderId: null,
-        validCups: 0,
-        discount: 0,
-      },
+      discountOrderId: null,
+      discountOrderCups: 0,
+      DISCOUNT_PER_CUP: 100,
+      discount: 0,
     });
 
     order.applyDiscount(previousOrder);
-    expect(order.discountInfo.previousOrderId).toBe(99999);
-    expect(order.discountInfo.validCups).toBe(1);
-    expect(order.discountInfo.discount).toBe(100);
+    expect(order.discountOrderId).toBe(99999);
+    expect(order.discountOrderCups).toBe(1);
+    expect(order.discount).toBe(100);
     expect(order.billingAmount).toBe(800);
   });
 
