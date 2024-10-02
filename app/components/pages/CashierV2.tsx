@@ -1,15 +1,11 @@
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useReducer,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Input } from "~/components/ui/input";
 import type { WithId } from "~/lib/typeguard";
 import { type ItemEntity, type2label } from "~/models/item";
-import { OrderEntity } from "~/models/order";
+import type { OrderEntity } from "~/models/order";
+import { useLatestOrderId } from "../functional/useLatestOrderId";
+import { useOrderState } from "../functional/useOrderState";
+import { useUISession } from "../functional/useUISession";
 import { AttractiveTextBox } from "../molecules/AttractiveTextBox";
 import { DiscountInput } from "../organisms/DiscountInput";
 import { OrderAlertDialog } from "../organisms/OrderAlertDialog";
@@ -30,110 +26,17 @@ type props = {
   submitPayload: (order: OrderEntity) => void;
 };
 
-export type Action =
-  | { type: "clear"; effectFn?: () => void }
-  | { type: "updateOrderId"; orderId: number }
-  | {
-      type: "addItem";
-      item: WithId<ItemEntity>;
-    }
-  | {
-      type: "mutateItem";
-      idx: number;
-      action: (prev: WithId<ItemEntity>) => WithId<ItemEntity>;
-    }
-  | { type: "applyDiscount"; discountOrder: WithId<OrderEntity> }
-  | { type: "removeDiscount" }
-  | { type: "setReceived"; received: string }
-  | { type: "setDescription"; description: string };
-
-const reducer = (state: OrderEntity, action: Action): OrderEntity => {
-  const addItem = (item: WithId<ItemEntity>) => {
-    const updated = state.clone();
-    updated.items = [...updated.items, item];
-    return updated;
-  };
-  const applyDiscount = (discountOrder: WithId<OrderEntity>) => {
-    const updated = state.clone();
-    updated.applyDiscount(discountOrder);
-    return updated;
-  };
-  const removeDiscount = () => {
-    const updated = state.clone();
-    updated.removeDiscount();
-    return updated;
-  };
-  const mutateItem = (
-    idx: number,
-    action: (prev: WithId<ItemEntity>) => WithId<ItemEntity>,
-  ) => {
-    const updated = state.clone();
-    updated.items[idx] = action(updated.items[idx]);
-    return updated;
-  };
-  const updateOrderId = (orderId: number) => {
-    const updated = state.clone();
-    updated.orderId = orderId;
-    return updated;
-  };
-  const setReceived = (received: string) => {
-    const updated = state.clone();
-    updated.received = Number(received);
-    return updated;
-  };
-  const setDescription = (description: string) => {
-    const updated = state.clone();
-    updated.description = description;
-    return updated;
-  };
-  const clear = (effectFn?: () => void) => {
-    if (effectFn) {
-      effectFn();
-    }
-    return OrderEntity.createNew({ orderId: state.orderId });
-  };
-
-  switch (action.type) {
-    case "clear":
-      return clear(action.effectFn);
-    case "applyDiscount":
-      return applyDiscount(action.discountOrder);
-    case "removeDiscount":
-      return removeDiscount();
-    case "addItem":
-      return addItem(action.item);
-    case "mutateItem":
-      return mutateItem(action.idx, action.action);
-    case "setReceived":
-      return setReceived(action.received);
-    case "setDescription":
-      return setDescription(action.description);
-    case "updateOrderId":
-      return updateOrderId(action.orderId);
-  }
-};
-
-const latestOrderId = (orders: WithId<OrderEntity>[] | undefined): number => {
-  if (!orders) {
-    return 0;
-  }
-  return orders.reduce((acc, cur) => Math.max(acc, cur.orderId), 0);
-};
-
 const CashierV2 = ({ items, orders, submitPayload }: props) => {
-  const [newOrder, dispatch] = useReducer(
-    reducer,
-    OrderEntity.createNew({ orderId: -1 }),
-  );
+  const [newOrder, newOrderDispatch] = useOrderState();
   const [inputStatus, setInputStatus] =
     useState<(typeof InputStatus)[number]>("discount");
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [inputSession, setInputSession] = useState(new Date());
+  const [UISession, renewUISession] = useUISession();
+  const { nextOrderId } = useLatestOrderId(orders);
 
-  const nextOrderId = useMemo(() => latestOrderId(orders) + 1, [orders]);
   useEffect(() => {
-    dispatch({ type: "updateOrderId", orderId: nextOrderId });
-  }, [nextOrderId]);
+    newOrderDispatch({ type: "updateOrderId", orderId: nextOrderId });
+  }, [nextOrderId, newOrderDispatch]);
 
   const charge = newOrder.received - newOrder.billingAmount;
   const chargeView: string | number = charge < 0 ? "不足しています" : charge;
@@ -159,9 +62,12 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
     if (newOrder.items.length === 0) {
       return;
     }
-    dispatch({ type: "clear", effectFn: () => setInputSession(new Date()) });
+    newOrderDispatch({
+      type: "clear",
+      effectFn: renewUISession,
+    });
     submitPayload(newOrder);
-  }, [charge, newOrder, submitPayload]);
+  }, [charge, newOrder, submitPayload, newOrderDispatch, renewUISession]);
 
   const moveFocus = useCallback(() => {
     switch (inputStatus) {
@@ -191,10 +97,10 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
       Escape: () => {
         setInputStatus("discount");
         setDialogOpen(false);
-        dispatch({ type: "clear" });
+        newOrderDispatch({ type: "clear" });
       },
     };
-  }, [proceedStatus, prevousStatus]);
+  }, [proceedStatus, prevousStatus, newOrderDispatch]);
 
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
@@ -237,35 +143,37 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
             <p>{newOrder.billingAmount}</p>
           </div>
           <DiscountInput
-            key={`DiscountInput-${inputSession.toJSON()}`}
+            key={`DiscountInput-${UISession.key}`}
             ref={discountInputDOM}
             disabled={inputStatus !== "discount"}
             orders={orders}
             onDiscountOrderFind={useCallback(
               (discountOrder) =>
-                dispatch({ type: "applyDiscount", discountOrder }),
-              [],
+                newOrderDispatch({ type: "applyDiscount", discountOrder }),
+              [newOrderDispatch],
             )}
             onDiscountOrderRemoved={useCallback(
-              () => dispatch({ type: "removeDiscount" }),
-              [],
+              () => newOrderDispatch({ type: "removeDiscount" }),
+              [newOrderDispatch],
             )}
           />
           <AttractiveTextBox
-            key={`Received-${inputSession.toJSON()}`}
+            key={`Received-${UISession.key}`}
             type="number"
             onTextSet={useCallback(
-              (text) => dispatch({ type: "setReceived", received: text }),
-              [],
+              (text) =>
+                newOrderDispatch({ type: "setReceived", received: text }),
+              [newOrderDispatch],
             )}
             focus={inputStatus === "received"}
           />
           <Input disabled value={chargeView} />
           <AttractiveTextBox
-            key={`Description-${inputSession.toJSON()}`}
+            key={`Description-${UISession.key}`}
             onTextSet={useCallback(
-              (text) => dispatch({ type: "setDescription", description: text }),
-              [],
+              (text) =>
+                newOrderDispatch({ type: "setDescription", description: text }),
+              [newOrderDispatch],
             )}
             focus={inputStatus === "description"}
           />
@@ -276,12 +184,13 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
             items={items}
             order={newOrder}
             onAddItem={useCallback(
-              (item) => dispatch({ type: "addItem", item }),
-              [],
+              (item) => newOrderDispatch({ type: "addItem", item }),
+              [newOrderDispatch],
             )}
             mutateItem={useCallback(
-              (idx, action) => dispatch({ type: "mutateItem", idx, action }),
-              [],
+              (idx, action) =>
+                newOrderDispatch({ type: "mutateItem", idx, action }),
+              [newOrderDispatch],
             )}
             focus={inputStatus === "items"}
             discountOrder={useMemo(
