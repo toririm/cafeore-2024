@@ -23,7 +23,9 @@ type ApplyDiscount = Action<
 type RemoveDiscount = Action<"removeDiscount">;
 type SetReceived = Action<"setReceived", { received: string }>;
 type SetDescription = Action<"setDescription", { description: string }>;
-
+/**
+ * オーダーの状態を更新するためのアクション型
+ */
 export type OrderAction =
   | Clear
   | UpdateOrderId
@@ -112,6 +114,7 @@ const reducer: OrderReducer<OrderAction> = (state, action): OrderEntity => {
 
 /**
  * オーダーの状態を管理する
+ *
  * reducer が受け付ける状態には下記がある：
  * - clear
  * - applyDiscount

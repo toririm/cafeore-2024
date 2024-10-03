@@ -10,6 +10,7 @@ const InputStatusList = [
 
 /**
  * CashierV2 のドメイン固有のフック
+ *
  * 入力ステータスを管理する
  */
 const useInputStatus = () => {
