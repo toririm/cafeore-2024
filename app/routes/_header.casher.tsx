@@ -116,7 +116,7 @@ export default function Casher() {
                     <div>
                       <Select
                         onValueChange={(value) => {
-                          item.assignee = value
+                          item.assignee = value;
                         }}
                       >
                         <SelectTrigger className="w-[100px] justify-center">
