@@ -17,7 +17,15 @@ import {
 } from "~/components/ui/alert-dialog";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "~/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue
+} from "~/components/ui/select";
 import {
   Table,
   TableBody,
@@ -98,61 +106,20 @@ export default function Casher() {
                 <TableHead className="w-500">No. {nextOrderId}</TableHead>
               </TableRow>
             </TableHeader>
-            {/* <TableBody>
-              {queue?.map((item, index) => (
-                <TableRow
-                  key={`${index}-${item.id}`}
-                  className="relative h-[50px]"
-                >
-                  <TableCell className="relative font-medium">
-                    <div className="absolute left-[50px]">{item.name}</div>
-                    <div>
-                      <Select onValueChange={(value)=>{item.assignee=value}}>
-                        <SelectTrigger className="absolute w-[100px] right-[100px]">
-                          <SelectValue placeholder="指名欄" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectLabel>指名</SelectLabel>
-                            <SelectItem value="first">1st</SelectItem>
-                            <SelectItem value="second">2nd</SelectItem>
-                            <SelectItem value="3rd">3rd</SelectItem>
-                            <SelectItem value="fourth">4th</SelectItem>
-                            <SelectItem value="fifth">5th</SelectItem>
-                            <SelectItem value="null">指名なし</SelectItem>
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <Button // ここで削除ボタンを押すと、mockOrder.itemsから削除する
-                        type="button"
-                        className="absolute right-[50px] h-[30px] w-[25px]"
-                        onClick={() => {
-                          setQueue((prev) => {
-                            const newItems = [...prev];
-                            newItems.splice(index, 1);
-                            return newItems;
-                          });
-                        }}
-                      >
-                        <div>
-                          <TrashIcon />
-                        </div>
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody> */}
             <TableBody>
               {queue?.map((item, index) => (
                 <TableRow key={`${index}-${item.id}`} className="h-[50px]">
                   <TableCell className="flex font-medium flex-row items-center gap-[20px]">
-                    <div className="justify-start flex-none w-[250px] pl-[50px]">{item.name}</div>
+                    <div className="justify-start flex-none w-[250px] pl-[50px]">
+                      {item.name}
+                    </div>
                     <div>
-                      <Select onValueChange={(value)=>{item.assignee=value}}>
-                        <SelectTrigger className="justify-center w-[100px]">
+                      <Select
+                        onValueChange={(value)=>{
+                          item.assignee=value
+                        }}
+                      >
+                        <SelectTrigger className="w-[100px] justify-center">
                           <SelectValue placeholder="指名欄" />
                         </SelectTrigger>
                         <SelectContent>
