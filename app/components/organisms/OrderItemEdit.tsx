@@ -11,6 +11,7 @@ type props = {
   items: WithId<ItemEntity>[] | undefined;
   focus: boolean;
   onAddItem: (item: WithId<ItemEntity>) => void;
+  onRemoveItem: (idx: number) => void;
   mutateItem: (
     idx: number,
     action: (prev: WithId<ItemEntity>) => WithId<ItemEntity>,
@@ -25,6 +26,7 @@ const OrderItemEdit = ({
   focus,
   discountOrder,
   onAddItem,
+  onRemoveItem,
   mutateItem,
   order,
   items,
@@ -57,6 +59,11 @@ const OrderItemEdit = ({
       setEditable(true);
     }
   }, [editable]);
+
+  const removeItem = useCallback(() => {
+    if (itemFocus === -1) return;
+    onRemoveItem(itemFocus);
+  }, [itemFocus, onRemoveItem]);
 
   // ↑・↓ が押されたときに itemFocus を移動
   useEffect(() => {
@@ -96,6 +103,7 @@ const OrderItemEdit = ({
   }, [focus, switchEditable]);
 
   // キー操作でアイテムを追加
+  // Backspace でアイテムを削除
   useEffect(() => {
     if (!items) return;
     const handler = (event: KeyboardEvent) => {
@@ -105,6 +113,9 @@ const OrderItemEdit = ({
           onAddItem(item);
         }
       }
+      if (event.key === "Backspace") {
+        removeItem();
+      }
     };
     if (focus) {
       window.addEventListener("keydown", handler);
@@ -112,7 +123,7 @@ const OrderItemEdit = ({
     return () => {
       window.removeEventListener("keydown", handler);
     };
-  }, [items, focus, editable, onAddItem]);
+  }, [items, focus, editable, onAddItem, removeItem]);
 
   // focus が外れたときに itemFocus をリセット
   useEffect(() => {
