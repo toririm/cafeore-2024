@@ -8,6 +8,9 @@ import {
 import type { SWRSubscription } from "swr/subscription";
 import { prodDB } from "./firestore";
 
+/**
+ * Firestore のコレクションを監視する SWRSubscription を生成する
+ */
 export const collectionSub = <T>(
   { converter }: { converter: FirestoreDataConverter<T> },
   ...queryConstraints: QueryConstraint[]

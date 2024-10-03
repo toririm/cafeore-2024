@@ -1,9 +1,10 @@
 import { parseWithZod } from "@conform-to/zod";
 import { AlertDialogCancel } from "@radix-ui/react-alert-dialog";
 import { TrashIcon } from "@radix-ui/react-icons";
-import { type ClientActionFunction, json } from "@remix-run/react";
+import { type ClientActionFunction, useSubmit } from "@remix-run/react";
 import { useState } from "react";
 import useSWRSubscription from "swr/subscription";
+import { z } from "zod";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,47 +26,52 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
-import { itemConverter } from "~/firebase/converter";
+import { itemConverter, orderConverter } from "~/firebase/converter";
 import { collectionSub } from "~/firebase/subscription";
-import { ItemEntity, itemSchema } from "~/models/item";
-import type { Order } from "~/models/order";
-import { itemRepository } from "~/repositories/item";
-
-const mockOrder: Order = {
-  orderId: 1,
-  createdAt: new Date(),
-  servedAt: null,
-  items: [
-    // {
-    //   id: "1",
-    //   type: "ice",
-    //   name: "珈琲・俺ブレンド",
-    //   price: 300,
-    // },
-  ],
-  total: 0,
-  orderReady: false,
-  description: "",
-  discountInfo: {
-    previousOrderId: null,
-    validCups: 0,
-    discount: 0,
-  },
-  received: 0,
-  billingAmount: 0,
-};
+import { stringToJSONSchema } from "~/lib/custom-zod";
+import type { WithId } from "~/lib/typeguard";
+import type { ItemEntity } from "~/models/item";
+import { OrderEntity, orderSchema } from "~/models/order";
+import { orderRepository } from "~/repositories/order";
 
 export default function Casher() {
-  // const total = mockOrder.items.reduce((acc, cur) => acc + cur.price, 0);
   const { data: items } = useSWRSubscription(
     "items",
     collectionSub({ converter: itemConverter }),
   );
-  const [recieved, setText] = useState(0);
-  const [order, setOrder] = useState<Order>(mockOrder);
+  const { data: orders } = useSWRSubscription(
+    "orders",
+    collectionSub({ converter: orderConverter }),
+  );
+  const curOrderId =
+    orders?.reduce((acc, cur) => Math.max(acc, cur.orderId), 0) ?? 0;
+  const nextOrderId = curOrderId + 1;
+  const submit = useSubmit();
+  const order = OrderEntity.createNew({ orderId: nextOrderId });
+  const [recieved, setReceived] = useState(0);
+  const [queue, setQueue] = useState<WithId<ItemEntity>[]>([]);
+  order.items = queue;
+  const charge = recieved - order.total;
+  const [description, setDescription] = useState("");
+  order.description = description;
+
+  const submitOrder = () => {
+    console.log(charge);
+    if (charge < 0) {
+      return;
+    }
+    if (queue.length === 0) {
+      return;
+    }
+    submit({ newOrder: JSON.stringify(order.toOrder()) }, { method: "POST" });
+    console.log("送信");
+    setQueue([]);
+    setReceived(0);
+    setDescription("");
+  };
 
   return (
-    <div>
+    <div className="p-[15px]">
       <div className="flex h-screen flex-row flex-wrap">
         <div className="w-2/3">
           <div className="grid h-screen grid-cols-2">
@@ -73,18 +79,7 @@ export default function Casher() {
               <div key={item.id}>
                 <Button
                   onClick={async () => {
-                    setOrder((prev) => {
-                      const newItems = [...prev.items, item]; // 新しい配列を作成
-                      const newTotal = newItems.reduce(
-                        (acc, cur) => acc + cur.price,
-                        0,
-                      ); // 新しい合計金額を計算
-                      return {
-                        ...prev, // 既存のオブジェクトの他の部分を維持
-                        items: newItems, // 更新されたitems
-                        total: newTotal, // 更新されたtotal
-                      };
-                    });
+                    setQueue([...queue, item]);
                   }}
                 >
                   {item.name}
@@ -99,13 +94,11 @@ export default function Casher() {
               <TableCaption />
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-500">
-                    No. {mockOrder.orderId}
-                  </TableHead>
+                  <TableHead className="w-500">No. {nextOrderId}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {order?.items.map((item, index) => (
+                {queue?.map((item, index) => (
                   <TableRow
                     key={`${index}-${item.id}`}
                     className="relative h-[50px]"
@@ -116,18 +109,10 @@ export default function Casher() {
                         type="button"
                         className="absolute right-[50px] h-[30px] w-[25px]"
                         onClick={() => {
-                          setOrder((prev) => {
-                            const newItems = [...prev.items];
+                          setQueue((prev) => {
+                            const newItems = [...prev];
                             newItems.splice(index, 1);
-                            const newTotal = newItems.reduce(
-                              (acc, cur) => acc + cur.price,
-                              0,
-                            ); // 新しい合計金額を計算
-                            return {
-                              ...prev,
-                              items: newItems,
-                              total: newTotal,
-                            };
+                            return newItems;
                           });
                         }}
                       >
@@ -142,7 +127,15 @@ export default function Casher() {
             </Table>
             <ul>
               <li>
-                <h2 className="relative">合計金額：{order.total} 円</h2>
+                <Input
+                  id="description"
+                  name="description"
+                  type="string"
+                  placeholder="備考欄"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+                <p className="relative">合計金額：{order.total} 円</p>
               </li>
               <li>
                 <form>
@@ -153,37 +146,34 @@ export default function Casher() {
                     <AlertDialogContent>
                       <AlertDialogHeader>
                         <AlertDialogTitle>
-                          金額を確認してください
+                          金額・備考欄を確認してください
                         </AlertDialogTitle>
                         <AlertDialogDescription>
+                          <p>備考欄：{order.description}</p>
                           <p>
                             受領額：
                             <Input
+                              id="recieved"
+                              name="recieved"
                               type="number"
                               placeholder="受け取った金額を入力してください"
                               value={recieved}
-                              onChange={(event) =>
-                                setText(Number.parseInt(event.target.value))
-                              }
+                              onChange={(e) => {
+                                const value = Number.parseInt(e.target.value);
+                                setReceived(Number.isNaN(value) ? 0 : value); // NaN のチェック
+                              }}
                             />
                           </p>
                           <p>合計： {order.total} 円</p>
                           <p>
-                            お釣り： {recieved - order.total < 0 && 0}
-                            {recieved - order.total >= 0 &&
-                              recieved - order.total}{" "}
-                            円
+                            お釣り：{" "}
+                            {Number.isNaN(charge) || charge < 0 ? 0 : charge} 円
                           </p>
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel type="button">
-                          戻る
-                        </AlertDialogCancel>
-                        <AlertDialogAction
-                          type="submit"
-                          onClick={() => mockOrderInitialize()}
-                        >
+                        <AlertDialogCancel>戻る</AlertDialogCancel>
+                        <AlertDialogAction onClick={submitOrder}>
                           送信
                         </AlertDialogAction>
                       </AlertDialogFooter>
@@ -201,28 +191,24 @@ export default function Casher() {
 
 export const clientAction: ClientActionFunction = async ({ request }) => {
   const formData = await request.formData();
-  const submission = parseWithZod(formData, { schema: itemSchema });
 
+  const schema = z.object({
+    newOrder: stringToJSONSchema.pipe(orderSchema),
+  });
+  const submission = parseWithZod(formData, {
+    schema,
+  });
   if (submission.status !== "success") {
-    return json(submission.reply());
+    console.error(submission.error);
+    return submission.reply();
   }
 
-  const newItem = submission.value;
-  // あとでマシなエラーハンドリングにする
-  const savedItem = await itemRepository.save(
-    ItemEntity.createNew({
-      name: newItem.name,
-      price: newItem.price,
-      type: newItem.type,
-    }),
-  );
+  const { newOrder } = submission.value;
+  const order = OrderEntity.fromOrder(newOrder);
 
-  console.log("Document written with ID: ", savedItem.id);
-  return new Response(null, { status: 204 });
+  const savedOrder = await orderRepository.save(order);
+
+  console.log("savedOrder", savedOrder);
+
+  return new Response("ok");
 };
-
-function mockOrderInitialize() {
-  mockOrder.items = [];
-  mockOrder.total = 0;
-  console.log(mockOrder);
-}
