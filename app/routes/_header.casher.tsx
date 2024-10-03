@@ -235,7 +235,7 @@ export const clientAction: ClientActionFunction = async ({ request }) => {
   }
 
   const { newOrder } = submission.value;
-  const order = OrderEntity.fromOrderWOId(newOrder);
+  const order = OrderEntity.fromOrder(newOrder);
 
   const savedOrder = await orderRepository.save(order);
 
