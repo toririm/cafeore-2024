@@ -17,6 +17,7 @@ import {
 } from "~/components/ui/alert-dialog";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "~/components/ui/select";
 import {
   Table,
   TableBody,
@@ -54,6 +55,7 @@ export default function Casher() {
   const charge = recieved - order.total;
   const [description, setDescription] = useState("");
   order.description = description;
+  const [assignee, setAssignee] = useState("");
 
   const submitOrder = () => {
     console.log(charge);
@@ -88,23 +90,41 @@ export default function Casher() {
             ))}
           </div>
         </div>
-        <div className="w-1/3">
-          <div>
-            <Table>
-              <TableCaption />
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-500">No. {nextOrderId}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {queue?.map((item, index) => (
-                  <TableRow
-                    key={`${index}-${item.id}`}
-                    className="relative h-[50px]"
-                  >
-                    <TableCell className="relative font-medium">
-                      <div className="absolute left-[50px]">{item.name}</div>
+        <div className="relative w-1/3">
+          <Table>
+            <TableCaption />
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-500">No. {nextOrderId}</TableHead>
+              </TableRow>
+            </TableHeader>
+            {/* <TableBody>
+              {queue?.map((item, index) => (
+                <TableRow
+                  key={`${index}-${item.id}`}
+                  className="relative h-[50px]"
+                >
+                  <TableCell className="relative font-medium">
+                    <div className="absolute left-[50px]">{item.name}</div>
+                    <div>
+                      <Select onValueChange={(value)=>{item.assignee=value}}>
+                        <SelectTrigger className="absolute w-[100px] right-[100px]">
+                          <SelectValue placeholder="指名欄" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>指名</SelectLabel>
+                            <SelectItem value="first">1st</SelectItem>
+                            <SelectItem value="second">2nd</SelectItem>
+                            <SelectItem value="3rd">3rd</SelectItem>
+                            <SelectItem value="fourth">4th</SelectItem>
+                            <SelectItem value="fifth">5th</SelectItem>
+                            <SelectItem value="null">指名なし</SelectItem>
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
                       <Button // ここで削除ボタンを押すと、mockOrder.itemsから削除する
                         type="button"
                         className="absolute right-[50px] h-[30px] w-[25px]"
@@ -120,69 +140,113 @@ export default function Casher() {
                           <TrashIcon />
                         </div>
                       </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            <ul>
-              <li>
-                <Input
-                  id="description"
-                  name="description"
-                  type="string"
-                  placeholder="備考欄"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                />
-                <p className="relative">合計金額：{order.total} 円</p>
-              </li>
-              <li>
-                <form>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button className="absolute right-[100px]">確定</Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>
-                          金額・備考欄を確認してください
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          <p>備考欄：{order.description}</p>
-                          <p>
-                            受領額：
-                            <Input
-                              id="recieved"
-                              name="recieved"
-                              type="number"
-                              placeholder="受け取った金額を入力してください"
-                              value={recieved}
-                              onChange={(e) => {
-                                const value = Number.parseInt(e.target.value);
-                                setReceived(Number.isNaN(value) ? 0 : value); // NaN のチェック
-                              }}
-                            />
-                          </p>
-                          <p>合計： {order.total} 円</p>
-                          <p>
-                            お釣り：{" "}
-                            {Number.isNaN(charge) || charge < 0 ? 0 : charge} 円
-                          </p>
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>戻る</AlertDialogCancel>
-                        <AlertDialogAction onClick={submitOrder}>
-                          送信
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </form>
-              </li>
-            </ul>
-          </div>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody> */}
+            <TableBody>
+              {queue?.map((item, index) => (
+                <TableRow key={`${index}-${item.id}`} className="h-[50px]">
+                  <TableCell className="flex font-medium flex-row items-center gap-[10px]">
+                    <div className="justify-start flex-none w-[140px]">{item.name}</div>
+                    <div>
+                      <Select onValueChange={(value)=>{item.assignee=value}}>
+                        <SelectTrigger className="justify-center w-[90px]">
+                          <SelectValue placeholder="指名欄" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>指名</SelectLabel>
+                            <SelectItem value="first">1st</SelectItem>
+                            <SelectItem value="second">2nd</SelectItem>
+                            <SelectItem value="3rd">3rd</SelectItem>
+                            <SelectItem value="fourth">4th</SelectItem>
+                            <SelectItem value="fifth">5th</SelectItem>
+                            <SelectItem value="null">指名なし</SelectItem>
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Button // ここで削除ボタンを押すと、mockOrder.itemsから削除する
+                        type="button"
+                        className="justify-center"
+                        onClick={() => {
+                          setQueue((prev) => {
+                            const newItems = [...prev];
+                            newItems.splice(index, 1);
+                            return newItems;
+                          });
+                        }}
+                      >
+                        <div>
+                          <TrashIcon />
+                        </div>
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          <ul>
+            <li>
+              <Input
+                id="description"
+                name="description"
+                type="string"
+                placeholder="備考欄"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+              <p className="relative">合計金額：{order.total} 円</p>
+            </li>
+            <li>
+              <form>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button className="absolute right-[100px]">確定</Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        金額・備考欄を確認してください
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        <p>備考欄：{order.description}</p>
+                        <p>合計： {order.total} 円</p>
+                        <p>
+                          受領額：
+                          <Input
+                            id="recieved"
+                            name="recieved"
+                            type="number"
+                            placeholder="受け取った金額を入力してください"
+                            value={recieved}
+                            onChange={(e) => {
+                              const value = Number.parseInt(e.target.value);
+                              setReceived(Number.isNaN(value) ? 0 : value); // NaN のチェック
+                            }}
+                          />
+                        </p>
+                        <p>
+                          お釣り：{" "}
+                          {Number.isNaN(charge) || charge < 0 ? 0 : charge} 円
+                        </p>
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>戻る</AlertDialogCancel>
+                      <AlertDialogAction onClick={submitOrder}>
+                        送信
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </form>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
