@@ -148,11 +148,11 @@ export default function Casher() {
             <TableBody>
               {queue?.map((item, index) => (
                 <TableRow key={`${index}-${item.id}`} className="h-[50px]">
-                  <TableCell className="flex font-medium flex-row items-center gap-[10px]">
-                    <div className="justify-start flex-none w-[140px]">{item.name}</div>
+                  <TableCell className="flex font-medium flex-row items-center gap-[20px]">
+                    <div className="justify-start flex-none w-[250px] pl-[50px]">{item.name}</div>
                     <div>
                       <Select onValueChange={(value)=>{item.assignee=value}}>
-                        <SelectTrigger className="justify-center w-[90px]">
+                        <SelectTrigger className="justify-center w-[100px]">
                           <SelectValue placeholder="指名欄" />
                         </SelectTrigger>
                         <SelectContent>
