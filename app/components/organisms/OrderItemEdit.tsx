@@ -30,25 +30,45 @@ const OrderItemEdit = ({
   items,
 }: props) => {
   const [itemFocus, setItemFocus] = useState<number>(-1);
+  const [editable, setEditable] = useState(false);
 
-  const proceedItemFocus = useCallback(() => {
-    setItemFocus((prev) => (prev + 1) % order.items.length);
-  }, [order.items]);
+  /**
+   * step だけ itemFocus を移動する
+   *
+   * - step が正の場合、次のアイテムに移動
+   * - step が負の場合、前のアイテムに移動
+   */
+  const moveItemFocus = useCallback(
+    (step: number) => {
+      setItemFocus(
+        (prev) => (prev + step + order.items.length) % order.items.length,
+      );
+    },
+    [order.items],
+  );
 
-  const prevousItemFocus = useCallback(() => {
-    setItemFocus(
-      (prev) => (prev - 1 + order.items.length) % order.items.length,
-    );
-  }, [order.items]);
+  /**
+   * assign 入力欄を開く/閉じる
+   */
+  const switchEditable = useCallback(() => {
+    if (editable) {
+      setEditable(false);
+    } else {
+      setEditable(true);
+    }
+  }, [editable]);
 
+  // ↑・↓ が押されたときに itemFocus を移動
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
       switch (event.key) {
         case "ArrowUp":
-          prevousItemFocus();
+          moveItemFocus(-1);
+          setEditable(false);
           break;
         case "ArrowDown":
-          proceedItemFocus();
+          moveItemFocus(1);
+          setEditable(false);
           break;
       }
     };
@@ -58,12 +78,29 @@ const OrderItemEdit = ({
     return () => {
       window.removeEventListener("keydown", handler);
     };
-  }, [proceedItemFocus, prevousItemFocus, focus]);
+  }, [focus, moveItemFocus]);
 
+  // Enter が押されたときに assign 入力欄を開く
+  useEffect(() => {
+    const handler = (event: KeyboardEvent) => {
+      if (event.key === "Enter") {
+        switchEditable();
+      }
+    };
+    if (focus) {
+      window.addEventListener("keydown", handler);
+    }
+    return () => {
+      window.removeEventListener("keydown", handler);
+    };
+  }, [focus, switchEditable]);
+
+  // キー操作でアイテムを追加
   useEffect(() => {
     if (!items) return;
     const handler = (event: KeyboardEvent) => {
       for (const [idx, item] of items.entries()) {
+        if (editable) return;
         if (event.key === keys[idx]) {
           onAddItem(item);
         }
@@ -75,8 +112,9 @@ const OrderItemEdit = ({
     return () => {
       window.removeEventListener("keydown", handler);
     };
-  }, [items, focus, onAddItem]);
+  }, [items, focus, editable, onAddItem]);
 
+  // focus が外れたときに itemFocus をリセット
   useEffect(() => {
     if (!focus) {
       setItemFocus(-1);
@@ -98,6 +136,7 @@ const OrderItemEdit = ({
           item={item}
           idx={idx}
           mutateItem={mutateItem}
+          editable={editable && idx === itemFocus}
           focus={idx === itemFocus}
         />
       ))}
