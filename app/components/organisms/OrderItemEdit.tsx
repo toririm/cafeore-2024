@@ -136,8 +136,8 @@ const OrderItemEdit = ({
           item={item}
           idx={idx}
           mutateItem={mutateItem}
-          editable={editable && idx === itemFocus}
-          focus={idx === itemFocus}
+          focus={editable && idx === itemFocus}
+          highlight={idx === itemFocus}
         />
       ))}
       {discountOrder && (

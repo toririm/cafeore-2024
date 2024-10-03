@@ -12,17 +12,17 @@ type props = {
     idx: number,
     action: (prev: WithId<ItemEntity>) => WithId<ItemEntity>,
   ) => void;
-  editable: boolean;
+  highlight: boolean;
   focus: boolean;
 };
 
 /**
  * Enterでアサイン入力欄を開けて、アイテムのアサインを変更できるコンポーネント
  */
-const ItemAssign = ({ item, idx, mutateItem, editable, focus }: props) => {
+const ItemAssign = ({ item, idx, mutateItem, focus, highlight }: props) => {
   const [assignee, setAssinee] = useState<string | null>(null);
 
-  const assignInputRef = useFocusRef(editable);
+  const assignInputRef = useFocusRef(focus);
 
   const saveAssignInput = useCallback(() => {
     mutateItem(idx, (prev) => {
@@ -34,19 +34,19 @@ const ItemAssign = ({ item, idx, mutateItem, editable, focus }: props) => {
 
   // アサイン入力欄を閉じるときに保存
   useEffect(() => {
-    if (!editable) {
+    if (!focus) {
       saveAssignInput();
     }
-  }, [editable, saveAssignInput]);
+  }, [focus, saveAssignInput]);
 
   return (
-    <div className={cn("grid grid-cols-2", focus && "bg-orange-500")}>
+    <div className={cn("grid grid-cols-2", highlight && "bg-orange-500")}>
       <p className="font-bold text-lg">{idx + 1}</p>
       <div>
         <p>{item.name}</p>
         <p>{item.price}</p>
         <p>{type2label[item.type]}</p>
-        {editable ? (
+        {focus ? (
           <Input
             ref={assignInputRef}
             value={assignee ?? ""}
