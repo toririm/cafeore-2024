@@ -89,6 +89,7 @@ const OrderItemEdit = ({
     if (!items) return;
     const handler = (event: KeyboardEvent) => {
       for (const [idx, item] of items.entries()) {
+        if (editable) return;
         if (event.key === keys[idx]) {
           onAddItem(item);
         }
@@ -100,7 +101,7 @@ const OrderItemEdit = ({
     return () => {
       window.removeEventListener("keydown", handler);
     };
-  }, [items, focus, onAddItem]);
+  }, [items, focus, editable, onAddItem]);
 
   useEffect(() => {
     if (!focus) {
