@@ -146,6 +146,10 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
               (item) => newOrderDispatch({ type: "addItem", item }),
               [newOrderDispatch],
             )}
+            onRemoveItem={useCallback(
+              (idx) => newOrderDispatch({ type: "removeItem", idx }),
+              [newOrderDispatch],
+            )}
             mutateItem={useCallback(
               (idx, action) =>
                 newOrderDispatch({ type: "mutateItem", idx, action }),
