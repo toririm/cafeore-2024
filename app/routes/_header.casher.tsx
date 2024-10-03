@@ -24,7 +24,7 @@ import {
   SelectItem,
   SelectLabel,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from "~/components/ui/select";
 import {
   Table,
@@ -109,14 +109,14 @@ export default function Casher() {
             <TableBody>
               {queue?.map((item, index) => (
                 <TableRow key={`${index}-${item.id}`} className="h-[50px]">
-                  <TableCell className="flex font-medium flex-row items-center gap-[20px]">
-                    <div className="justify-start flex-none w-[250px] pl-[50px]">
+                  <TableCell className="flex·flex-row items-center gap-[20px] font-medium">
+                    <div className="w-[250px] flex-none justify-start pl-[50px]">
                       {item.name}
                     </div>
                     <div>
                       <Select
-                        onValueChange={(value)=>{
-                          item.assignee=value
+                        onValueChange={(value) => {
+                          item.assignee = value
                         }}
                       >
                         <SelectTrigger className="w-[100px] justify-center">
