@@ -27,7 +27,7 @@ type props = {
  */
 const CashierV2 = ({ items, orders, submitPayload }: props) => {
   const [newOrder, newOrderDispatch] = useOrderState();
-  const { inputStatus, proceedStatus, previousStatus, setInputStatus } =
+  const { inputStatus, proceedStatus, previousStatus, resetStatus } =
     useInputStatus();
   const [UISession, renewUISession] = useUISession();
   const { nextOrderId } = useLatestOrderId(orders);
@@ -38,9 +38,9 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
 
   const resetAll = useCallback(() => {
     newOrderDispatch({ type: "clear" });
-    setInputStatus("discount");
+    resetStatus();
     renewUISession();
-  }, [newOrderDispatch, setInputStatus, renewUISession]);
+  }, [newOrderDispatch, resetStatus, renewUISession]);
 
   const submitOrder = useCallback(() => {
     if (newOrder.getCharge() < 0) {
