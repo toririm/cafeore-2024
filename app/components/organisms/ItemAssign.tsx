@@ -32,6 +32,7 @@ const ItemAssign = ({ item, idx, mutateItem, editable, focus }: props) => {
     });
   }, [assignee, idx, mutateItem]);
 
+  // アサイン入力欄を閉じるときに保存
   useEffect(() => {
     if (!editable) {
       saveAssignInput();

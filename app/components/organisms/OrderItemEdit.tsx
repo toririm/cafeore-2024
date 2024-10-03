@@ -32,6 +32,12 @@ const OrderItemEdit = ({
   const [itemFocus, setItemFocus] = useState<number>(-1);
   const [editable, setEditable] = useState(false);
 
+  /**
+   * step だけ itemFocus を移動する
+   *
+   * - step が正の場合、次のアイテムに移動
+   * - step が負の場合、前のアイテムに移動
+   */
   const moveItemFocus = useCallback(
     (step: number) => {
       setItemFocus(
@@ -41,6 +47,9 @@ const OrderItemEdit = ({
     [order.items],
   );
 
+  /**
+   * assign 入力欄を開く/閉じる
+   */
   const switchEditable = useCallback(() => {
     if (editable) {
       setEditable(false);
@@ -49,6 +58,7 @@ const OrderItemEdit = ({
     }
   }, [editable]);
 
+  // ↑・↓ が押されたときに itemFocus を移動
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
       switch (event.key) {
@@ -85,6 +95,7 @@ const OrderItemEdit = ({
     };
   }, [focus, switchEditable]);
 
+  // キー操作でアイテムを追加
   useEffect(() => {
     if (!items) return;
     const handler = (event: KeyboardEvent) => {
@@ -103,6 +114,7 @@ const OrderItemEdit = ({
     };
   }, [items, focus, editable, onAddItem]);
 
+  // focus が外れたときに itemFocus をリセット
   useEffect(() => {
     if (!focus) {
       setItemFocus(-1);
