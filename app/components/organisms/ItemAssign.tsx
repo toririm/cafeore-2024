@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { WithId } from "~/lib/typeguard";
 import { cn } from "~/lib/utils";
 import { type ItemEntity, type2label } from "~/models/item";
+import { useFocusRef } from "../functional/useFocusRef";
 import { Input } from "../ui/input";
 
 type props = {
@@ -11,64 +12,31 @@ type props = {
     idx: number,
     action: (prev: WithId<ItemEntity>) => WithId<ItemEntity>,
   ) => void;
+  editable: boolean;
   focus: boolean;
 };
 
 /**
  * Enterでアサイン入力欄を開けて、アイテムのアサインを変更できるコンポーネント
  */
-const ItemAssign = ({ item, idx, mutateItem, focus }: props) => {
-  const [editable, setEditable] = useState(false);
+const ItemAssign = ({ item, idx, mutateItem, editable, focus }: props) => {
   const [assignee, setAssinee] = useState<string | null>(null);
 
-  const assignInputRef = useRef<HTMLInputElement>(null);
+  const assignInputRef = useFocusRef(editable);
 
-  const closeAssignInput = useCallback(() => {
+  const saveAssignInput = useCallback(() => {
     mutateItem(idx, (prev) => {
       const copy = structuredClone(prev);
       copy.assignee = assignee;
       return copy;
     });
-    setEditable(false);
   }, [assignee, idx, mutateItem]);
 
-  // edit の状態に応じて assign 入力欄を開くか閉じる
-  const switchEditable = useCallback(() => {
-    if (editable) {
-      closeAssignInput();
-    } else {
-      setEditable(true);
-    }
-  }, [editable, closeAssignInput]);
-
-  // focus が変化したときに assign 入力欄を閉じる
   useEffect(() => {
-    if (!focus && editable) {
-      closeAssignInput();
+    if (!editable) {
+      saveAssignInput();
     }
-  }, [focus, editable, closeAssignInput]);
-
-  // Enter が押されたときに assign 入力欄を開く
-  useEffect(() => {
-    const handler = (event: KeyboardEvent) => {
-      if (event.key === "Enter") {
-        switchEditable();
-      }
-    };
-    if (focus) {
-      window.addEventListener("keydown", handler);
-    }
-    return () => {
-      window.removeEventListener("keydown", handler);
-    };
-  }, [focus, switchEditable]);
-
-  // edit が true に変化したとき assign 入力欄にフォーカスする
-  useEffect(() => {
-    if (editable) {
-      assignInputRef.current?.focus();
-    }
-  }, [editable]);
+  }, [editable, saveAssignInput]);
 
   return (
     <div className={cn("grid grid-cols-2", focus && "bg-orange-500")}>

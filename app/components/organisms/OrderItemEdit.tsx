@@ -30,25 +30,35 @@ const OrderItemEdit = ({
   items,
 }: props) => {
   const [itemFocus, setItemFocus] = useState<number>(-1);
+  const [editable, setEditable] = useState(false);
 
-  const proceedItemFocus = useCallback(() => {
-    setItemFocus((prev) => (prev + 1) % order.items.length);
-  }, [order.items]);
+  const moveItemFocus = useCallback(
+    (step: number) => {
+      setItemFocus(
+        (prev) => (prev + step + order.items.length) % order.items.length,
+      );
+    },
+    [order.items],
+  );
 
-  const prevousItemFocus = useCallback(() => {
-    setItemFocus(
-      (prev) => (prev - 1 + order.items.length) % order.items.length,
-    );
-  }, [order.items]);
+  const switchEditable = useCallback(() => {
+    if (editable) {
+      setEditable(false);
+    } else {
+      setEditable(true);
+    }
+  }, [editable]);
 
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
       switch (event.key) {
         case "ArrowUp":
-          prevousItemFocus();
+          moveItemFocus(-1);
+          setEditable(false);
           break;
         case "ArrowDown":
-          proceedItemFocus();
+          moveItemFocus(1);
+          setEditable(false);
           break;
       }
     };
@@ -58,7 +68,22 @@ const OrderItemEdit = ({
     return () => {
       window.removeEventListener("keydown", handler);
     };
-  }, [proceedItemFocus, prevousItemFocus, focus]);
+  }, [focus, moveItemFocus]);
+
+  // Enter が押されたときに assign 入力欄を開く
+  useEffect(() => {
+    const handler = (event: KeyboardEvent) => {
+      if (event.key === "Enter") {
+        switchEditable();
+      }
+    };
+    if (focus) {
+      window.addEventListener("keydown", handler);
+    }
+    return () => {
+      window.removeEventListener("keydown", handler);
+    };
+  }, [focus, switchEditable]);
 
   useEffect(() => {
     if (!items) return;
@@ -98,6 +123,7 @@ const OrderItemEdit = ({
           item={item}
           idx={idx}
           mutateItem={mutateItem}
+          editable={editable && idx === itemFocus}
           focus={idx === itemFocus}
         />
       ))}
