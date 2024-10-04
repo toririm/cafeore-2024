@@ -61,7 +61,11 @@ describe("[db] itemRepository", async () => {
   });
 
   test("itemRepository.findAll", async () => {
-    const item = ItemEntity.createNew({ name: "Foo", price: 300, type: "ore" });
+    const item = ItemEntity.createNew({
+      name: "Foo",
+      price: 300,
+      type: "hotOre",
+    });
     const savedItem = await itemRepository.save(item);
     const items = await itemRepository.findAll();
     expect(items).toContainEqual(savedItem);

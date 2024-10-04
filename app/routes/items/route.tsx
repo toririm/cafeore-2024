@@ -44,7 +44,14 @@ export default function Item() {
 
   // Sort and group items by type
   const sortedItems = useMemo<Record<ItemType, ItemEntity[]>>(() => {
-    const base = { hot: [], ice: [], ore: [], milk: [] };
+    const base = {
+      hot: [],
+      ice: [],
+      hotOre: [],
+      iceOre: [],
+      milk: [],
+      others: [],
+    };
     if (!items) return base;
     return items.reduce<Record<ItemType, ItemEntity[]>>((acc, item) => {
       acc[item.type].push(item);
