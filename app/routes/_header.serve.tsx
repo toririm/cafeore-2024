@@ -1,4 +1,5 @@
 import type { MetaFunction } from "@remix-run/react";
+import { orderBy } from "firebase/firestore";
 import useSWRSubscription from "swr/subscription";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
@@ -19,7 +20,7 @@ export const clientLoader = async () => {
 export default function Serve() {
   const { data: orders } = useSWRSubscription(
     "orders",
-    collectionSub({ converter: orderConverter }),
+    collectionSub({ converter: orderConverter }, orderBy("orderId", "desc")),
   );
 
   return (

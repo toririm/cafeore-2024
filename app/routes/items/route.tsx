@@ -8,6 +8,7 @@ import {
 } from "@remix-run/react";
 import { useMemo } from "react";
 import useSWRSubscription from "swr/subscription";
+import { usePreventNumberKeyUpDown } from "~/components/functional/usePreventNumberKeyUpDown";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
@@ -44,13 +45,22 @@ export default function Item() {
 
   // Sort and group items by type
   const sortedItems = useMemo<Record<ItemType, ItemEntity[]>>(() => {
-    const base = { hot: [], ice: [], ore: [], milk: [] };
+    const base = {
+      hot: [],
+      ice: [],
+      hotOre: [],
+      iceOre: [],
+      milk: [],
+      others: [],
+    };
     if (!items) return base;
     return items.reduce<Record<ItemType, ItemEntity[]>>((acc, item) => {
       acc[item.type].push(item);
       return acc;
     }, base);
   }, [items]);
+
+  usePreventNumberKeyUpDown();
 
   return (
     <div className="bg-white p-4 font-sans">
