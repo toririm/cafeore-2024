@@ -8,6 +8,7 @@ import {
 } from "@remix-run/react";
 import { useMemo } from "react";
 import useSWRSubscription from "swr/subscription";
+import { usePreventNumberKeyUpDown } from "~/components/functional/usePreventNumberKeyUpDown";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
@@ -58,6 +59,8 @@ export default function Item() {
       return acc;
     }, base);
   }, [items]);
+
+  usePreventNumberKeyUpDown();
 
   return (
     <div className="bg-white p-4 font-sans">
