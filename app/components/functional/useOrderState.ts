@@ -23,7 +23,7 @@ type ApplyDiscount = Action<
 >;
 type RemoveDiscount = Action<"removeDiscount">;
 type SetReceived = Action<"setReceived", { received: string }>;
-type SetDescription = Action<"setDescription", { description: string }>;
+type SetDescription = Action<"setDescription", { description: string | null }>;
 /**
  * オーダーの状態を更新するためのアクション型
  */

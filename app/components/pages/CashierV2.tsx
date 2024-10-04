@@ -133,7 +133,10 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
             key={`Description-${UISession.key}`}
             onTextSet={useCallback(
               (text) =>
-                newOrderDispatch({ type: "setDescription", description: text }),
+                newOrderDispatch({
+                  type: "setDescription",
+                  description: text || null,
+                }),
               [newOrderDispatch],
             )}
             focus={inputStatus === "description"}
