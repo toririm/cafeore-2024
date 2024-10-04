@@ -4,7 +4,7 @@
   "editor.formatOnSaveMode": "file",
   "editor.codeActionsOnSave": {
     "source.organizeImports.biome": "explicit",
-    "source.fixAll.biome": "always",
+    "source.fixAll.biome": "explicit",
     "source.addMissingImports.ts": "explicit"
   },
   "editor.tabSize": 2,

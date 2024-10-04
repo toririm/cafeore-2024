@@ -1,7 +1,3 @@
-/**
- * Slackにメッセージを送信する
- * @param message 送信するメッセージ
- */
 export const sendSlackMessage = async (message: string) => {
   const webhookUrl = import.meta.env.VITE_WEBHOOK_URL;
 

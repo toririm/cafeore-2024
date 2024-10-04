@@ -13,23 +13,41 @@ export const orderSchema = z.object({
   description: z.string().nullable(),
   billingAmount: z.number(), // total - discount
   received: z.number(), // お預かり金額
-  discountOrderId: z.number().nullable(),
-  discountOrderCups: z.number(),
-  DISCOUNT_PER_CUP: z.number(),
-  discount: z.number(), // min(this.getCoffeeCount(), discountOrderCups) * DISCOUNT_PER_CUP
+  discountInfo: z.object({
+    previousOrderId: z.number().nullable(),
+    validCups: z.number(), // min(this.items.length, previousOrder.items.length)
+    discount: z.number(), // validCups * 100
+  }),
 });
 
 export type Order = z.infer<typeof orderSchema>;
+type DiscountInfo = Order["discountInfo"];
 
-// 途中から割引額を変更する場合はこの値を変更する
-const STATIC_DISCOUNT_PER_CUP = 100;
+const DISCOUNT_RATE_PER_CUP = 100;
+
+// OrderEntity の内部でのみ使うクラス
+class DiscountInfoEntity implements DiscountInfo {
+  constructor(
+    readonly previousOrderId: number | null,
+    readonly validCups: number,
+    readonly discount: number,
+  ) {}
+
+  static fromDiscountInfo(discountInfo: DiscountInfo): DiscountInfoEntity {
+    return new DiscountInfoEntity(
+      discountInfo.previousOrderId,
+      discountInfo.validCups,
+      discountInfo.discount,
+    );
+  }
+}
 
 export class OrderEntity implements Order {
   // 全てのプロパティを private にして外部からの直接アクセスを禁止
   private constructor(
     private readonly _id: string | undefined,
-    private _orderId: number,
-    private _createdAt: Date,
+    private readonly _orderId: number,
+    private readonly _createdAt: Date,
     private _servedAt: Date | null,
     private _items: WithId<ItemEntity>[],
     private _total: number,
@@ -37,10 +55,11 @@ export class OrderEntity implements Order {
     private _description: string | null,
     private _billingAmount: number,
     private _received: number,
-    private _discountOrderId: number | null,
-    private _discountOrderCups: number,
-    private readonly _DISCOUNT_PER_CUP: number,
-    private _discount: number,
+    private _discountInfo: DiscountInfoEntity = new DiscountInfoEntity(
+      null,
+      0,
+      0,
+    ),
   ) {}
 
   static createNew({ orderId }: { orderId: number }): OrderEntity {
@@ -55,18 +74,10 @@ export class OrderEntity implements Order {
       null,
       0,
       0,
-      null,
-      0,
-      STATIC_DISCOUNT_PER_CUP,
-      0,
     );
   }
 
-  static fromOrder(order: WithId<Order>): WithId<OrderEntity>;
-  static fromOrder(order: Order): OrderEntity;
-  static fromOrder(
-    order: WithId<Order> | Order,
-  ): WithId<OrderEntity> | OrderEntity {
+  static fromOrder(order: WithId<Order>): WithId<OrderEntity> {
     return new OrderEntity(
       order.id,
       order.orderId,
@@ -78,11 +89,8 @@ export class OrderEntity implements Order {
       order.description,
       order.billingAmount,
       order.received,
-      order.discountOrderId,
-      order.discountOrderCups,
-      order.DISCOUNT_PER_CUP,
-      order.discount,
-    );
+      DiscountInfoEntity.fromDiscountInfo(order.discountInfo),
+    ) as WithId<OrderEntity>;
   }
 
   // --------------------------------------------------
@@ -95,9 +103,6 @@ export class OrderEntity implements Order {
 
   get orderId() {
     return this._orderId;
-  }
-  set orderId(orderId: number) {
-    this._orderId = orderId;
   }
 
   get createdAt() {
@@ -135,7 +140,7 @@ export class OrderEntity implements Order {
   }
 
   get billingAmount() {
-    this._billingAmount = this.total - this.discount;
+    this._billingAmount = this.total - this._discountInfo.discount;
     return this._billingAmount;
   }
 
@@ -146,92 +151,46 @@ export class OrderEntity implements Order {
     this._received = received;
   }
 
-  get discountOrderId() {
-    return this._discountOrderId;
-  }
-
-  get discountOrderCups() {
-    return this._discountOrderCups;
-  }
-
-  get DISCOUNT_PER_CUP() {
-    return this._DISCOUNT_PER_CUP;
-  }
-
-  get discount() {
-    this._discount =
-      Math.min(this.getCoffeeCount(), this._discountOrderCups) *
-      this._DISCOUNT_PER_CUP;
-    return this._discount;
+  get discountInfo() {
+    return this._discountInfo;
   }
 
   // --------------------------------------------------
   // methods
   // --------------------------------------------------
 
-  /**
-   * コーヒーの数を取得する
-   * @returns 割引の対象となるコーヒーの数
-   */
-  getCoffeeCount() {
+  _getCoffeeCount() {
     // milk 以外のアイテムの数を返す
     // TODO(toririm): このメソッドは items が変更された時だけでいい
     return this.items.filter((item) => item.type !== "milk").length;
   }
 
-  /**
-   * オーダーを準備完了状態に変更する
-   */
   beReady() {
     // orderReady は false -> true にしか変更できないようにする
     this._orderReady = true;
   }
 
-  /**
-   * オーダーを提供済み状態に変更する
-   */
   beServed() {
     // servedAt は null -> Date にしか変更できないようにする
     this._servedAt = new Date();
   }
 
-  /**
-   * 割引を適用する
-   * @param previousOrder 割引の参照となる前回のオーダー
-   */
+  /* このメソッドのみで discountInfo を更新する */
   applyDiscount(previousOrder: OrderEntity) {
-    this._discountOrderId = previousOrder.orderId;
-    this._discountOrderCups = previousOrder.getCoffeeCount();
+    const validCups = Math.min(
+      this._getCoffeeCount(),
+      previousOrder._getCoffeeCount(),
+    );
+    const discount = validCups * DISCOUNT_RATE_PER_CUP;
+
+    this._discountInfo = DiscountInfoEntity.fromDiscountInfo({
+      previousOrderId: previousOrder.orderId,
+      validCups,
+      discount,
+    });
+    return this._discountInfo;
   }
 
-  /**
-   * 割引を解除する
-   */
-  removeDiscount() {
-    this._discountOrderId = null;
-    this._discountOrderCups = 0;
-  }
-
-  /**
-   * オーダーを作成した時刻を更新する
-   */
-  nowCreated() {
-    // createdAt を更新
-    this._createdAt = new Date();
-  }
-
-  /**
-   * お釣りを計算する
-   * @returns お釣り
-   */
-  getCharge() {
-    return this.received - this.billingAmount;
-  }
-
-  /**
-   * メソッドを持たない Order オブジェクトに変換する
-   * @returns Order オブジェクト
-   */
   toOrder(): Order {
     return {
       id: this.id,
@@ -244,20 +203,7 @@ export class OrderEntity implements Order {
       description: this.description,
       billingAmount: this.billingAmount,
       received: this.received,
-      discountOrderId: this.discountOrderId,
-      discountOrderCups: this.discountOrderCups,
-      DISCOUNT_PER_CUP: this.DISCOUNT_PER_CUP,
-      discount: this.discount,
+      discountInfo: this.discountInfo,
     };
-  }
-
-  /**
-   * オーダーを複製する
-   * ただし、items は参照を共有することに注意
-   */
-  clone(): WithId<OrderEntity>;
-  clone(): OrderEntity;
-  clone(): WithId<OrderEntity> | OrderEntity {
-    return OrderEntity.fromOrder(this.toOrder());
   }
 }
