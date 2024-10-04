@@ -23,11 +23,18 @@ export default function Serve() {
     collectionSub({ converter: orderConverter }, orderBy("orderId", "desc")),
   );
 
+  const unserved = orders?.reduce((acc, cur) => {
+    if (cur.servedAt == null) {
+      return acc + 1;
+    }
+    return acc;
+  }, 0);
+
   return (
     <div className="p-4 font-sans">
       <div className="flex justify-between pb-4">
         <h1 className="text-3xl">提供</h1>
-        <p>提供待ちオーダー数：</p>
+        <p>提供待ちオーダー数：{unserved}</p>
       </div>
 
       <div className="grid grid-cols-4 gap-4">
