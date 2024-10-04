@@ -1,7 +1,14 @@
 import { z } from "zod";
 import type { WithId } from "~/lib/typeguard";
 
-export const itemtypes = ["hot", "ice", "ore", "milk"] as const;
+export const itemtypes = [
+  "hot",
+  "ice",
+  "hotOre",
+  "iceOre",
+  "milk",
+  "others",
+] as const;
 
 export const itemSchema = z.object({
   id: z.string().optional(), // Firestore のドキュメント ID
@@ -21,8 +28,10 @@ export type ItemType = Item["type"];
 export const type2label = {
   hot: "ホット",
   ice: "アイス",
-  ore: "オレ",
-  milk: "ミルク",
+  hotOre: "ホットオレ",
+  iceOre: "アイスオレ",
+  milk: "アイスミルク",
+  others: "その他",
 } as const satisfies Record<ItemType, string>;
 
 export class ItemEntity implements Item {
