@@ -43,21 +43,25 @@ export default function Item() {
     shouldRevalidate: "onInput",
   });
 
-  // Sort and group items by type
-  const sortedItems = useMemo<Record<ItemType, ItemEntity[]>>(() => {
-    const base = {
-      hot: [],
-      ice: [],
-      hotOre: [],
-      iceOre: [],
-      milk: [],
-      others: [],
-    };
-    if (!items) return base;
-    return items.reduce<Record<ItemType, ItemEntity[]>>((acc, item) => {
-      acc[item.type].push(item);
-      return acc;
-    }, base);
+  const aggregatedItems = useMemo<Record<ItemType, ItemEntity[]>>(() => {
+    const base = itemtypes.reduce<Record<ItemType, ItemEntity[]>>(
+      (acc, type) => {
+        acc[type] = [];
+        return acc;
+      },
+      {} as Record<ItemType, ItemEntity[]>,
+    );
+    const aggregated = items?.reduce<Record<ItemType, ItemEntity[]>>(
+      (acc, item) => {
+        if (!acc[item.type]) {
+          acc[item.type] = [];
+        }
+        acc[item.type].push(item);
+        return acc;
+      },
+      base,
+    );
+    return aggregated ?? base;
   }, [items]);
 
   usePreventNumberKeyUpDown();
@@ -157,7 +161,7 @@ export default function Item() {
                 {type2label[type]}
               </h3>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                {sortedItems[type]?.map((item) => (
+                {aggregatedItems[type]?.map((item) => (
                   <div
                     key={item.id}
                     className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md"
