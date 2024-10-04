@@ -56,9 +56,9 @@ export default function Serve() {
                         <CardContent
                           className={cn(
                             "pt-6",
-                            item.type === "milk" && "bg-yellow-300",
-                            item.type === "hotOre" && "bg-green-300",
-                            item.type === "iceOre" && "bg-green-300",
+                            item.type === "milk" && "bg-yellow-200",
+                            item.type === "hotOre" && "bg-orange-300",
+                            item.type === "iceOre" && "bg-blue-300",
                           )}
                         >
                           <h3>{item.name}</h3>
