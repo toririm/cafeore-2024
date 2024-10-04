@@ -5,6 +5,7 @@ import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { orderConverter } from "~/firebase/converter";
 import { collectionSub } from "~/firebase/subscription";
+import { cn } from "~/lib/utils";
 import { type2label } from "~/models/item";
 import { orderRepository } from "~/repositories/order";
 
@@ -52,7 +53,14 @@ export default function Serve() {
                   {order.items.map((item) => (
                     <div key={item.id}>
                       <Card>
-                        <CardContent className="pt-6">
+                        <CardContent
+                          className={cn(
+                            "pt-6",
+                            item.type === "milk" && "bg-blue-300",
+                            item.type === "hotOre" && "bg-green-300",
+                            item.type === "iceOre" && "bg-green-300",
+                          )}
+                        >
                           <h3>{item.name}</h3>
                           <p>{type2label[item.type]}</p>
                         </CardContent>
