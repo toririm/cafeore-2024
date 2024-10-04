@@ -5,9 +5,9 @@ import type { OrderEntity } from "~/models/order";
 import { useInputStatus } from "../functional/useInputStatus";
 import { useLatestOrderId } from "../functional/useLatestOrderId";
 import { useOrderState } from "../functional/useOrderState";
+import { usePreventNumberKeyUpDown } from "../functional/usePreventNumberKeyUpDown";
 import { useUISession } from "../functional/useUISession";
 import { AttractiveTextBox } from "../molecules/AttractiveTextBox";
-import { InputNumber } from "../molecules/InputNumber";
 import { ChargeView } from "../organisms/ChargeView";
 import { DiscountInput } from "../organisms/DiscountInput";
 import { OrderAlertDialog } from "../organisms/OrderAlertDialog";
@@ -31,6 +31,7 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
     useInputStatus();
   const [UISession, renewUISession] = useUISession();
   const { nextOrderId } = useLatestOrderId(orders);
+  usePreventNumberKeyUpDown();
 
   useEffect(() => {
     newOrderDispatch({ type: "updateOrderId", orderId: nextOrderId });
@@ -117,7 +118,8 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
               [newOrderDispatch],
             )}
           />
-          <InputNumber
+          <AttractiveTextBox
+            type="number"
             key={`Received-${UISession.key}`}
             onTextSet={useCallback(
               (text) =>

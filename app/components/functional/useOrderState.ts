@@ -6,7 +6,7 @@ import { OrderEntity } from "~/models/order";
 type BaseAction<TypeName extends string> = { type: TypeName };
 type Action<
   TypeName extends string,
-  U = Record<never, never>,
+  U extends Record<string, unknown> = Record<never, never>,
 > = BaseAction<TypeName> & U;
 
 type Clear = Action<"clear", { effectFn?: () => void }>;

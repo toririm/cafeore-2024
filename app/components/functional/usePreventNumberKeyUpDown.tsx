@@ -1,12 +1,9 @@
-import { type ComponentPropsWithRef, useEffect } from "react";
-import { AttractiveTextBox } from "./AttractiveTextBox";
-
-type props = ComponentPropsWithRef<typeof AttractiveTextBox>;
+import { useEffect } from "react";
 
 /**
- * 上下キーで数値を増減させない数値専用のテキストボックス
+ * 上下キーで数値を増減させないEffect
  */
-const InputNumber = ({ ...props }: props) => {
+const usePreventNumberKeyUpDown = () => {
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
       if (event.key === "ArrowUp" || event.key === "ArrowDown") {
@@ -21,8 +18,6 @@ const InputNumber = ({ ...props }: props) => {
       window.removeEventListener("keyup", handler);
     };
   }, []);
-
-  return <AttractiveTextBox type="number" {...props} />;
 };
 
-export { InputNumber };
+export { usePreventNumberKeyUpDown };
