@@ -51,7 +51,7 @@ describe("[unit] order entity", () => {
       id: "3",
       name: "item3",
       price: 100,
-      type: "ore",
+      type: "hotOre",
       assignee: null,
     });
     expect(order.total).toBe(541);
