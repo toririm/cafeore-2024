@@ -2,7 +2,13 @@ import type { MetaFunction } from "@remix-run/react";
 import { orderBy } from "firebase/firestore";
 import useSWRSubscription from "swr/subscription";
 import { Button } from "~/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "~/components/ui/card";
 import { orderConverter } from "~/firebase/converter";
 import { collectionSub } from "~/firebase/subscription";
 import { cn } from "~/lib/utils";
@@ -74,6 +80,7 @@ export default function Serve() {
                   <Button>提供</Button>
                 </div>
               </CardContent>
+              <CardFooter>備考欄：{order?.description}</CardFooter>
             </Card>
           </div>
         ))}
