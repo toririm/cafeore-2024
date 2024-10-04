@@ -23,7 +23,7 @@ type ApplyDiscount = Action<
 >;
 type RemoveDiscount = Action<"removeDiscount">;
 type SetReceived = Action<"setReceived", { received: string }>;
-type SetDescription = Action<"setDescription", { description: string | null }>;
+type SetDescription = Action<"setDescription", { description: string }>;
 /**
  * オーダーの状態を更新するためのアクション型
  */
@@ -95,7 +95,7 @@ const setReceived: OrderReducer<SetReceived> = (state, action) => {
 
 const setDescription: OrderReducer<SetDescription> = (state, action) => {
   const updated = state.clone();
-  updated.description = action.description;
+  updated.description = action.description || null;
   return updated;
 };
 
