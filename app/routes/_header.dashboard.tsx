@@ -39,12 +39,42 @@ const Dashboard = (props: HighchartsReact.Props) => {
     return acc;
   }, 0);
   const chartComponentRef = useRef<HighchartsReact.RefObject>(null);
-  const itemNamesArray = items?.map((items) => items.name);
-  // const numData = orders?.map((orders) => orders.items);
-  // const numberPerMenu = (orders: OrderEntity) => {
-  //   return;
-  // };
-  // console.log(numData);
+  const itemNamesArray = items?.map((items) => items.id);
+  const init = new Map<string, number>();
+  const numPerItem = orders?.reduce((acc, cur) => {
+    if (itemNamesArray !== undefined) {
+      for (let i = 0; i < cur.items.length; i++) {
+        for (let j = 0; j < itemNamesArray?.length; j++) {
+          if (cur.items[i].id === itemNamesArray[j]) {
+            const num = acc.get(cur.items[i].id) ?? 0;
+            acc.set(cur.items[i].id, num + 1);
+          }
+        }
+      }
+    }
+    return acc;
+  }, init);
+  const itemNames = (): string[] => {
+    const name: string[] = [];
+    if (numPerItem !== undefined && items !== undefined) {
+      const itemIds = [...numPerItem.keys()];
+      for (let i = 0; i < numPerItem.size; i++) {
+        for (let j = 0; j < items?.length; j++) {
+          if (itemIds[i] === items[j].id) {
+            name.push(items[j].name);
+          }
+        }
+      }
+    }
+    return name;
+  };
+  const itemValues = (): number[] => {
+    let values: number[] = [];
+    if (numPerItem !== undefined) {
+      values = [...numPerItem.values()];
+    }
+    return values;
+  };
   const options: Highcharts.Options = {
     title: {
       text: "種類別杯数",
@@ -52,12 +82,13 @@ const Dashboard = (props: HighchartsReact.Props) => {
     series: [
       {
         type: "column",
-        data: [1, 2, 3, 4, 5, 6, 7, 8],
+        data: itemValues(),
       },
     ],
-    xAxis: { categories: itemNamesArray },
+    xAxis: { categories: itemNames() },
     yAxis: { type: "linear" },
   };
+  console.log(itemValues());
 
   return (
     <div className="p-4 font-sans">

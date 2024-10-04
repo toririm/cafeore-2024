@@ -26,14 +26,10 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.13",
-<<<<<<< HEAD
-    "firebase": "^10.13.2",
+    "firebase": "^10.14.0",
     "highcharts": "^11.4.8",
     "highcharts-react-official": "^3.2.1",
-=======
-    "firebase": "^10.14.0",
     "input-otp": "^1.2.4",
->>>>>>> f3dabf0d1dc6576d446120254b69f8cf8dcd233f
     "lodash": "^4.17.21",
     "lucide-react": "0.447.0",
     "react": "^18.3.1",
