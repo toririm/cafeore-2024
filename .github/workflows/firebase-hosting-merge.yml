@@ -6,6 +6,14 @@ on:
   push:
     branches:
       - main
+    paths:
+      - "pos/**"
+      - ".github/workflows/firebase-hosting-merge.yml"
+
+defaults:
+  run:
+    working-directory: ./pos
+
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest

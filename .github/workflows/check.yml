@@ -1,5 +1,14 @@
 name: check
-on: push
+on:
+  push:
+    paths:
+      - "pos/**"
+      - ".github/workflows/check.yml"
+
+defaults:
+  run:
+    working-directory: ./pos
+
 jobs:
   biome:
     runs-on: ubuntu-latest
