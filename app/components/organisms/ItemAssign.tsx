@@ -23,7 +23,7 @@ type props = {
 const ItemAssign = ({ item, idx, mutateItem, focus, highlight }: props) => {
   const [assignee, setAssinee] = useState<string | null>(null);
 
-  const assignInputRef = useFocusRef(focus);
+  const assignInputRef = useFocusRef<HTMLInputElement>(focus);
 
   const saveAssignInput = useCallback(() => {
     mutateItem(idx, (prev) => {
@@ -42,7 +42,7 @@ const ItemAssign = ({ item, idx, mutateItem, focus, highlight }: props) => {
 
   const assignView = useMemo(() => {
     if (item.assignee) return item.assignee;
-    return highlight ? "Enterで入力" : "　　　　　　　　　　";
+    return highlight ? "Enterで入力" : "　";
   }, [highlight, item.assignee]);
 
   return (

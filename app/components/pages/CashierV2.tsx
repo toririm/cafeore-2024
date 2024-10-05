@@ -7,7 +7,8 @@ import { useLatestOrderId } from "../functional/useLatestOrderId";
 import { useOrderState } from "../functional/useOrderState";
 import { usePreventNumberKeyUpDown } from "../functional/usePreventNumberKeyUpDown";
 import { useUISession } from "../functional/useUISession";
-import { AttractiveTextBox } from "../molecules/AttractiveTextBox";
+import { AttractiveInput } from "../molecules/AttractiveInput";
+import { AttractiveTextArea } from "../molecules/AttractiveTextArea";
 import { InputHeader } from "../molecules/InputHeader";
 import { ChargeView } from "../organisms/ChargeView";
 import { DiscountInput } from "../organisms/DiscountInput";
@@ -120,20 +121,22 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
               focus={inputStatus === "discount"}
               number={2}
             />
-            <DiscountInput
-              key={`DiscountInput-${UISession.key}`}
-              focus={inputStatus === "discount"}
-              orders={orders}
-              onDiscountOrderFind={useCallback(
-                (discountOrder) =>
-                  newOrderDispatch({ type: "applyDiscount", discountOrder }),
-                [newOrderDispatch],
-              )}
-              onDiscountOrderRemoved={useCallback(
-                () => newOrderDispatch({ type: "removeDiscount" }),
-                [newOrderDispatch],
-              )}
-            />
+            <div className="flex justify-center">
+              <DiscountInput
+                key={`DiscountInput-${UISession.key}`}
+                focus={inputStatus === "discount"}
+                orders={orders}
+                onDiscountOrderFind={useCallback(
+                  (discountOrder) =>
+                    newOrderDispatch({ type: "applyDiscount", discountOrder }),
+                  [newOrderDispatch],
+                )}
+                onDiscountOrderRemoved={useCallback(
+                  () => newOrderDispatch({ type: "removeDiscount" }),
+                  [newOrderDispatch],
+                )}
+              />
+            </div>
           </div>
           <div className="flex-1">
             <InputHeader
@@ -141,7 +144,7 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
               focus={inputStatus === "description"}
               number={3}
             />
-            <AttractiveTextBox
+            <AttractiveTextArea
               key={`Description-${UISession.key}`}
               onTextSet={useCallback(
                 (text) =>
@@ -173,7 +176,7 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
               <p>{newOrder.billingAmount}</p>
             </div>
 
-            <AttractiveTextBox
+            <AttractiveInput
               type="number"
               key={`Received-${UISession.key}`}
               onTextSet={useCallback(

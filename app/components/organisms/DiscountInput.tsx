@@ -1,3 +1,4 @@
+import { CheckCircledIcon, CrossCircledIcon } from "@radix-ui/react-icons";
 import {
   type ComponentPropsWithoutRef,
   useEffect,
@@ -34,7 +35,7 @@ const DiscountInput = ({
   ...props
 }: props) => {
   const [discountOrderId, setDiscountOrderId] = useState("");
-  const ref = useFocusRef(focus);
+  const ref = useFocusRef<HTMLInputElement>(focus);
 
   const isComplete = useMemo(
     () => discountOrderId.length === 3,
@@ -60,21 +61,41 @@ const DiscountInput = ({
   }, [isComplete, discountOrder, onDiscountOrderFind, onDiscountOrderRemoved]);
 
   return (
-    <div>
-      <p>割引券番号</p>
-      <ThreeDigitsInput
-        ref={ref}
-        value={discountOrderId}
-        onChange={(value) => setDiscountOrderId(value)}
-        disabled={!focus}
-        {...props}
-      />
+    <div className="">
+      <div className="flex justify-center p-6">
+        <div className="">
+          <p className="pb-1 text-sm">番号</p>
+          <ThreeDigitsInput
+            ref={ref}
+            value={discountOrderId}
+            onChange={(value) => setDiscountOrderId(value)}
+            disabled={!focus}
+            {...props}
+          />
+        </div>
+      </div>
       <p>
-        {!isComplete && "3桁の割引券番号を入力してください"}
+        {!isComplete && (
+          <div className="flex items-center">
+            {/* <ExclamationTriangleIcon className="mr-1 stroke-stone-400" /> */}
+            <p className="text-sm text-stone-400">3桁すべて入力してください</p>
+          </div>
+        )}
         {isComplete &&
-          (discountOrder instanceof OrderEntity
-            ? `有効杯数: ${lastPurchasedCups}`
-            : "見つかりません")}
+          (discountOrder instanceof OrderEntity ? (
+            <div className="flex items-center">
+              <CheckCircledIcon className="mr-1 h-5 w-5 stroke-green-700" />
+              <p className="flex items-center">
+                <span className="mr-1 text-lg">{lastPurchasedCups}</span>
+                杯分
+              </p>
+            </div>
+          ) : (
+            <div className="flex items-center">
+              <CrossCircledIcon className="mr-1 h-5 w-5 stroke-red-700" />
+              <p className="flex items-center">無効な番号</p>
+            </div>
+          ))}
       </p>
     </div>
   );
