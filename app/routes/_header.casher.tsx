@@ -189,7 +189,7 @@ export default function Casher() {
             <TableCaption />
             <TableHeader>
               <TableRow>
-                <TableHead className="w-500 pb-[15px] font-medium text-4xl">
+                <TableHead className="w-500 pb-[15px] font-medium text-4xl text-theme">
                   No. {nextOrderId}
                 </TableHead>
               </TableRow>
