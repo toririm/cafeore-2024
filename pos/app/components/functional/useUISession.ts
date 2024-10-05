@@ -12,7 +12,7 @@ type UISession = {
  *
  * UISession.key を DOM の key に指定することで、セッションが変更されたときに再描画される
  */
-const useUISession = (): [UISession, () => void] => {
+const useUISession = () => {
   const [date, setDate] = useState(new Date());
 
   const UISession = useMemo(() => {
@@ -26,7 +26,7 @@ const useUISession = (): [UISession, () => void] => {
     setDate(new Date());
   }, []);
 
-  return [UISession, renewUISession];
+  return [UISession, renewUISession] as const;
 };
 
 export { useUISession };
