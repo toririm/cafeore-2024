@@ -7,14 +7,12 @@ import { useLatestOrderId } from "../functional/useLatestOrderId";
 import { useOrderState } from "../functional/useOrderState";
 import { usePreventNumberKeyUpDown } from "../functional/usePreventNumberKeyUpDown";
 import { useUISession } from "../functional/useUISession";
-import { AttractiveInput } from "../molecules/AttractiveInput";
 import { AttractiveTextArea } from "../molecules/AttractiveTextArea";
 import { InputHeader } from "../molecules/InputHeader";
-import { ChargeView } from "../organisms/ChargeView";
 import { DiscountInput } from "../organisms/DiscountInput";
 import { OrderAlertDialog } from "../organisms/OrderAlertDialog";
 import { OrderItemEdit } from "../organisms/OrderItemEdit";
-import { Button } from "../ui/button";
+import { OrderReceivedInput } from "../organisms/OrderReceivedInput";
 
 type props = {
   items: WithId<ItemEntity>[] | undefined;
@@ -144,49 +142,39 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
               focus={inputStatus === "description"}
               number={3}
             />
-            <AttractiveTextArea
-              key={`Description-${UISession.key}`}
-              onTextSet={useCallback(
-                (text) =>
-                  newOrderDispatch({
-                    type: "setDescription",
-                    description: text,
-                  }),
-                [newOrderDispatch],
-              )}
-              focus={inputStatus === "description"}
-            />
+            <div className="pt-5">
+              <AttractiveTextArea
+                key={`Description-${UISession.key}`}
+                onTextSet={useCallback(
+                  (text) =>
+                    newOrderDispatch({
+                      type: "setDescription",
+                      description: text,
+                    }),
+                  [newOrderDispatch],
+                )}
+                focus={inputStatus === "description"}
+              />
+            </div>
           </div>
           <div className="flex-1">
             <InputHeader
-              title="受取金額"
+              title="会計"
               focus={inputStatus === "received"}
               number={4}
             />
-            <p>操作</p>
-            <p>入力ステータスを移動して一つ一つの項目を入力していきます</p>
-            <ul>
-              <li>入力ステータスを移動　←・→</li>
-              <li>注文をクリア: Esc</li>
-            </ul>
-            <Button onClick={submitOrder}>提出</Button>
-            <h1 className="text-lg">{`No. ${newOrder.orderId}`}</h1>
-            <div className="border-8">
-              <p>合計金額</p>
-              <p>{newOrder.billingAmount}</p>
+            <div className="pt-5">
+              <OrderReceivedInput
+                key={`Received-${UISession.key}`}
+                onTextSet={useCallback(
+                  (received) =>
+                    newOrderDispatch({ type: "setReceived", received }),
+                  [newOrderDispatch],
+                )}
+                focus={inputStatus === "received"}
+                order={newOrder}
+              />
             </div>
-
-            <AttractiveInput
-              type="number"
-              key={`Received-${UISession.key}`}
-              onTextSet={useCallback(
-                (text) =>
-                  newOrderDispatch({ type: "setReceived", received: text }),
-                [newOrderDispatch],
-              )}
-              focus={inputStatus === "received"}
-            />
-            <ChargeView order={newOrder} />
           </div>
         </div>
         <OrderAlertDialog
