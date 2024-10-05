@@ -1,4 +1,5 @@
-name: check
+name: pos / check
+
 on:
   push:
     paths:
