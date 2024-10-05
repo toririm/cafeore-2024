@@ -135,22 +135,22 @@ const OrderItemEdit = ({
   return (
     <>
       {focus && (
-        <>
-          <p>商品を追加: キーボードの a, s, d, f, g, h, j, k, l, ;</p>
-          <p>↑・↓でアイテムのフォーカスを移動</p>
-          <p>Enterで指名の入力欄を開く</p>
-        </>
+        <div className="pb-3 flex justify-end">
+          <p className="text-stone-400 text-sm">上下矢印キーでアイテムを選択</p>
+        </div>
       )}
-      {order.items.map((item, idx) => (
-        <ItemAssign
-          key={`${idx}-${item.id}`}
-          item={item}
-          idx={idx}
-          mutateItem={mutateItem}
-          focus={editable && idx === itemFocus}
-          highlight={idx === itemFocus}
-        />
-      ))}
+      <div className="grid gap-5">
+        {order.items.map((item, idx) => (
+          <ItemAssign
+            key={`${idx}-${item.id}`}
+            item={item}
+            idx={idx}
+            mutateItem={mutateItem}
+            focus={editable && idx === itemFocus}
+            highlight={idx === itemFocus}
+          />
+        ))}
+      </div>
       {discountOrder && (
         <div className="grid grid-cols-2">
           <p className="font-bold text-lg">割引</p>

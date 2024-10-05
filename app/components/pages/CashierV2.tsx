@@ -84,7 +84,7 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
     <>
       <div className="p-4">
         <p className="font-extrabold text-3xl">No.{newOrder.orderId}</p>
-        <div className="flex">
+        <div className="flex gap-5">
           <div className="flex-1">
             <InputHeader
               title="商品"
