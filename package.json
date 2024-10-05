@@ -1,0 +1,9 @@
+{
+  "name": "cafeore-2024",
+  "private": true,
+  "workspaces": ["pos"],
+  "devDependencies": {
+    "@biomejs/biome": "1.9.3"
+  },
+  "trustedDependencies": ["@biomejs/biome"]
+}
