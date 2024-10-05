@@ -1,8 +1,10 @@
 import type { MetaFunction } from "@remix-run/react";
-import { orderBy } from "firebase/firestore";
-import useSWRSubscription from "swr/subscription";
-
 import dayjs from "dayjs";
+import { orderBy } from "firebase/firestore";
+import Highcharts from "highcharts";
+import HighchartsReact from "highcharts-react-official";
+import { useRef } from "react";
+import useSWRSubscription from "swr/subscription";
 import {
   Table,
   TableBody,
@@ -13,7 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
-import { orderConverter } from "~/firebase/converter";
+import { itemConverter, orderConverter } from "~/firebase/converter";
 import { collectionSub } from "~/firebase/subscription";
 import type { OrderEntity } from "~/models/order";
 
@@ -21,10 +23,14 @@ export const meta: MetaFunction = () => {
   return [{ title: "注文状況" }];
 };
 
-export default function Dashboard() {
+const Dashboard = (props: HighchartsReact.Props) => {
   const { data: orders } = useSWRSubscription(
     "orders",
     collectionSub({ converter: orderConverter }, orderBy("orderId", "desc")),
+  );
+  const { data: items } = useSWRSubscription(
+    "items",
+    collectionSub({ converter: itemConverter }),
   );
   const unseved = orders?.reduce((acc, cur) => {
     if (cur.servedAt == null) {
@@ -32,6 +38,57 @@ export default function Dashboard() {
     }
     return acc;
   }, 0);
+  const chartComponentRef = useRef<HighchartsReact.RefObject>(null);
+  const itemNamesArray = items?.map((items) => items.id);
+  const init = new Map<string, number>();
+  const numPerItem = orders?.reduce((acc, cur) => {
+    if (itemNamesArray !== undefined) {
+      for (let i = 0; i < cur.items.length; i++) {
+        for (let j = 0; j < itemNamesArray?.length; j++) {
+          if (cur.items[i].id === itemNamesArray[j]) {
+            const num = acc.get(cur.items[i].id) ?? 0;
+            acc.set(cur.items[i].id, num + 1);
+          }
+        }
+      }
+    }
+    return acc;
+  }, init);
+  const itemNames = (): string[] => {
+    const name: string[] = [];
+    if (numPerItem !== undefined && items !== undefined) {
+      const itemIds = [...numPerItem.keys()];
+      for (let i = 0; i < numPerItem.size; i++) {
+        for (let j = 0; j < items?.length; j++) {
+          if (itemIds[i] === items[j].id) {
+            name.push(items[j].name);
+          }
+        }
+      }
+    }
+    return name;
+  };
+  const itemValues = (): number[] => {
+    let values: number[] = [];
+    if (numPerItem !== undefined) {
+      values = [...numPerItem.values()];
+    }
+    return values;
+  };
+  const options: Highcharts.Options = {
+    title: {
+      text: "種類別杯数",
+    },
+    series: [
+      {
+        type: "column",
+        data: itemValues(),
+      },
+    ],
+    xAxis: { categories: itemNames() },
+    yAxis: { type: "linear" },
+  };
+  console.log(itemValues());
 
   return (
     <div className="p-4 font-sans">
@@ -39,9 +96,8 @@ export default function Dashboard() {
         <h1 className="text-3xl">注文状況</h1>
         <p>提供待ちオーダー数：{unseved}</p>
       </div>
-
-      <div>
-        <div>
+      <div className="flex justify-start pb-2">
+        <div className="w-1/2">
           <Table>
             <TableCaption />
             <TableHeader>
@@ -73,10 +129,20 @@ export default function Dashboard() {
             <TableFooter />
           </Table>
         </div>
+        <div className="w-1/2">
+          <div className="sticky top-0">
+            <HighchartsReact
+              highcharts={Highcharts}
+              options={options}
+              ref={chartComponentRef}
+              {...props}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
-}
+};
 
 const numOfCups = (order: OrderEntity): number => {
   return order.items.length;
@@ -88,3 +154,5 @@ const diffTime = (order: OrderEntity) => {
     "m:ss",
   );
 };
+
+export default Dashboard;
