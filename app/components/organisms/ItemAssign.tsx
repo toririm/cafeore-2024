@@ -48,15 +48,15 @@ const ItemAssign = ({ item, idx, mutateItem, focus, highlight }: props) => {
   return (
     <div
       className={cn(
-        "grid grid-cols-6 border-l-2 border-white",
+        "grid grid-cols-6 border-white border-l-2",
         highlight && "border-orange-600",
       )}
     >
-      <div className="flex items-center col-span-5">
-        <p className="flex-none font-mono font-bold p-3 text-lg">{idx + 1}</p>
+      <div className="col-span-5 flex items-center">
+        <p className="flex-none p-3 font-bold font-mono text-lg">{idx + 1}</p>
         <div className="flex-1">
           <p className="font-bold text-lg">{item.name}</p>
-          <p className="text-xs text-stone-500">{type2label[item.type]}</p>
+          <p className="text-stone-500 text-xs">{type2label[item.type]}</p>
           <div className="flex justify-end">
             {focus ? (
               <Input
@@ -69,14 +69,14 @@ const ItemAssign = ({ item, idx, mutateItem, focus, highlight }: props) => {
             ) : (
               <div
                 className={cn(
-                  "w-1/2 flex items-center border-b-2 border-stone-300",
+                  "flex w-1/2 items-center border-stone-300 border-b-2",
                   highlight && "border-stone-950",
                 )}
               >
                 {highlight && (
-                  <Pencil2Icon className="w-1/6 pr-1 stroke-stone-400" />
+                  <Pencil2Icon className="w-1/6 stroke-stone-400 pr-1" />
                 )}
-                <p className="flex-none w-5/6 text-stone-400 text-sm">
+                <p className="w-5/6 flex-none text-sm text-stone-400">
                   {assignView}
                 </p>
               </div>
@@ -84,11 +84,9 @@ const ItemAssign = ({ item, idx, mutateItem, focus, highlight }: props) => {
           </div>
         </div>
       </div>
-      {/* <div className="flex items-center text-right"> */}
       <p className="flex items-center justify-end text-right">
         &yen;{item.price}
       </p>
-      {/* </div> */}
     </div>
   );
 };
