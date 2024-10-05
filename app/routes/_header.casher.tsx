@@ -63,7 +63,6 @@ export default function Casher() {
   const charge = recieved - order.total;
   const [description, setDescription] = useState("");
   order.description = description;
-  const [assignee, setAssignee] = useState("");
 
   const submitOrder = () => {
     console.log(charge);
@@ -81,36 +80,125 @@ export default function Casher() {
   };
 
   return (
-    <div className="p-[15px]">
-      <div className="flex h-screen flex-row flex-wrap">
-        <div className="w-2/3">
-          <div className="grid h-screen grid-cols-2">
-            {items?.map((item) => (
-              <div key={item.id}>
-                <Button
-                  onClick={async () => {
-                    setQueue([...queue, item]);
-                  }}
-                >
-                  {item.name}
-                </Button>
-              </div>
-            ))}
+    <div className="p-[20px]">
+      <div className="flex flex-row flex-wrap ">
+        <div className="relative w-2/3 pr-[20px] pl-[20px]">
+          <div
+            key="hot"
+            className="pb-[15px] pl-[20px] font-medium text-2xl text-hot"
+          >
+            ホット
+          </div>
+          <div
+            className="grid grid-cols-3 items-center justify-items-center gap-[30px]"
+            style={{ gridTemplateRows: "auto" }}
+          >
+            {items?.map(
+              (item) =>
+                item.type === "hot" && (
+                  <Button
+                    key={item.id}
+                    className="h-[50px] w-[200px] bg-hot text-lg hover:bg-theme hover:ring-4 hover:ring-theme"
+                    onClick={async () => {
+                      setQueue([...queue, item]);
+                    }}
+                  >
+                    {item.name}
+                  </Button>
+                ),
+            )}
+          </div>
+          <div
+            key="ice"
+            className="pt-[30px] pb-[15px] pl-[20px] font-medium text-2xl text-ice"
+          >
+            アイス
+          </div>
+          <div
+            className="grid grid-cols-3 items-center justify-items-center gap-[30px]"
+            style={{ gridTemplateRows: "auto" }}
+          >
+            {items?.map(
+              (item) =>
+                (item.type === "ice" || item.type === "milk") && (
+                  <Button
+                    key={item.id}
+                    className="h-[50px] w-[200px] bg-ice text-lg hover:bg-theme hover:ring-4 hover:ring-theme"
+                    onClick={async () => {
+                      setQueue([...queue, item]);
+                    }}
+                  >
+                    {item.name}
+                  </Button>
+                ),
+            )}
+          </div>
+          <div
+            key="ore"
+            className="pt-[30px] pb-[15px] pl-[20px] font-medium text-2xl text-ore"
+          >
+            オレ
+          </div>
+          <div
+            className="grid grid-cols-3 items-center justify-items-center gap-[30px]"
+            style={{ gridTemplateRows: "auto" }}
+          >
+            {items?.map(
+              (item) =>
+                (item.type === "hotOre" || item.type === "iceOre") && (
+                  <Button
+                    key={item.id}
+                    className="h-[50px] w-[200px] bg-ore text-lg hover:bg-theme hover:ring-4 hover:ring-theme"
+                    onClick={async () => {
+                      setQueue([...queue, item]);
+                    }}
+                  >
+                    {item.name}
+                  </Button>
+                ),
+            )}
+          </div>
+          <div
+            key="others"
+            className="pt-[30px] pb-[15px] pl-[20px] font-medium text-2xl"
+          >
+            その他
+          </div>
+          <div
+            className="grid grid-cols-3 items-center justify-items-center gap-[30px]"
+            style={{ gridTemplateRows: "auto" }}
+          >
+            {items?.map(
+              (item) =>
+                item.type === "others" && (
+                  <Button
+                    key={item.id}
+                    className="h-[50px] w-[200px] text-lg hover:bg-theme hover:ring-4 hover:ring-theme"
+                    onClick={async () => {
+                      setQueue([...queue, item]);
+                    }}
+                  >
+                    {item.name}
+                  </Button>
+                ),
+            )}
           </div>
         </div>
-        <div className="relative w-1/3">
+        <div className="relative w-1/3 pl-[20px]">
           <Table>
             <TableCaption />
             <TableHeader>
               <TableRow>
-                <TableHead className="w-500">No. {nextOrderId}</TableHead>
+                <TableHead className="w-500 pb-[15px] font-medium text-4xl">
+                  No. {nextOrderId}
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {queue?.map((item, index) => (
                 <TableRow key={`${index}-${item.id}`} className="h-[50px]">
                   <TableCell className="flex flex-row items-center gap-[20px] font-medium">
-                    <div className="w-[250px] flex-none justify-start pl-[50px]">
+                    <div className="w-[250px] flex-none justify-start pl-[40px] text-xl">
                       {item.name}
                     </div>
                     <div>
@@ -157,63 +245,61 @@ export default function Casher() {
               ))}
             </TableBody>
           </Table>
-          <ul>
-            <li>
-              <Input
-                id="description"
-                name="description"
-                type="string"
-                placeholder="備考欄"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              />
-              <p className="relative">合計金額：{order.total} 円</p>
-            </li>
-            <li>
-              <form>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button className="absolute right-[100px]">確定</Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        金額・備考欄を確認してください
-                      </AlertDialogTitle>
-                      <AlertDialogDescription>
-                        <p>備考欄：{order.description}</p>
-                        <p>合計： {order.total} 円</p>
-                        <p>
-                          受領額：
-                          <Input
-                            id="recieved"
-                            name="recieved"
-                            type="number"
-                            placeholder="受け取った金額を入力してください"
-                            value={recieved}
-                            onChange={(e) => {
-                              const value = Number.parseInt(e.target.value);
-                              setReceived(Number.isNaN(value) ? 0 : value); // NaN のチェック
-                            }}
-                          />
-                        </p>
-                        <p>
-                          お釣り：{" "}
-                          {Number.isNaN(charge) || charge < 0 ? 0 : charge} 円
-                        </p>
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>戻る</AlertDialogCancel>
-                      <AlertDialogAction onClick={submitOrder}>
-                        送信
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </form>
-            </li>
-          </ul>
+          <Input
+            id="description"
+            name="description"
+            type="string"
+            placeholder="備考欄"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+          <p className="relative pt-[20px] pl-[20px] font-medium text-3xl">
+            合計金額：{order.total} 円
+          </p>
+          <form>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button className="absolute right-[30px] h-[50px] w-[150px] text-xl hover:bg-theme hover:ring-4 hover:ring-theme">
+                  確定
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    金額・備考欄を確認してください
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    <p>備考欄：{order.description}</p>
+                    <p>合計： {order.total} 円</p>
+                    <p>
+                      受領額：
+                      <Input
+                        id="recieved"
+                        name="recieved"
+                        type="number"
+                        placeholder="受け取った金額を入力してください"
+                        value={recieved}
+                        onChange={(e) => {
+                          const value = Number.parseInt(e.target.value);
+                          setReceived(Number.isNaN(value) ? 0 : value); // NaN のチェック
+                        }}
+                      />
+                    </p>
+                    <p>
+                      お釣り： {Number.isNaN(charge) || charge < 0 ? 0 : charge}{" "}
+                      円
+                    </p>
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>戻る</AlertDialogCancel>
+                  <AlertDialogAction onClick={submitOrder}>
+                    送信
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </form>
         </div>
       </div>
     </div>
