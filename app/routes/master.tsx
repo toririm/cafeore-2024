@@ -43,15 +43,16 @@ export default function FielsOfMaster() {
                             <CardContent className="pt-6">
                               <h3>{item.name}</h3>
                               <p>{type2label[item.type]}</p>
+                              <p>指名:{item.assignee ?? "なし"}</p>
                             </CardContent>
                           </Card>
                         </div>
                       ))}
                     </div>
-                    <p>{order.orderReady}</p>
-                    <div className="flex justify-between pt-4">
-                      {/* <p className="flex items-center">{`提供時間：${order.servedAt?.toLocaleTimeString()}`}</p> */}
-                    </div>
+                    {/* <p>{order.orderReady}</p> */}
+                    {/* <div className="flex justify-between pt-4">
+                      <p className="flex items-center">{`提供時間：${order.servedAt?.toLocaleTimeString()}`}</p>
+                    </div> */}
                   </CardContent>
                 </Card>
               </div>
