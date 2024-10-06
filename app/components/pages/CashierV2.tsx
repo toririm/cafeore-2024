@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { WithId } from "~/lib/typeguard";
 import type { ItemEntity } from "~/models/item";
 import type { OrderEntity } from "~/models/order";
@@ -10,9 +10,17 @@ import { useUISession } from "../functional/useUISession";
 import { AttractiveTextArea } from "../molecules/AttractiveTextArea";
 import { InputHeader } from "../molecules/InputHeader";
 import { DiscountInput } from "../organisms/DiscountInput";
-import { OrderAlertDialog } from "../organisms/OrderAlertDialog";
 import { OrderItemEdit } from "../organisms/OrderItemEdit";
 import { OrderReceivedInput } from "../organisms/OrderReceivedInput";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../ui/alert-dialog";
 
 type props = {
   items: WithId<ItemEntity>[] | undefined;
@@ -30,7 +38,9 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
   const { inputStatus, proceedStatus, previousStatus, resetStatus } =
     useInputStatus();
   const [UISession, renewUISession] = useUISession();
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const { nextOrderId } = useLatestOrderId(orders);
+
   usePreventNumberKeyUpDown();
 
   useEffect(() => {
@@ -78,6 +88,12 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
       window.removeEventListener("keydown", handler);
     };
   }, [keyEventHandlers]);
+
+  useEffect(() => {
+    if (inputStatus === "submit") {
+      setDrawerOpen(true);
+    }
+  }, [inputStatus]);
 
   return (
     <>
@@ -177,12 +193,28 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
             </div>
           </div>
         </div>
-        <OrderAlertDialog
-          open={inputStatus === "submit"}
-          order={newOrder}
-          onConfirm={submitOrder}
-          onCanceled={previousStatus}
-        />
+        {/* <ConfirmDrawer focus={inputStatus === "submit"} onConfirm={submitOrder}>
+          <div className="grid grid-cols-2">
+            <p className="text-center text-sm text-stone-400">Enter で送信</p>
+            <p className="text-center text-sm text-stone-400">
+              左矢印キーで戻る
+            </p>
+          </div>
+        </ConfirmDrawer> */}
+        <AlertDialog open={inputStatus === "submit"}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>送信しますか？</AlertDialogTitle>
+              <AlertDialogDescription>
+                Tabを押してから、Enterで送信
+              </AlertDialogDescription>
+              <AlertDialogDescription>左矢印キーで戻る</AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogAction onClick={submitOrder}>送信</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </>
   );
