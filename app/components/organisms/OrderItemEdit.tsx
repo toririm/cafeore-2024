@@ -129,6 +129,7 @@ const OrderItemEdit = ({
   useEffect(() => {
     if (!focus) {
       setItemFocus(-1);
+      setEditable(false);
     } else {
       setItemFocus(0);
     }
@@ -136,7 +137,9 @@ const OrderItemEdit = ({
 
   // itemFocus が range 外に出ないように調整
   useEffect(() => {
-    setItemFocus((prev) => Math.min(order.items.length - 1, Math.max(0, prev)));
+    setItemFocus((prev) =>
+      Math.min(order.items.length - 1, Math.max(-1, prev)),
+    );
   });
 
   return (
