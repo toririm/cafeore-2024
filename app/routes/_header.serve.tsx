@@ -1,12 +1,21 @@
-import type { MetaFunction } from "@remix-run/react";
+import { parseWithZod } from "@conform-to/zod";
+import {
+  type ClientActionFunction,
+  type MetaFunction,
+  useSubmit,
+} from "@remix-run/react";
 import { orderBy } from "firebase/firestore";
+import { useCallback } from "react";
 import useSWRSubscription from "swr/subscription";
+import { z } from "zod";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { orderConverter } from "~/firebase/converter";
 import { collectionSub } from "~/firebase/subscription";
+import { stringToJSONSchema } from "~/lib/custom-zod";
 import { cn } from "~/lib/utils";
 import { type2label } from "~/models/item";
+import { OrderEntity, orderSchema } from "~/models/order";
 import { orderRepository } from "~/repositories/order";
 
 export const meta: MetaFunction = () => {
@@ -19,6 +28,7 @@ export const clientLoader = async () => {
 };
 
 export default function Serve() {
+  const submit = useSubmit();
   const { data: orders } = useSWRSubscription(
     "orders",
     collectionSub({ converter: orderConverter }, orderBy("orderId", "desc")),
@@ -30,6 +40,18 @@ export default function Serve() {
     }
     return acc;
   }, 0);
+
+  const submitPayload = useCallback(
+    (servedOrder: OrderEntity) => {
+      const order = servedOrder.clone();
+      order.beServed();
+      submit(
+        { servedOrder: JSON.stringify(order.toOrder()) },
+        { method: "PUT" },
+      );
+    },
+    [submit],
+  );
 
   return (
     <div className="p-4 font-sans">
@@ -50,8 +72,8 @@ export default function Serve() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 gap-2">
-                  {order.items.map((item) => (
-                    <div key={item.id}>
+                  {order.items.map((item, idx) => (
+                    <div key={`${idx}-${item.id}`}>
                       <Card>
                         <CardContent
                           className={cn(
@@ -71,7 +93,7 @@ export default function Serve() {
                 <p>{order.orderReady}</p>
                 <div className="flex justify-between pt-4">
                   <p className="flex items-center">{`提供時間：${order.servedAt?.toLocaleTimeString()}`}</p>
-                  <Button>提供</Button>
+                  <Button onClick={() => submitPayload(order)}>提供</Button>
                 </div>
               </CardContent>
             </Card>
@@ -81,3 +103,27 @@ export default function Serve() {
     </div>
   );
 }
+
+export const clientAction: ClientActionFunction = async ({ request }) => {
+  const formData = await request.formData();
+
+  const schema = z.object({
+    servedOrder: stringToJSONSchema.pipe(orderSchema),
+  });
+  const submission = parseWithZod(formData, {
+    schema,
+  });
+  if (submission.status !== "success") {
+    console.error(submission.error);
+    return submission.reply();
+  }
+
+  const { servedOrder } = submission.value;
+  const order = OrderEntity.fromOrder(servedOrder);
+
+  const savedOrder = await orderRepository.save(order);
+
+  console.log("savedOrder", savedOrder);
+
+  return new Response("ok");
+};
