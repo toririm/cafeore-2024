@@ -4,7 +4,7 @@ import type { ItemEntity } from "~/models/item";
 import type { OrderEntity } from "~/models/order";
 import { ItemAssign } from "./ItemAssign";
 
-const keys = ["q", "d", "c", "w", "a", "v", "e", "s", "z", "x"];
+const keys = ["q", "d", "c", "w", "a", "v", "e", "s", "z", "x", "b"];
 
 type props = {
   order: OrderEntity;
