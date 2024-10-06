@@ -51,6 +51,10 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        theme: "#a196c3",
+        hot: "#f74316",
+        ice: "#0ebbf0",
+        ore: "#834f2f",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -66,11 +70,9 @@ module.exports = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
-        keyframes: {
-          "caret-blink": {
-            "0%,70%,100%": { opacity: "1" },
-            "20%,50%": { opacity: "0" },
-          },
+        "caret-blink": {
+          "0%,70%,100%": { opacity: "1" },
+          "20%,50%": { opacity: "0" },
         },
       },
       animation: {

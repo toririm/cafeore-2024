@@ -5,21 +5,21 @@ import {
   useState,
 } from "react";
 import { useFocusRef } from "../functional/useFocusRef";
-import { Input, type InputProps } from "../ui/input";
+import { Textarea, type TextareaProps } from "../ui/textarea";
 
-type props = InputProps & {
+type props = TextareaProps & {
   onTextSet: (text: string) => void;
   focus: boolean;
 };
 
 /**
- * focus が true のときに自動でフォーカスを当てるテキストボックス
+ * focus が true のときに自動でフォーカスを当てる textarea
  */
-const AttractiveTextBox = ({ focus, onTextSet, ...props }: props) => {
+const AttractiveTextArea = ({ focus, onTextSet, ...props }: props) => {
   const [text, setText] = useState("");
-  const DOMRef = useFocusRef(focus);
+  const DOMRef = useFocusRef<HTMLTextAreaElement>(focus);
 
-  const onChangeHandler: ChangeEventHandler<HTMLInputElement> = useCallback(
+  const onChangeHandler: ChangeEventHandler<HTMLTextAreaElement> = useCallback(
     (event) => setText(event.target.value),
     [],
   );
@@ -29,7 +29,7 @@ const AttractiveTextBox = ({ focus, onTextSet, ...props }: props) => {
   }, [text, onTextSet]);
 
   return (
-    <Input
+    <Textarea
       value={text}
       onChange={onChangeHandler}
       ref={DOMRef}
@@ -39,4 +39,4 @@ const AttractiveTextBox = ({ focus, onTextSet, ...props }: props) => {
   );
 };
 
-export { AttractiveTextBox };
+export { AttractiveTextArea };

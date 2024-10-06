@@ -1,10 +1,10 @@
 import { useCallback, useMemo, useState } from "react";
 
 const InputStatusList = [
-  "discount",
   "items",
-  "received",
+  "discount",
   "description",
+  "received",
   "submit",
 ] as const;
 
