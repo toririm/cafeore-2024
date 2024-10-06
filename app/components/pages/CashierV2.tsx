@@ -1,18 +1,26 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { WithId } from "~/lib/typeguard";
-import { type ItemEntity, type2label } from "~/models/item";
+import type { ItemEntity } from "~/models/item";
 import type { OrderEntity } from "~/models/order";
 import { useInputStatus } from "../functional/useInputStatus";
 import { useLatestOrderId } from "../functional/useLatestOrderId";
 import { useOrderState } from "../functional/useOrderState";
 import { usePreventNumberKeyUpDown } from "../functional/usePreventNumberKeyUpDown";
 import { useUISession } from "../functional/useUISession";
-import { AttractiveTextBox } from "../molecules/AttractiveTextBox";
-import { ChargeView } from "../organisms/ChargeView";
+import { AttractiveTextArea } from "../molecules/AttractiveTextArea";
+import { InputHeader } from "../molecules/InputHeader";
 import { DiscountInput } from "../organisms/DiscountInput";
-import { OrderAlertDialog } from "../organisms/OrderAlertDialog";
 import { OrderItemEdit } from "../organisms/OrderItemEdit";
-import { Button } from "../ui/button";
+import { OrderReceivedInput } from "../organisms/OrderReceivedInput";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../ui/alert-dialog";
 
 type props = {
   items: WithId<ItemEntity>[] | undefined;
@@ -30,7 +38,9 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
   const { inputStatus, proceedStatus, previousStatus, resetStatus } =
     useInputStatus();
   const [UISession, renewUISession] = useUISession();
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const { nextOrderId } = useLatestOrderId(orders);
+
   usePreventNumberKeyUpDown();
 
   useEffect(() => {
@@ -79,98 +89,133 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
     };
   }, [keyEventHandlers]);
 
+  useEffect(() => {
+    if (inputStatus === "submit") {
+      setDrawerOpen(true);
+    }
+  }, [inputStatus]);
+
   return (
     <>
-      <div className="grid grid-cols-3">
-        <div>
-          {items?.map((item) => (
-            <div key={item.id}>
-              <p>{item.name}</p>
-              <p>{item.price}</p>
-              <p>{type2label[item.type]}</p>
-            </div>
-          ))}
-        </div>
-        <div>
-          <p>操作</p>
-          <p>入力ステータスを移動して一つ一つの項目を入力していきます</p>
-          <ul>
-            <li>入力ステータスを移動　←・→</li>
-            <li>注文をクリア: Esc</li>
-          </ul>
-          <Button onClick={submitOrder}>提出</Button>
-          <h1 className="text-lg">{`No. ${newOrder.orderId}`}</h1>
-          <div className="border-8">
-            <p>合計金額</p>
-            <p>{newOrder.billingAmount}</p>
+      <div className="p-4">
+        <p className="font-extrabold text-3xl">No.{newOrder.orderId}</p>
+        <div className="flex gap-5 px-2">
+          <div className="flex-1">
+            <InputHeader
+              title="商品"
+              focus={inputStatus === "items"}
+              number={1}
+            />
+            <OrderItemEdit
+              items={items}
+              order={newOrder}
+              onAddItem={useCallback(
+                (item) => newOrderDispatch({ type: "addItem", item }),
+                [newOrderDispatch],
+              )}
+              onRemoveItem={useCallback(
+                (idx) => newOrderDispatch({ type: "removeItem", idx }),
+                [newOrderDispatch],
+              )}
+              mutateItem={useCallback(
+                (idx, action) =>
+                  newOrderDispatch({ type: "mutateItem", idx, action }),
+                [newOrderDispatch],
+              )}
+              focus={inputStatus === "items"}
+              discountOrder={useMemo(
+                () => newOrder.discountOrderId !== null,
+                [newOrder],
+              )}
+            />
           </div>
-          <DiscountInput
-            key={`DiscountInput-${UISession.key}`}
-            focus={inputStatus === "discount"}
-            orders={orders}
-            onDiscountOrderFind={useCallback(
-              (discountOrder) =>
-                newOrderDispatch({ type: "applyDiscount", discountOrder }),
-              [newOrderDispatch],
-            )}
-            onDiscountOrderRemoved={useCallback(
-              () => newOrderDispatch({ type: "removeDiscount" }),
-              [newOrderDispatch],
-            )}
-          />
-          <AttractiveTextBox
-            type="number"
-            key={`Received-${UISession.key}`}
-            onTextSet={useCallback(
-              (text) =>
-                newOrderDispatch({ type: "setReceived", received: text }),
-              [newOrderDispatch],
-            )}
-            focus={inputStatus === "received"}
-          />
-          <ChargeView order={newOrder} />
-          <AttractiveTextBox
-            key={`Description-${UISession.key}`}
-            onTextSet={useCallback(
-              (text) =>
-                newOrderDispatch({ type: "setDescription", description: text }),
-              [newOrderDispatch],
-            )}
-            focus={inputStatus === "description"}
-          />
+          <div className="flex-1">
+            <InputHeader
+              title="割引"
+              focus={inputStatus === "discount"}
+              number={2}
+            />
+            <div className="flex justify-center">
+              <DiscountInput
+                key={`DiscountInput-${UISession.key}`}
+                focus={inputStatus === "discount"}
+                orders={orders}
+                onDiscountOrderFind={useCallback(
+                  (discountOrder) =>
+                    newOrderDispatch({ type: "applyDiscount", discountOrder }),
+                  [newOrderDispatch],
+                )}
+                onDiscountOrderRemoved={useCallback(
+                  () => newOrderDispatch({ type: "removeDiscount" }),
+                  [newOrderDispatch],
+                )}
+              />
+            </div>
+          </div>
+          <div className="flex-1">
+            <InputHeader
+              title="備考"
+              focus={inputStatus === "description"}
+              number={3}
+            />
+            <div className="pt-5">
+              <AttractiveTextArea
+                key={`Description-${UISession.key}`}
+                onTextSet={useCallback(
+                  (text) =>
+                    newOrderDispatch({
+                      type: "setDescription",
+                      description: text,
+                    }),
+                  [newOrderDispatch],
+                )}
+                focus={inputStatus === "description"}
+              />
+            </div>
+          </div>
+          <div className="flex-1">
+            <InputHeader
+              title="会計"
+              focus={inputStatus === "received"}
+              number={4}
+            />
+            <div className="pt-5">
+              <OrderReceivedInput
+                key={`Received-${UISession.key}`}
+                onTextSet={useCallback(
+                  (received) =>
+                    newOrderDispatch({ type: "setReceived", received }),
+                  [newOrderDispatch],
+                )}
+                focus={inputStatus === "received"}
+                order={newOrder}
+              />
+            </div>
+          </div>
         </div>
-        <div>
-          <p>入力ステータス: {inputStatus}</p>
-          <OrderItemEdit
-            items={items}
-            order={newOrder}
-            onAddItem={useCallback(
-              (item) => newOrderDispatch({ type: "addItem", item }),
-              [newOrderDispatch],
-            )}
-            onRemoveItem={useCallback(
-              (idx) => newOrderDispatch({ type: "removeItem", idx }),
-              [newOrderDispatch],
-            )}
-            mutateItem={useCallback(
-              (idx, action) =>
-                newOrderDispatch({ type: "mutateItem", idx, action }),
-              [newOrderDispatch],
-            )}
-            focus={inputStatus === "items"}
-            discountOrder={useMemo(
-              () => newOrder.discountOrderId !== null,
-              [newOrder],
-            )}
-          />
-        </div>
+        {/* <ConfirmDrawer focus={inputStatus === "submit"} onConfirm={submitOrder}>
+          <div className="grid grid-cols-2">
+            <p className="text-center text-sm text-stone-400">Enter で送信</p>
+            <p className="text-center text-sm text-stone-400">
+              左矢印キーで戻る
+            </p>
+          </div>
+        </ConfirmDrawer> */}
+        <AlertDialog open={inputStatus === "submit"}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>送信しますか？</AlertDialogTitle>
+              <AlertDialogDescription>
+                Tabを押してから、Enterで送信
+              </AlertDialogDescription>
+              <AlertDialogDescription>左矢印キーで戻る</AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogAction onClick={submitOrder}>送信</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
-      <OrderAlertDialog
-        open={inputStatus === "submit"}
-        order={newOrder}
-        onConfirm={submitOrder}
-        onCanceled={previousStatus}
-      />
     </>
   );
 };

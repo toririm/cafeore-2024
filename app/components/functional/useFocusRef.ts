@@ -5,8 +5,8 @@ import { useEffect, useRef } from "react";
  * @param focus フォーカスを当てるかどうか
  * @returns
  */
-const useFocusRef = (focus: boolean) => {
-  const DOMRef = useRef<HTMLInputElement>(null);
+const useFocusRef = <T extends HTMLElement>(focus: boolean) => {
+  const DOMRef = useRef<T>(null);
 
   useEffect(() => {
     if (focus) {
