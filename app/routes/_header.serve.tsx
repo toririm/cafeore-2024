@@ -61,44 +61,47 @@ export default function Serve() {
       </div>
 
       <div className="grid grid-cols-4 gap-4">
-        {orders?.map((order) => (
-          <div key={order.id}>
-            <Card>
-              <CardHeader>
-                <div className="flex justify-between">
-                  <CardTitle>{`No. ${order.orderId}`}</CardTitle>
-                  <p>{order.createdAt.toLocaleTimeString()}</p>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 gap-2">
-                  {order.items.map((item, idx) => (
-                    <div key={`${idx}-${item.id}`}>
-                      <Card>
-                        <CardContent
-                          className={cn(
-                            "pt-6",
-                            item.type === "milk" && "bg-yellow-200",
-                            item.type === "hotOre" && "bg-orange-300",
-                            item.type === "iceOre" && "bg-blue-300",
-                          )}
-                        >
-                          <h3>{item.name}</h3>
-                          <p>{type2label[item.type]}</p>
-                        </CardContent>
-                      </Card>
+        {orders?.map(
+          (order) =>
+            order.servedAt === null && (
+              <div key={order.id}>
+                <Card>
+                  <CardHeader>
+                    <div className="flex justify-between">
+                      <CardTitle>{`No. ${order.orderId}`}</CardTitle>
+                      <p>{order.createdAt.toLocaleTimeString()}</p>
                     </div>
-                  ))}
-                </div>
-                <p>{order.orderReady}</p>
-                <div className="flex justify-between pt-4">
-                  <p className="flex items-center">{`提供時間：${order.servedAt?.toLocaleTimeString()}`}</p>
-                  <Button onClick={() => submitPayload(order)}>提供</Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        ))}
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 gap-2">
+                      {order.items.map((item, idx) => (
+                        <div key={`${idx}-${item.id}`}>
+                          <Card>
+                            <CardContent
+                              className={cn(
+                                "pt-6",
+                                item.type === "milk" && "bg-yellow-200",
+                                item.type === "hotOre" && "bg-orange-300",
+                                item.type === "iceOre" && "bg-blue-300",
+                              )}
+                            >
+                              <h3>{item.name}</h3>
+                              <p>{type2label[item.type]}</p>
+                            </CardContent>
+                          </Card>
+                        </div>
+                      ))}
+                    </div>
+                    <p>{order.orderReady}</p>
+                    <div className="flex justify-between pt-4">
+                      {/* <p className="flex items-center">{`提供時間：${order.servedAt?.toLocaleTimeString()}`}</p> */}
+                      <Button onClick={() => submitPayload(order)}>提供</Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            ),
+        )}
       </div>
     </div>
   );
