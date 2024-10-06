@@ -31,7 +31,7 @@ const OrderItemEdit = ({
   order,
   items,
 }: props) => {
-  const [itemFocus, setItemFocus] = useState<number>(-1);
+  const [itemFocus, setItemFocus] = useState<number>(0);
   const [editable, setEditable] = useState(false);
 
   /**
@@ -129,34 +129,58 @@ const OrderItemEdit = ({
   useEffect(() => {
     if (!focus) {
       setItemFocus(-1);
+    } else {
+      setItemFocus(0);
     }
   }, [focus]);
 
+  // itemFocus が range 外に出ないように調整
+  useEffect(() => {
+    setItemFocus((prev) => Math.min(order.items.length - 1, Math.max(0, prev)));
+  });
+
   return (
     <>
-      {focus && (
+      <div className="flex justify-end pb-10">
+        <p className="text-sm text-stone-400">上下矢印キーでアイテムを選択</p>
+      </div>
+      <div className="grid gap-5 pb-10">
+        {order.items.map((item, idx) => (
+          <ItemAssign
+            key={`${idx}-${item.id}`}
+            item={item}
+            idx={idx}
+            mutateItem={mutateItem}
+            focus={editable && idx === itemFocus}
+            highlight={idx === itemFocus}
+          />
+        ))}
+      </div>
+      <hr className="my-3" />
+      <div className="grid grid-cols-6 text-stone-400">
+        <p className="col-span-5 font-bold">小計</p>
+        <div className="flex items-center justify-end text-right">
+          &yen;{order.total}
+        </div>
+      </div>
+      {discountOrder && (
         <>
-          <p>商品を追加: キーボードの a, s, d, f, g, h, j, k, l, ;</p>
-          <p>↑・↓でアイテムのフォーカスを移動</p>
-          <p>Enterで指名の入力欄を開く</p>
+          <hr className="my-3" />
+          <div className="grid grid-cols-6 text-stone-400">
+            <p className="col-span-5 font-bold">割引</p>
+            <div className="flex items-center justify-end text-right">
+              &minus; &yen;{order.discount}
+            </div>
+          </div>
         </>
       )}
-      {order.items.map((item, idx) => (
-        <ItemAssign
-          key={`${idx}-${item.id}`}
-          item={item}
-          idx={idx}
-          mutateItem={mutateItem}
-          focus={editable && idx === itemFocus}
-          highlight={idx === itemFocus}
-        />
-      ))}
-      {discountOrder && (
-        <div className="grid grid-cols-2">
-          <p className="font-bold text-lg">割引</p>
-          <div>-&yen;{order.discount}</div>
+      <hr className="my-3" />
+      <div className="grid grid-cols-6">
+        <p className="col-span-5 font-bold text-lg">合計</p>
+        <div className="flex items-center justify-end text-right">
+          &yen;{order.billingAmount}
         </div>
-      )}
+      </div>
     </>
   );
 };

@@ -1,12 +1,21 @@
-import type { MetaFunction } from "@remix-run/react";
+import { parseWithZod } from "@conform-to/zod";
+import {
+  type ClientActionFunction,
+  type MetaFunction,
+  useSubmit,
+} from "@remix-run/react";
 import { orderBy } from "firebase/firestore";
+import { useCallback } from "react";
 import useSWRSubscription from "swr/subscription";
+import { z } from "zod";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { orderConverter } from "~/firebase/converter";
 import { collectionSub } from "~/firebase/subscription";
+import { stringToJSONSchema } from "~/lib/custom-zod";
 import { cn } from "~/lib/utils";
 import { type2label } from "~/models/item";
+import { OrderEntity, orderSchema } from "~/models/order";
 import { orderRepository } from "~/repositories/order";
 
 export const meta: MetaFunction = () => {
@@ -19,6 +28,7 @@ export const clientLoader = async () => {
 };
 
 export default function Serve() {
+  const submit = useSubmit();
   const { data: orders } = useSWRSubscription(
     "orders",
     collectionSub({ converter: orderConverter }, orderBy("orderId", "desc")),
@@ -31,6 +41,18 @@ export default function Serve() {
     return acc;
   }, 0);
 
+  const submitPayload = useCallback(
+    (servedOrder: OrderEntity) => {
+      const order = servedOrder.clone();
+      order.beServed();
+      submit(
+        { servedOrder: JSON.stringify(order.toOrder()) },
+        { method: "PUT" },
+      );
+    },
+    [submit],
+  );
+
   return (
     <div className="p-4 font-sans">
       <div className="flex justify-between pb-4">
@@ -39,45 +61,72 @@ export default function Serve() {
       </div>
 
       <div className="grid grid-cols-4 gap-4">
-        {orders?.map((order) => (
-          <div key={order.id}>
-            <Card>
-              <CardHeader>
-                <div className="flex justify-between">
-                  <CardTitle>{`No. ${order.orderId}`}</CardTitle>
-                  <p>{order.createdAt.toLocaleTimeString()}</p>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 gap-2">
-                  {order.items.map((item) => (
-                    <div key={item.id}>
-                      <Card>
-                        <CardContent
-                          className={cn(
-                            "pt-6",
-                            item.type === "milk" && "bg-yellow-200",
-                            item.type === "hotOre" && "bg-orange-300",
-                            item.type === "iceOre" && "bg-blue-300",
-                          )}
-                        >
-                          <h3>{item.name}</h3>
-                          <p>{type2label[item.type]}</p>
-                        </CardContent>
-                      </Card>
+        {orders?.map(
+          (order) =>
+            order.servedAt === null && (
+              <div key={order.id}>
+                <Card>
+                  <CardHeader>
+                    <div className="flex justify-between">
+                      <CardTitle>{`No. ${order.orderId}`}</CardTitle>
+                      <p>{order.createdAt.toLocaleTimeString()}</p>
                     </div>
-                  ))}
-                </div>
-                <p>{order.orderReady}</p>
-                <div className="flex justify-between pt-4">
-                  <p className="flex items-center">{`提供時間：${order.servedAt?.toLocaleTimeString()}`}</p>
-                  <Button>提供</Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        ))}
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 gap-2">
+                      {order.items.map((item, idx) => (
+                        <div key={`${idx}-${item.id}`}>
+                          <Card>
+                            <CardContent
+                              className={cn(
+                                "pt-6",
+                                item.type === "milk" && "bg-yellow-200",
+                                item.type === "hotOre" && "bg-orange-300",
+                                item.type === "iceOre" && "bg-blue-300",
+                              )}
+                            >
+                              <h3>{item.name}</h3>
+                              <p>{type2label[item.type]}</p>
+                            </CardContent>
+                          </Card>
+                        </div>
+                      ))}
+                    </div>
+                    <p>{order.orderReady}</p>
+                    <div className="flex justify-between pt-4">
+                      {/* <p className="flex items-center">{`提供時間：${order.servedAt?.toLocaleTimeString()}`}</p> */}
+                      <Button onClick={() => submitPayload(order)}>提供</Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            ),
+        )}
       </div>
     </div>
   );
 }
+
+export const clientAction: ClientActionFunction = async ({ request }) => {
+  const formData = await request.formData();
+
+  const schema = z.object({
+    servedOrder: stringToJSONSchema.pipe(orderSchema),
+  });
+  const submission = parseWithZod(formData, {
+    schema,
+  });
+  if (submission.status !== "success") {
+    console.error(submission.error);
+    return submission.reply();
+  }
+
+  const { servedOrder } = submission.value;
+  const order = OrderEntity.fromOrder(servedOrder);
+
+  const savedOrder = await orderRepository.save(order);
+
+  console.log("savedOrder", savedOrder);
+
+  return new Response("ok");
+};
