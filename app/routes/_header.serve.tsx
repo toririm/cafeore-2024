@@ -31,7 +31,7 @@ export default function Serve() {
   const submit = useSubmit();
   const { data: orders } = useSWRSubscription(
     "orders",
-    collectionSub({ converter: orderConverter }, orderBy("orderId", "desc")),
+    collectionSub({ converter: orderConverter }, orderBy("orderId", "asc")),
   );
 
   const unserved = orders?.reduce((acc, cur) => {
@@ -69,6 +69,9 @@ export default function Serve() {
                   <CardHeader>
                     <div className="flex justify-between">
                       <CardTitle>{`No. ${order.orderId}`}</CardTitle>
+                      <CardTitle className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-stone-500">
+                        {order.items.length}
+                      </CardTitle>
                       <p>{order.createdAt.toLocaleTimeString()}</p>
                     </div>
                   </CardHeader>
@@ -82,11 +85,13 @@ export default function Serve() {
                                 "pt-6",
                                 item.type === "milk" && "bg-yellow-200",
                                 item.type === "hotOre" && "bg-orange-300",
-                                item.type === "iceOre" && "bg-blue-300",
+                                item.type === "iceOre" && "bg-sky-300",
                               )}
                             >
                               <h3>{item.name}</h3>
-                              <p>{type2label[item.type]}</p>
+                              <p className="text-sm text-stone-400">
+                                {type2label[item.type]}
+                              </p>
                             </CardContent>
                           </Card>
                         </div>
