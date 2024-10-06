@@ -176,7 +176,9 @@ export class OrderEntity implements Order {
   getCoffeeCount() {
     // milk 以外のアイテムの数を返す
     // TODO(toririm): このメソッドは items が変更された時だけでいい
-    return this.items.filter((item) => item.type !== "milk").length;
+    return this.items.filter(
+      (item) => item.type !== "milk" && item.type !== "others",
+    ).length;
   }
 
   /**
