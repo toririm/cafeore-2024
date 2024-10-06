@@ -9,7 +9,13 @@ import { useCallback } from "react";
 import useSWRSubscription from "swr/subscription";
 import { z } from "zod";
 import { Button } from "~/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "~/components/ui/card";
 import { orderConverter } from "~/firebase/converter";
 import { collectionSub } from "~/firebase/subscription";
 import { stringToJSONSchema } from "~/lib/custom-zod";
@@ -103,6 +109,7 @@ export default function Serve() {
                       <Button onClick={() => submitPayload(order)}>提供</Button>
                     </div>
                   </CardContent>
+                  <CardFooter>備考欄：{order?.description}</CardFooter>
                 </Card>
               </div>
             ),
