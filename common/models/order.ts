@@ -1,7 +1,6 @@
 import { z } from "zod";
 import type { WithId } from "../lib/typeguard";
 import { type ItemEntity, itemSchema } from "./item";
-import { clone } from "lodash";
 
 export enum OrderStatus {
   Preparing = "preparing",
