@@ -23,7 +23,10 @@ export const converter = <T>(
       } catch (error) {
         console.error("Error in toFirestore:", error);
         if (error instanceof z.ZodError) {
-          console.error("Zod validation errors:", JSON.stringify(error.errors, null, 2));
+          console.error(
+            "Zod validation errors:",
+            JSON.stringify(error.errors, null, 2),
+          );
         }
         throw error;
       }
