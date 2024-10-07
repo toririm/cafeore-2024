@@ -1,15 +1,22 @@
 import { z } from "zod";
 import type { WithId } from "../lib/typeguard";
 import { type ItemEntity, itemSchema } from "./item";
+import { clone } from "lodash";
+
+export enum OrderStatus {
+  Preparing = "preparing",
+  Ready = "ready",
+  Served = "served"
+}
 
 export const orderSchema = z.object({
   id: z.string().optional(), // Firestore のドキュメント ID
   orderId: z.number(),
   createdAt: z.date(),
+  status: z.nativeEnum(OrderStatus),
   servedAt: z.date().nullable(),
   items: z.array(itemSchema.required()),
   total: z.number(), // sum of item.price
-  orderReady: z.boolean(),
   description: z.string().nullable(),
   billingAmount: z.number(), // total - discount
   received: z.number(), // お預かり金額
@@ -30,10 +37,10 @@ export class OrderEntity implements Order {
     private readonly _id: string | undefined,
     private _orderId: number,
     private _createdAt: Date,
+    private _status: OrderStatus,
     private _servedAt: Date | null,
     private _items: WithId<ItemEntity>[],
     private _total: number,
-    private _orderReady: boolean,
     private _description: string | null,
     private _billingAmount: number,
     private _received: number,
@@ -48,10 +55,10 @@ export class OrderEntity implements Order {
       undefined,
       orderId,
       new Date(),
+      OrderStatus.Preparing,
       null,
       [],
       0,
-      false,
       null,
       0,
       0,
@@ -71,10 +78,10 @@ export class OrderEntity implements Order {
       order.id,
       order.orderId,
       order.createdAt,
+      order.status,
       order.servedAt,
       order.items,
       order.total,
-      order.orderReady,
       order.description,
       order.billingAmount,
       order.received,
@@ -108,6 +115,13 @@ export class OrderEntity implements Order {
     return this._servedAt;
   }
 
+  get status() {
+    return this._status;
+  }
+  set status(status: OrderStatus) {
+    this._status = status;
+  }
+
   get items() {
     return this._items;
   }
@@ -123,9 +137,7 @@ export class OrderEntity implements Order {
     return this._total;
   }
 
-  get orderReady() {
-    return this._orderReady;
-  }
+  
 
   get description() {
     return this._description;
@@ -182,18 +194,17 @@ export class OrderEntity implements Order {
   }
 
   /**
-   * オーダーを準備完了状態に変更する
+   * オーダーを提供可能状態に変更する
    */
   beReady() {
-    // orderReady は false -> true にしか変更できないようにする
-    this._orderReady = true;
+    // status が preparing -> ready にしか変更できないようにする
+    this._status = OrderStatus.Ready;
   }
-
   /**
    * オーダーを提供済み状態に変更する
    */
-  beServed() {
-    // servedAt は null -> Date にしか変更できないようにする
+  beServed() {  // status が ready -> served にしか変更できないようにする
+    this._status = OrderStatus.Served;
     this._servedAt = new Date();
   }
 
@@ -242,7 +253,7 @@ export class OrderEntity implements Order {
       servedAt: this.servedAt,
       items: this.items,
       total: this.total,
-      orderReady: this.orderReady,
+      status: this.status,
       description: this.description,
       billingAmount: this.billingAmount,
       received: this.received,
