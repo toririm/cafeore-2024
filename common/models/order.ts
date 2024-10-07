@@ -6,7 +6,7 @@ import { clone } from "lodash";
 export enum OrderStatus {
   Preparing = "preparing",
   Ready = "ready",
-  Served = "served"
+  Served = "served",
 }
 
 export const orderSchema = z.object({
