@@ -1,7 +1,7 @@
+import type { WithId } from "&/lib/typeguard";
+import type { ItemEntity } from "&/models/item";
+import type { OrderEntity } from "&/models/order";
 import { useCallback, useEffect, useState } from "react";
-import type { WithId } from "~/lib/typeguard";
-import type { ItemEntity } from "~/models/item";
-import type { OrderEntity } from "~/models/order";
 import { ItemAssign } from "./ItemAssign";
 
 const keys = ["q", "d", "c", "w", "a", "v", "e", "s", "z", "x", "b"];

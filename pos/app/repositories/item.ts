@@ -1,3 +1,7 @@
+import { itemConverter } from "&/firebase-utils/converter";
+import { prodDB } from "&/firebase-utils/firestore";
+import { type WithId, hasId } from "&/lib/typeguard";
+import type { ItemEntity } from "&/models/item";
 import {
   type Firestore,
   addDoc,
@@ -8,10 +12,6 @@ import {
   getDocs,
   setDoc,
 } from "firebase/firestore";
-import { itemConverter } from "~/firebase/converter";
-import { prodDB } from "~/firebase/firestore";
-import { type WithId, hasId } from "~/lib/typeguard";
-import type { ItemEntity } from "~/models/item";
 import type { ItemRepository } from "./type";
 
 // TODO(toririm): エラーハンドリングをやる

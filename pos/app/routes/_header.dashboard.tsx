@@ -1,3 +1,6 @@
+import { itemConverter, orderConverter } from "&/firebase-utils/converter";
+import { collectionSub } from "&/firebase-utils/subscription";
+import type { OrderEntity } from "&/models/order";
 import type { MetaFunction } from "@remix-run/react";
 import dayjs from "dayjs";
 import { orderBy } from "firebase/firestore";
@@ -23,7 +26,6 @@ import {
   ChartTooltipContent,
 } from "~/components/ui/chart";
 import type { ChartConfig } from "~/components/ui/chart";
-
 import {
   Table,
   TableBody,
@@ -34,9 +36,6 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
-import { itemConverter, orderConverter } from "~/firebase/converter";
-import { collectionSub } from "~/firebase/subscription";
-import type { OrderEntity } from "~/models/order";
 
 export const meta: MetaFunction = () => {
   return [{ title: "注文状況" }];
