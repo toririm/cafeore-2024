@@ -1,5 +1,6 @@
 {
   "name": "cafeore-2024",
+  "private": true,
   "workspaces": ["pos"],
   "scripts": {
     "sync": "bun install --frozen-lockfile"
