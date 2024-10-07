@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "mobile/**"
+      - ".github/workflows/mobile-cloudflare-preview.yml"
 
 defaults:
   run:
@@ -15,6 +16,7 @@ permissions:
 
 jobs:
   build_and_deploy:
+    name: Deploy to Cloudflare Pages
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -42,7 +44,7 @@ jobs:
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           # Optional: Switch what branch you are publishing to.
           # By default this will be the branch which triggered this workflow
-          branch: main
+          # branch: main
           # Optional: Change the working directory
           workingDirectory: mobile
           # Optional: Change the Wrangler version, allows you to point to a specific version or a tag such as `beta`
