@@ -1,4 +1,4 @@
-name: mobile / preview
+name: mobile / deploy
 
 on:
   push:
