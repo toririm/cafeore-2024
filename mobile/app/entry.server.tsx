@@ -26,6 +26,7 @@ export default async function handleRequest(
       onError(error: unknown) {
         // Log streaming rendering errors from inside the shell
         console.error(error);
+        // biome-ignore lint: lint/style/noParameterAssign
         responseStatusCode = 500;
       },
     },
