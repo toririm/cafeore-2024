@@ -118,7 +118,7 @@ export const orderConverter: FirestoreDataConverter<WithId<OrderEntity>> = {
 
       const convertedData = orderSchema.required().parse({
         ...dateParsedData,
-        id: snapshot.id
+        id: snapshot.id,
       });
       console.log(
         "Converted order data:",
