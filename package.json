@@ -1,12 +1,65 @@
 {
   "name": "cafeore-2024",
   "private": true,
-  "workspaces": ["pos", "mobile"],
+  "sideEffects": false,
+  "type": "module",
   "scripts": {
-    "sync": "bun install --frozen-lockfile"
+    "sync": "bun install --frozen-lockfile",
+    "build": "remix vite:build",
+    "dev": "remix vite:dev",
+    "lint": "biome check",
+    "fmt": "biome check --write",
+    "preview": "vite preview",
+    "test:unit": "bun test -t unit",
+    "test:db": "firebase emulators:exec --only firestore --project demo-firestore 'bun test -t db'",
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@conform-to/react": "^1.2.2",
+    "@conform-to/zod": "^1.2.2",
+    "@radix-ui/react-alert-dialog": "^1.1.2",
+    "@radix-ui/react-icons": "^1.3.0",
+    "@radix-ui/react-label": "^2.1.0",
+    "@radix-ui/react-radio-group": "^1.2.1",
+    "@radix-ui/react-select": "^2.1.1",
+    "@radix-ui/react-slot": "^1.1.0",
+    "@remix-run/react": "^2.12.1",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "dayjs": "^1.11.13",
+    "firebase": "^10.14.0",
+    "highcharts": "^11.4.8",
+    "highcharts-react-official": "^3.2.1",
+    "input-otp": "^1.2.4",
+    "lodash": "^4.17.21",
+    "lucide-react": "^0.447.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "recharts": "^2.12.7",
+    "swr": "^2.2.5",
+    "tailwind-merge": "^2.5.2",
+    "tailwindcss-animate": "^1.0.7",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.3"
+    "@biomejs/biome": "1.9.3",
+    "@firebase/rules-unit-testing": "^3.0.4",
+    "@remix-run/dev": "^2.12.1",
+    "@types/bun": "^1.1.10",
+    "@types/lodash": "^4.17.9",
+    "@types/react": "^18.3.10",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.20",
+    "firebase-tools": "^13.20.2",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.13",
+    "typescript": "^5.6.2",
+    "vite": "^5.4.8",
+    "vite-tsconfig-paths": "^5.0.1",
+    "vitest": "^2.1.1"
   },
-  "trustedDependencies": ["@biomejs/biome"]
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "trustedDependencies": ["@biomejs/biome", "esbuild", "protobufjs", "re2"]
 }
