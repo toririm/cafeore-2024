@@ -3,6 +3,7 @@ import { collectionSub } from "&/firebase-utils/subscription";
 import { stringToJSONSchema } from "&/lib/custom-zod";
 import { type2label } from "&/models/item";
 import { OrderEntity, orderSchema } from "&/models/order";
+import { orderRepository } from "&/repositories/order";
 import { parseWithZod } from "@conform-to/zod";
 import {
   type ClientActionFunction,
@@ -22,7 +23,6 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 import { cn } from "~/lib/utils";
-import { orderRepository } from "~/repositories/order";
 
 export const meta: MetaFunction = () => {
   return [{ title: "提供画面" }];

@@ -1,7 +1,3 @@
-import { orderConverter } from "&/firebase-utils/converter";
-import { prodDB } from "&/firebase-utils/firestore";
-import { type WithId, hasId } from "&/lib/typeguard";
-import type { OrderEntity } from "&/models/order";
 import {
   type Firestore,
   addDoc,
@@ -12,6 +8,10 @@ import {
   getDocs,
   setDoc,
 } from "firebase/firestore";
+import { orderConverter } from "../firebase-utils/converter";
+import { prodDB } from "../firebase-utils/firestore";
+import { type WithId, hasId } from "../lib/typeguard";
+import type { OrderEntity } from "../models/order";
 import type { OrderRepository } from "./type";
 
 // TODO(toririm): エラーハンドリングをやる
