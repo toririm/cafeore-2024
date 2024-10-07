@@ -8,7 +8,7 @@ import { orderConverter } from "common/firebase-utils/converter";
 import { collectionSub } from "common/firebase-utils/subscription";
 import { stringToJSONSchema } from "common/lib/custom-zod";
 import { type2label } from "common/models/item";
-import { OrderEntity, orderSchema, OrderStatus} from "common/models/order";
+import { OrderEntity, OrderStatus, orderSchema } from "common/models/order";
 import { orderRepository } from "common/repositories/order";
 import { orderBy } from "firebase/firestore";
 import { useCallback } from "react";
