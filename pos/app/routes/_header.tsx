@@ -1,5 +1,5 @@
 import { Outlet } from "@remix-run/react";
-import { OnlineStatus,useOnlineStatus } from "~/components/online-status";
+import { OnlineStatus, useOnlineStatus } from "~/components/online-status";
 
 export default function BaseHeader() {
   const isOnline = useOnlineStatus();
