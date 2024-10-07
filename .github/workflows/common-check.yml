@@ -6,6 +6,10 @@ on:
       - "common/**"
       - ".github/workflows/common-check.yml"
 
+defaults:
+  run:
+    working-directory: ./common
+
 jobs:
   biome:
     runs-on: ubuntu-latest
