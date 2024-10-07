@@ -108,9 +108,14 @@ export const orderConverter: FirestoreDataConverter<WithId<OrderEntity>> = {
       const rawData = snapshot.data(options);
       console.log("Raw order data:", JSON.stringify(rawData, null, 2));
 
-      let transformedData = { ...rawData };
-      if (transformedData.status === undefined && transformedData.orderReady !== undefined) {
-        transformedData.status = transformedData.orderReady ? OrderStatus.Ready : OrderStatus.Preparing;
+      const transformedData = { ...rawData };
+      if (
+        transformedData.status === undefined &&
+        transformedData.orderReady !== undefined
+      ) {
+        transformedData.status = transformedData.orderReady
+          ? OrderStatus.Ready
+          : OrderStatus.Preparing;
       }
 
       const dateParsedData = parseDateProperty(transformedData);
