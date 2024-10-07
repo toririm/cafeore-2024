@@ -128,7 +128,6 @@ export const orderConverter: FirestoreDataConverter<WithId<OrderEntity>> = {
       convertedData.items = convertedData.items.map((item) =>
         ItemEntity.fromItem(item),
       );
-      
       const orderEntity = OrderEntity.fromOrder(convertedData);
       console.log("Created OrderEntity:", JSON.stringify(orderEntity, null, 2));
       return orderEntity;
