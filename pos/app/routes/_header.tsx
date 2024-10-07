@@ -18,7 +18,6 @@ export default function BaseHeader() {
       </div>
     );
   }
-  
   return (
     <div>
       {/* TODO(toririm): デザインが微妙にダサいので何とかする。
