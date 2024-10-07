@@ -67,8 +67,8 @@ const parseDateProperty = (data: DocumentData): DocumentData => {
       return parseDateProperty(value as DocumentData);
     }
     if (_.isArray(value)) {
-      return value.map((item) => 
-        _.isPlainObject(item) ? parseDateProperty(item as DocumentData) : item
+      return value.map((item) =>
+        _.isPlainObject(item) ? parseDateProperty(item as DocumentData) : item,
       );
     }
     return value;
