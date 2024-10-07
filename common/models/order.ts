@@ -203,7 +203,8 @@ export class OrderEntity implements Order {
   /**
    * オーダーを提供済み状態に変更する
    */
-  beServed() {  // status が ready -> served にしか変更できないようにする
+  beServed() {
+    // status が ready -> served にしか変更できないようにする
     this._status = OrderStatus.Served;
     this._servedAt = new Date();
   }
