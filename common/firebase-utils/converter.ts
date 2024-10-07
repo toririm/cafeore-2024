@@ -142,7 +142,10 @@ export const orderConverter: FirestoreDataConverter<WithId<OrderEntity>> = {
         JSON.stringify(snapshot.data(options), null, 2),
       );
       if (error instanceof z.ZodError) {
-        console.error("Zod validation errors:", JSON.stringify(error.errors, null, 2));
+        console.error(
+          "Zod validation errors:",
+          JSON.stringify(error.errors, null, 2),
+        );
         console.error("Zod error issues:");
         error.issues.forEach((issue, index) => {
           console.error(`Issue ${index + 1}:`, JSON.stringify(issue, null, 2));
