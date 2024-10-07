@@ -88,7 +88,10 @@ export const itemConverter: FirestoreDataConverter<WithId<ItemEntity>> = {
       );
       return ItemEntity.fromItem(convertedData);
     } catch (error) {
-      console.error("Error in itemConverter.fromFirestore for document:", snapshot.id);
+      console.error(
+        "Error in itemConverter.fromFirestore for document:",
+        snapshot.id,
+      );
       throw error;
     }
   },
