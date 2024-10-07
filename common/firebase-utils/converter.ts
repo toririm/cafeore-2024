@@ -47,7 +47,10 @@ export const converter = <T>(
           JSON.stringify(snapshot.data(options), null, 2),
         );
         if (error instanceof z.ZodError) {
-          console.error("Zod validation errors:", JSON.stringify(error.errors, null, 2));
+          console.error(
+            "Zod validation errors:",
+            JSON.stringify(error.errors, null, 2),
+          );
         }
         throw error;
       }
