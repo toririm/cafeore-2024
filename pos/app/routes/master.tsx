@@ -1,7 +1,7 @@
-import { orderConverter } from "&/firebase-utils/converter";
-import { collectionSub } from "&/firebase-utils/subscription";
-import { type2label } from "&/models/item";
 import type { MetaFunction } from "@remix-run/react";
+import { orderConverter } from "common/firebase-utils/converter";
+import { collectionSub } from "common/firebase-utils/subscription";
+import { type2label } from "common/models/item";
 import { orderBy } from "firebase/firestore";
 import useSWRSubscription from "swr/subscription";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";

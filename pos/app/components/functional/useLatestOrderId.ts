@@ -1,5 +1,5 @@
-import type { WithId } from "&/lib/typeguard";
-import type { OrderEntity } from "&/models/order";
+import type { WithId } from "common/lib/typeguard";
+import type { OrderEntity } from "common/models/order";
 import { useMemo } from "react";
 
 /**

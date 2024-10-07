@@ -1,7 +1,7 @@
-import { useClientLoaderData } from "&/lib/custom-loader";
-import { type2label } from "&/models/item";
-import { orderRepository } from "&/repositories/order";
 import { Form, type MetaFunction } from "@remix-run/react";
+import { useClientLoaderData } from "common/lib/custom-loader";
+import { type2label } from "common/models/item";
+import { orderRepository } from "common/repositories/order";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 export { clientAction } from "./action";

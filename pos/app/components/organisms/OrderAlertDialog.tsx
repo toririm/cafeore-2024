@@ -1,5 +1,5 @@
-import { type2label } from "&/models/item";
-import type { OrderEntity } from "&/models/order";
+import { type2label } from "common/models/item";
+import type { OrderEntity } from "common/models/order";
 import { type ComponentPropsWithoutRef, forwardRef } from "react";
 import {
   AlertDialog,

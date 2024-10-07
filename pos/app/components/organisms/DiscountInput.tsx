@@ -1,6 +1,6 @@
-import type { WithId } from "&/lib/typeguard";
-import { OrderEntity } from "&/models/order";
 import { CheckCircledIcon, CrossCircledIcon } from "@radix-ui/react-icons";
+import type { WithId } from "common/lib/typeguard";
+import { OrderEntity } from "common/models/order";
 import {
   type ComponentPropsWithoutRef,
   useEffect,

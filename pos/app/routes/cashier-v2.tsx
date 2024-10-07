@@ -1,10 +1,10 @@
-import { itemConverter, orderConverter } from "&/firebase-utils/converter";
-import { collectionSub } from "&/firebase-utils/subscription";
-import { stringToJSONSchema } from "&/lib/custom-zod";
-import { OrderEntity, orderSchema } from "&/models/order";
-import { orderRepository } from "&/repositories/order";
 import { parseWithZod } from "@conform-to/zod";
 import { type ClientActionFunction, useSubmit } from "@remix-run/react";
+import { itemConverter, orderConverter } from "common/firebase-utils/converter";
+import { collectionSub } from "common/firebase-utils/subscription";
+import { stringToJSONSchema } from "common/lib/custom-zod";
+import { OrderEntity, orderSchema } from "common/models/order";
+import { orderRepository } from "common/repositories/order";
 import { useCallback } from "react";
 import useSWRSubscription from "swr/subscription";
 import { z } from "zod";

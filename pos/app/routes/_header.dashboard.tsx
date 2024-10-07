@@ -1,7 +1,7 @@
-import { itemConverter, orderConverter } from "&/firebase-utils/converter";
-import { collectionSub } from "&/firebase-utils/subscription";
-import type { OrderEntity } from "&/models/order";
 import type { MetaFunction } from "@remix-run/react";
+import { itemConverter, orderConverter } from "common/firebase-utils/converter";
+import { collectionSub } from "common/firebase-utils/subscription";
+import type { OrderEntity } from "common/models/order";
 import dayjs from "dayjs";
 import { orderBy } from "firebase/firestore";
 import {

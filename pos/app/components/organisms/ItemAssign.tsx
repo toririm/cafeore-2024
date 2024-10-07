@@ -1,6 +1,6 @@
-import type { WithId } from "&/lib/typeguard";
-import { type ItemEntity, type2label } from "&/models/item";
 import { Pencil2Icon } from "@radix-ui/react-icons";
+import type { WithId } from "common/lib/typeguard";
+import { type ItemEntity, type2label } from "common/models/item";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { cn } from "~/lib/utils";
 import { useFocusRef } from "../functional/useFocusRef";

@@ -1,7 +1,7 @@
-import { ItemEntity, itemSchema } from "&/models/item";
-import { itemRepository } from "&/repositories/item";
 import { parseWithZod } from "@conform-to/zod";
 import { type ClientActionFunction, json } from "@remix-run/react";
+import { ItemEntity, itemSchema } from "common/models/item";
+import { itemRepository } from "common/repositories/item";
 import { sendSlackMessage } from "~/lib/webhook";
 
 // TODO(toririm): テストを書く
