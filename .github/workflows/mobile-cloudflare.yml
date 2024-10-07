@@ -5,6 +5,10 @@ on:
     paths:
       - "mobile/**"
 
+defaults:
+  run:
+    working-directory: ./mobile
+
 permissions:
   contents: read
   deployments: write
