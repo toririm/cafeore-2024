@@ -42,7 +42,10 @@ export const converter = <T>(
         return schema.parse(dateParsedData);
       } catch (error) {
         console.error("Error in fromFirestore for document:", snapshot.id);
-        console.error("Raw data:", JSON.stringify(snapshot.data(options), null, 2));
+        console.error(
+          "Raw data:",
+          JSON.stringify(snapshot.data(options), null, 2),
+        );
         if (error instanceof z.ZodError) {
           console.error("Zod validation errors:", JSON.stringify(error.errors, null, 2));
         }
