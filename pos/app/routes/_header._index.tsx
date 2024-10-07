@@ -1,5 +1,5 @@
-import { converter } from "&/firebase/converter";
-import { prodDB } from "&/firebase/firestore";
+import { converter } from "&/firebase-utils/converter";
+import { prodDB } from "&/firebase-utils/firestore";
 import { itemSchema } from "&/models/item";
 import { type MetaFunction, useLoaderData } from "@remix-run/react";
 import { collection, getDocs } from "firebase/firestore";
