@@ -56,4 +56,4 @@ jobs:
       - name: Install dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: bun install --frozen-lockfile
-      - run: bun run test
+      - run: bun test
