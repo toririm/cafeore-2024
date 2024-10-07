@@ -1,14 +1,14 @@
-name: pos / check
+name: mobile / check
 
 on:
   push:
     paths:
-      - "pos/**"
-      - ".github/workflows/pos-check.yml"
+      - "mobile/**"
+      - ".github/workflows/mobile-check.yml"
 
 defaults:
   run:
-    working-directory: ./pos
+    working-directory: ./mobile
 
 jobs:
   biome:
