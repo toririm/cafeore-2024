@@ -9,6 +9,7 @@ on:
       - main
     paths:
       - "pos/**"
+      - "common/**"
       - ".github/workflows/pos-firebase-hosting-merge.yml"
   
 defaults:

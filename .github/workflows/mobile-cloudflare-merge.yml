@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - "mobile/**"
+      - "common/**"
       - ".github/workflows/mobile-cloudflare-merge.yml"
 
 defaults:
