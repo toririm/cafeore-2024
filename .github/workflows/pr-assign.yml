@@ -1,4 +1,4 @@
-name: auto assign
+name: PR bot
 
 on:
   pull_request:
