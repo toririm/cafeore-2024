@@ -1,5 +1,14 @@
 {
   "name": "common",
   "private": true,
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "firebase": "^10.14.0",
+    "lodash": "^4.17.21",
+    "swr": "^2.2.5",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "vite": "^5.4.8"
+  }
 }
