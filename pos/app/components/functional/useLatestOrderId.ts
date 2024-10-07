@@ -1,6 +1,6 @@
+import type { WithId } from "&/lib/typeguard";
+import type { OrderEntity } from "&/models/order";
 import { useMemo } from "react";
-import type { WithId } from "~/lib/typeguard";
-import type { OrderEntity } from "~/models/order";
 
 /**
  * オーダーのIDの最大値と次のIDを取得する

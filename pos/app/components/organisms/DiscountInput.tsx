@@ -1,3 +1,5 @@
+import type { WithId } from "&/lib/typeguard";
+import { OrderEntity } from "&/models/order";
 import { CheckCircledIcon, CrossCircledIcon } from "@radix-ui/react-icons";
 import {
   type ComponentPropsWithoutRef,
@@ -5,9 +7,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import type { WithId } from "~/lib/typeguard";
 import { cn } from "~/lib/utils";
-import { OrderEntity } from "~/models/order";
 import { useFocusRef } from "../functional/useFocusRef";
 import { ThreeDigitsInput } from "../molecules/ThreeDigitsInput";
 
