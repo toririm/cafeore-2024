@@ -9,7 +9,7 @@ import _ from "lodash";
 import { z, type ZodSchema } from "zod";
 import type { WithId } from "../lib/typeguard";
 import { ItemEntity, itemSchema } from "../models/item";
-import { OrderEntity, orderSchema, OrderStatus } from "../models/order";
+import { OrderEntity, OrderStatus, orderSchema } from "../models/order";
 
 export const converter = <T>(
   schema: ZodSchema<T>,
