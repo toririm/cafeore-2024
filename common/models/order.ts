@@ -137,8 +137,6 @@ export class OrderEntity implements Order {
     return this._total;
   }
 
-  
-
   get description() {
     return this._description;
   }
