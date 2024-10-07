@@ -1,0 +1,11 @@
+{
+  "name": "cafeore-2024",
+  "workspaces": ["pos"],
+  "scripts": {
+    "sync": "bun install --frozen-lockfile"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.9.3"
+  },
+  "trustedDependencies": ["@biomejs/biome"]
+}
