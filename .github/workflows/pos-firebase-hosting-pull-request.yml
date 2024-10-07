@@ -7,7 +7,7 @@ on:
   pull_request:
     paths:
       - "pos/**"
-      - ".github/workflows/firebase-hosting-pull-request.yml"
+      - ".github/workflows/pos-firebase-hosting-pull-request.yml"
 
 defaults:
   run:

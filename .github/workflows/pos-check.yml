@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - "pos/**"
-      - ".github/workflows/check.yml"
+      - ".github/workflows/pos-check.yml"
 
 defaults:
   run:
