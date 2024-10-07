@@ -13,7 +13,7 @@ export const orderSchema = z.object({
   id: z.string().optional(), // Firestore のドキュメント ID
   orderId: z.number(),
   createdAt: z.date(),
-  status: z.nativeEnum(OrderStatus),
+  status: z.nativeEnum(OrderStatus).optional(),
   servedAt: z.date().nullable(),
   items: z.array(itemSchema.required()),
   total: z.number(), // sum of item.price

@@ -6,92 +6,131 @@ import {
   Timestamp,
 } from "firebase/firestore";
 import _ from "lodash";
-import type { ZodSchema } from "zod";
+import { z, type ZodSchema } from "zod";
 import type { WithId } from "../lib/typeguard";
 import { ItemEntity, itemSchema } from "../models/item";
-import { OrderEntity, orderSchema } from "../models/order";
+import { OrderEntity, orderSchema, OrderStatus } from "../models/order";
 
 export const converter = <T>(
   schema: ZodSchema<T>,
 ): FirestoreDataConverter<T> => {
   return {
     toFirestore: (data: T) => {
-      // Zod のパースを挟まないと、Entityオブジェクトのgetter/setterは無視され
-      // privateプロパティがFirestoreに保存されてしまう
-      const parsedData = schema.parse(data);
-      // id は ドキュメントには含めない
-      const dataWithoutId = _.omit(parsedData as object, "id");
-      return dataWithoutId;
+      try {
+        const parsedData = schema.parse(data);
+        const dataWithoutId = _.omit(parsedData as object, "id");
+        return dataWithoutId;
+      } catch (error) {
+        console.error("Error in toFirestore:", error);
+        if (error instanceof z.ZodError) {
+          console.error("Zod validation errors:", JSON.stringify(error.errors, null, 2));
+        }
+        throw error;
+      }
     },
     fromFirestore: (
       snapshot: QueryDocumentSnapshot,
       options: SnapshotOptions,
     ) => {
-      const data = snapshot.data(options);
-      // id は Firestore のドキュメント ID を使う
-      const dataWithId = { ...data, id: snapshot.id };
-      const dateParsedData = parseDateProperty(dataWithId);
-      return schema.parse(dateParsedData);
+      try {
+        const data = snapshot.data(options);
+        const dataWithId = { ...data, id: snapshot.id };
+        const dateParsedData = parseDateProperty(dataWithId);
+        return schema.parse(dateParsedData);
+      } catch (error) {
+        console.error("Error in fromFirestore for document:", snapshot.id);
+        console.error("Raw data:", JSON.stringify(snapshot.data(options), null, 2));
+        if (error instanceof z.ZodError) {
+          console.error("Zod validation errors:", JSON.stringify(error.errors, null, 2));
+        }
+        throw error;
+      }
     },
   };
 };
 
-// 通常の Firestore のデータは上記 Zod によってパースできるが
-// Firestore の Timestamp はパースできないため、個別でパースする
-
-// この関数の型注釈は若干嘘
 const parseDateProperty = (data: DocumentData): DocumentData => {
-  const parsedData = _.mapValues(data, (value) =>
-    // firestore 固有の Timestamp 型を Date に変換
-    value instanceof Timestamp ? value.toDate() : value,
-  );
-  const recursivelyParsedData = _.mapValues(parsedData, (value) => {
-    // 再帰的にパースする
-    switch (Object.prototype.toString.call(value)) {
-      case "[object Object]":
-        return parseDateProperty(value);
-      case "[object Array]":
-        return (value as Array<DocumentData>).map((v) => parseDateProperty(v));
-      default:
-        return value;
+  return _.mapValues(data, (value) => {
+    if (value instanceof Timestamp) {
+      return value.toDate();
     }
+    if (_.isPlainObject(value)) {
+      return parseDateProperty(value as DocumentData);
+    }
+    if (_.isArray(value)) {
+      return value.map((item) => 
+        _.isPlainObject(item) ? parseDateProperty(item as DocumentData) : item
+      );
+    }
+    return value;
   });
-  return recursivelyParsedData;
 };
 
-/**
- * Firestore のデータを ItemEntity に変換する
- */
 export const itemConverter: FirestoreDataConverter<WithId<ItemEntity>> = {
   toFirestore: converter(itemSchema).toFirestore,
   fromFirestore: (
     snapshot: QueryDocumentSnapshot,
     options: SnapshotOptions,
   ) => {
-    const convertedData = converter(itemSchema.required()).fromFirestore(
-      snapshot,
-      options,
-    );
-    return ItemEntity.fromItem(convertedData);
+    try {
+      const convertedData = converter(itemSchema.required()).fromFirestore(
+        snapshot,
+        options,
+      );
+      return ItemEntity.fromItem(convertedData);
+    } catch (error) {
+      console.error("Error in itemConverter.fromFirestore for document:", snapshot.id);
+      throw error;
+    }
   },
 };
 
-/**
- * Firestore のデータを OrderEntity に変換する
- */
 export const orderConverter: FirestoreDataConverter<WithId<OrderEntity>> = {
   toFirestore: converter(orderSchema).toFirestore,
   fromFirestore: (
     snapshot: QueryDocumentSnapshot,
     options: SnapshotOptions,
   ): WithId<OrderEntity> => {
-    const convertedData = converter(orderSchema.required()).fromFirestore(
-      snapshot,
-      options,
-    );
-    convertedData.items = convertedData.items.map((item) =>
-      ItemEntity.fromItem(item),
-    );
-    return OrderEntity.fromOrder(convertedData);
+    try {
+      console.log("Processing order document:", snapshot.id);
+      const rawData = snapshot.data(options);
+      console.log("Raw order data:", JSON.stringify(rawData, null, 2));
+
+      let transformedData = { ...rawData };
+      if (transformedData.status === undefined && transformedData.orderReady !== undefined) {
+        transformedData.status = transformedData.orderReady ? OrderStatus.Ready : OrderStatus.Preparing;
+      }
+
+      const dateParsedData = parseDateProperty(transformedData);
+      console.log("Date parsed data:", JSON.stringify(dateParsedData, null, 2));
+
+      const convertedData = orderSchema.required().parse({
+        ...dateParsedData,
+        id: snapshot.id
+      });
+      console.log("Converted order data:", JSON.stringify(convertedData, null, 2));
+      
+      convertedData.items = convertedData.items.map((item) =>
+        ItemEntity.fromItem(item),
+      );
+      
+      const orderEntity = OrderEntity.fromOrder(convertedData);
+      console.log("Created OrderEntity:", JSON.stringify(orderEntity, null, 2));
+      
+      return orderEntity;
+    } catch (error) {
+      console.error("Error in orderConverter.fromFirestore for document:", snapshot.id);
+      console.error("Raw data:", JSON.stringify(snapshot.data(options), null, 2));
+      if (error instanceof z.ZodError) {
+        console.error("Zod validation errors:", JSON.stringify(error.errors, null, 2));
+        console.error("Zod error issues:");
+        error.issues.forEach((issue, index) => {
+          console.error(`Issue ${index + 1}:`, JSON.stringify(issue, null, 2));
+        });
+      } else {
+        console.error("Unexpected error:", error);
+      }
+      throw error;
+    }
   },
 };

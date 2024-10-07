@@ -8,7 +8,7 @@ import { orderConverter } from "common/firebase-utils/converter";
 import { collectionSub } from "common/firebase-utils/subscription";
 import { stringToJSONSchema } from "common/lib/custom-zod";
 import { type2label } from "common/models/item";
-import { OrderEntity, orderSchema } from "common/models/order";
+import { OrderEntity, orderSchema, OrderStatus} from "common/models/order";
 import { orderRepository } from "common/repositories/order";
 import { orderBy } from "firebase/firestore";
 import { useCallback } from "react";
@@ -41,20 +41,28 @@ export default function Serve() {
   );
 
   const unserved = orders?.reduce((acc, cur) => {
-    if (cur.servedAt == null) {
+    if (cur.status !== OrderStatus.Served) {
       return acc + 1;
     }
     return acc;
   }, 0);
 
   const submitPayload = useCallback(
-    (servedOrder: OrderEntity) => {
-      const order = servedOrder.clone();
-      order.beServed();
-      submit(
-        { servedOrder: JSON.stringify(order.toOrder()) },
-        { method: "PUT" },
-      );
+    (order: OrderEntity) => {
+      const updatedOrder = order.clone();
+      if (order.status === OrderStatus.Preparing) {
+        updatedOrder.beReady();
+        submit(
+          { readyOrder: JSON.stringify(updatedOrder.toOrder()) },
+          { method: "PUT" },
+        );
+      } else if (order.status === OrderStatus.Ready) {
+        updatedOrder.beServed();
+        submit(
+          { servedOrder: JSON.stringify(updatedOrder.toOrder()) },
+          { method: "PUT" },
+        );
+      }
     },
     [submit],
   );
@@ -67,11 +75,10 @@ export default function Serve() {
       </div>
 
       <div className="grid grid-cols-4 gap-4">
-        {orders?.map(
-          (order) =>
-            order.servedAt === null && (
-              <div key={order.id}>
-                <Card>
+      {orders?.filter(order => order.status !== OrderStatus.Served).map(
+    (order) => (
+      <div key={order.id}>
+        <Card>
                   <CardHeader>
                     <div className="flex justify-between">
                       <CardTitle>{`No. ${order.orderId}`}</CardTitle>
@@ -103,12 +110,20 @@ export default function Serve() {
                         </div>
                       ))}
                     </div>
-                    <p>{order.orderReady}</p>
+                    <p>{order.status}</p>
                     <div className="flex justify-between pt-4">
-                      {/* <p className="flex items-center">{`提供時間：${order.servedAt?.toLocaleTimeString()}`}</p> */}
-                      <Button onClick={() => submitPayload(order)}>提供</Button>
-                    </div>
-                  </CardContent>
+  {order.status === OrderStatus.Preparing && (
+    <Button onClick={() => submitPayload(order)}>
+      準備完了
+    </Button>
+  )}
+  {order.status === OrderStatus.Ready && (
+    <Button onClick={() => submitPayload(order)}>
+      提供
+    </Button>
+  )}
+</div>
+              </CardContent>
                   <CardFooter>備考欄：{order?.description}</CardFooter>
                 </Card>
               </div>
@@ -123,7 +138,8 @@ export const clientAction: ClientActionFunction = async ({ request }) => {
   const formData = await request.formData();
 
   const schema = z.object({
-    servedOrder: stringToJSONSchema.pipe(orderSchema),
+    servedOrder: stringToJSONSchema.pipe(orderSchema).optional(),
+    readyOrder: stringToJSONSchema.pipe(orderSchema).optional(),
   });
   const submission = parseWithZod(formData, {
     schema,
@@ -133,8 +149,15 @@ export const clientAction: ClientActionFunction = async ({ request }) => {
     return submission.reply();
   }
 
-  const { servedOrder } = submission.value;
-  const order = OrderEntity.fromOrder(servedOrder);
+  const { servedOrder, readyOrder } = submission.value;
+  let order;
+  if (servedOrder) {
+    order = OrderEntity.fromOrder(servedOrder);
+  } else if (readyOrder) {
+    order = OrderEntity.fromOrder(readyOrder);
+  } else {
+    return new Response("Invalid request", { status: 400 });
+  }
 
   const savedOrder = await orderRepository.save(order);
 
