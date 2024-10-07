@@ -1,6 +1,6 @@
 import type { ClientActionFunctionArgs } from "@remix-run/react";
 
-import { orderRepository } from "&/repositories/order";
+import { orderRepository } from "common/repositories/order";
 
 export const updateOrder = async ({ request }: ClientActionFunctionArgs) => {
   const formData = await request.formData();

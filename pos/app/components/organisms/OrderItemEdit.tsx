@@ -1,6 +1,6 @@
-import type { WithId } from "&/lib/typeguard";
-import type { ItemEntity } from "&/models/item";
-import type { OrderEntity } from "&/models/order";
+import type { WithId } from "common/lib/typeguard";
+import type { ItemEntity } from "common/models/item";
+import type { OrderEntity } from "common/models/order";
 import { useCallback, useEffect, useState } from "react";
 import { ItemAssign } from "./ItemAssign";
 

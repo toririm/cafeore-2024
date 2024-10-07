@@ -1,4 +1,4 @@
-import type { OrderEntity } from "&/models/order";
+import type { OrderEntity } from "common/models/order";
 import { useMemo } from "react";
 import { Input } from "../ui/input";
 

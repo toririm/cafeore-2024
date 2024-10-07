@@ -1,7 +1,3 @@
-import { itemConverter } from "&/firebase-utils/converter";
-import { collectionSub } from "&/firebase-utils/subscription";
-import type { ItemEntity, ItemType } from "&/models/item";
-import { itemSchema, itemtypes, type2label } from "&/models/item";
 import { useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
 import {
@@ -10,6 +6,10 @@ import {
   useActionData,
   useNavigation,
 } from "@remix-run/react";
+import { itemConverter } from "common/firebase-utils/converter";
+import { collectionSub } from "common/firebase-utils/subscription";
+import type { ItemEntity, ItemType } from "common/models/item";
+import { itemSchema, itemtypes, type2label } from "common/models/item";
 import { useMemo } from "react";
 import useSWRSubscription from "swr/subscription";
 import { usePreventNumberKeyUpDown } from "~/components/functional/usePreventNumberKeyUpDown";

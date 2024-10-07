@@ -1,15 +1,15 @@
-import { orderConverter } from "&/firebase-utils/converter";
-import { collectionSub } from "&/firebase-utils/subscription";
-import { stringToJSONSchema } from "&/lib/custom-zod";
-import { type2label } from "&/models/item";
-import { OrderEntity, orderSchema } from "&/models/order";
-import { orderRepository } from "&/repositories/order";
 import { parseWithZod } from "@conform-to/zod";
 import {
   type ClientActionFunction,
   type MetaFunction,
   useSubmit,
 } from "@remix-run/react";
+import { orderConverter } from "common/firebase-utils/converter";
+import { collectionSub } from "common/firebase-utils/subscription";
+import { stringToJSONSchema } from "common/lib/custom-zod";
+import { type2label } from "common/models/item";
+import { OrderEntity, orderSchema } from "common/models/order";
+import { orderRepository } from "common/repositories/order";
 import { orderBy } from "firebase/firestore";
 import { useCallback } from "react";
 import useSWRSubscription from "swr/subscription";

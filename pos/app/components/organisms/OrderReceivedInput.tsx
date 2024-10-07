@@ -1,5 +1,5 @@
-import type { OrderEntity } from "&/models/order";
 import { CrossCircledIcon } from "@radix-ui/react-icons";
+import type { OrderEntity } from "common/models/order";
 import { useMemo } from "react";
 import { AttractiveInput } from "../molecules/AttractiveInput";
 
