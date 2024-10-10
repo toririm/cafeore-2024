@@ -73,12 +73,10 @@ export default function Dashboard() {
     return acc;
   }, init);
   const itemValue = (name: string): number | undefined => {
-    console.log(name);
     let valueNum = undefined;
     if (numPerItem !== undefined) {
       valueNum = numPerItem.get(name);
     }
-    console.log(numPerItem);
     return valueNum;
   };
   const chartData = [
@@ -143,7 +141,14 @@ export default function Dashboard() {
             </TableHeader>
             <TableBody>
               {orders?.map((order) => (
-                <TableRow key={order.orderId}>
+                <TableRow
+                  key={order.orderId}
+                  style={
+                    pass15Minutes(order) === true
+                      ? { background: "#ffe4e1" }
+                      : {}
+                  }
+                >
                   <TableCell className="font-medium">{order.orderId}</TableCell>
                   <TableCell>{numOfCups(order)}</TableCell>
                   <TableCell>￥{order.total}</TableCell>
@@ -218,6 +223,13 @@ const diffTime = (order: OrderEntity) => {
   return dayjs(dayjs(order.servedAt).diff(dayjs(order.createdAt))).format(
     "m:ss",
   );
+};
+
+const pass15Minutes = (order: OrderEntity) => {
+  let drawn = dayjs();
+  if (order.servedAt !== null) drawn = dayjs(order.servedAt);
+  const time = dayjs(drawn.diff(dayjs(order.createdAt))).format("m:ss");
+  return Number(time.split(":")[0]) >= 15;
 };
 
 const chartConfig = {
