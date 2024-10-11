@@ -35,12 +35,12 @@ export const type2label = {
 } as const satisfies Record<ItemType, string>;
 
 export class ItemEntity implements Item {
-  private constructor(
-    public readonly id: string | undefined,
-    public readonly name: string,
-    public readonly price: number,
-    public readonly type: ItemType,
-    public assignee: string | null,
+  constructor(
+    public readonly _id: string | undefined,
+    public _name: string,
+    public _price: number,
+    public _type: ItemType,
+    public _assignee: string | null,
   ) {}
 
   static createNew({ name, price, type }: Omit<Item, "assignee">): ItemEntity {
@@ -55,5 +55,32 @@ export class ItemEntity implements Item {
       item.type,
       item.assignee,
     ) as WithId<ItemEntity>;
+  }
+
+  get id() {
+    return this._id;
+  }
+
+  get name() {
+    return this._name;
+  }
+
+  get price() {
+    return this._price;
+  }
+
+  get type() {
+    return this._type;
+  }
+
+  get assignee() {
+    return this._assignee;
+  }
+  set assignee(assignee: string | null) {
+    if (assignee === "") {
+      this._assignee = null;
+    } else {
+      this._assignee = assignee;
+    }
   }
 }
