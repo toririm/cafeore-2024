@@ -4,6 +4,7 @@ import {
   type MetaFunction,
   useSubmit,
 } from "@remix-run/react";
+import dayjs from "dayjs";
 import { orderBy } from "firebase/firestore";
 import { useCallback } from "react";
 import useSWRSubscription from "swr/subscription";
@@ -23,6 +24,7 @@ import { cn } from "~/lib/utils";
 import { type2label } from "~/models/item";
 import { OrderEntity, orderSchema } from "~/models/order";
 import { orderRepository } from "~/repositories/order";
+import { diffTimeDisplay } from "~/components/functional/diffTimeDisplay";
 
 export const meta: MetaFunction = () => {
   return [{ title: "提供画面" }];
@@ -59,6 +61,15 @@ export default function Serve() {
     [submit],
   );
 
+  const diffTime = (order: OrderEntity) => {
+    const now = new Date();
+    return dayjs(dayjs(now).diff(dayjs(order.createdAt))).format("m:ss");
+  };
+
+  // setInterval(() => {
+  //   diffTime;
+  // }, 1000);
+
   return (
     <div className="p-4 font-sans">
       <div className="flex justify-between pb-4">
@@ -73,12 +84,15 @@ export default function Serve() {
               <div key={order.id}>
                 <Card>
                   <CardHeader>
-                    <div className="flex justify-between">
+                    <div className="flex items-center justify-between">
                       <CardTitle>{`No. ${order.orderId}`}</CardTitle>
                       <CardTitle className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-stone-500">
                         {order.items.length}
                       </CardTitle>
-                      <p>{order.createdAt.toLocaleTimeString()}</p>
+                      <div className="grid">
+                        <div>{order.createdAt.toLocaleTimeString()}</div>
+                        <div>経過時間：{diffTime(order)}</div>
+                      </div>
                     </div>
                   </CardHeader>
                   <CardContent>
