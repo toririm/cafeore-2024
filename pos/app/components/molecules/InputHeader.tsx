@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { cn } from "~/lib/utils";
 import { Circle } from "../atoms/Circle";
 
@@ -7,7 +8,7 @@ type props = {
   number: number;
 };
 
-const InputHeader = ({ title, focus, number }: props) => {
+const InputHeader = memo(({ title, focus, number }: props) => {
   return (
     <div className="flex items-center p-3">
       <Circle focus={focus} className="flex-initial">
@@ -23,6 +24,6 @@ const InputHeader = ({ title, focus, number }: props) => {
       </h2>
     </div>
   );
-};
+});
 
 export { InputHeader };

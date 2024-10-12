@@ -1,6 +1,6 @@
 import { CrossCircledIcon } from "@radix-ui/react-icons";
 import type { OrderEntity } from "common/models/order";
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import { AttractiveInput } from "../molecules/AttractiveInput";
 
 type props = {
@@ -9,7 +9,7 @@ type props = {
   focus: boolean;
 };
 
-const OrderReceivedInput = ({ order, onTextSet, focus }: props) => {
+const OrderReceivedInput = memo(({ order, onTextSet, focus }: props) => {
   const charge = useMemo(() => order.getCharge(), [order]);
 
   return (
@@ -54,6 +54,6 @@ const OrderReceivedInput = ({ order, onTextSet, focus }: props) => {
       </div>
     </>
   );
-};
+});
 
 export { OrderReceivedInput };
