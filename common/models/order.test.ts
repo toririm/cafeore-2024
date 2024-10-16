@@ -28,7 +28,7 @@ describe("[unit] order entity", () => {
     // 現在はItemEntityにメソッドが生えていないためこれで正常に動くが
     // メソッドが生えると型エラーが発生する。ちゃんと`fromItem`等を使って
     // インスタンスを生成するように修正する
-    const items = [
+    const items: WithId<ItemEntity>[] = [
       ItemEntity.fromItem({
         id: "1",
         name: "item1",
