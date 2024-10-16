@@ -72,7 +72,7 @@ export class OrderEntity implements Order {
       order.orderId,
       order.createdAt,
       order.servedAt,
-      order.items,
+      order.items as WithId<ItemEntity>[],
       order.total,
       order.orderReady,
       order.description,
