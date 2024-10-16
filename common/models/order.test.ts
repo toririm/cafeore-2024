@@ -28,7 +28,22 @@ describe("[unit] order entity", () => {
     // 現在はItemEntityにメソッドが生えていないためこれで正常に動くが
     // メソッドが生えると型エラーが発生する。ちゃんと`fromItem`等を使って
     // インスタンスを生成するように修正する
-    const items: WithId<ItemEntity>[] = [coffeeItem, milkItem];
+    const items: WithId<ItemEntity>[] = [
+      ItemEntity.fromItem({
+        id: "1",
+        name: "item1",
+        price: 100,
+        type: "hot",
+        assignee: null,
+      }),
+      ItemEntity.fromItem({
+        id: "2",
+        name: "item2",
+        price: 341,
+        type: "ice",
+        assignee: null,
+      }),
+    ];
 
     order.items.push(...items);
     expect(order.total).toBe(441);
