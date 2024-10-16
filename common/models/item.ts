@@ -35,27 +35,33 @@ export const type2label = {
 } as const satisfies Record<ItemType, string>;
 
 export class ItemEntity implements Item {
-  constructor(
-    public readonly _id: string | undefined,
-    public _name: string,
-    public _price: number,
-    public _type: ItemType,
-    public _assignee: string | null,
+  private constructor(
+    private readonly _id: string | undefined,
+    private _name: string,
+    private _price: number,
+    private _type: ItemType,
+    private _assignee: string | null,
   ) {}
 
   static createNew({ name, price, type }: Omit<Item, "assignee">): ItemEntity {
     return new ItemEntity(undefined, name, price, type, null);
   }
 
-  static fromItem(item: WithId<Item>): WithId<ItemEntity> {
+  static fromItem(item: WithId<Item>): WithId<ItemEntity>;
+  static fromItem(item: Item): ItemEntity;
+  static fromItem(item: WithId<Item> | Item): ItemEntity {
     return new ItemEntity(
       item.id,
       item.name,
       item.price,
       item.type,
       item.assignee,
-    ) as WithId<ItemEntity>;
+    );
   }
+
+  // --------------------------------------------------
+  // getter / setter
+  // --------------------------------------------------
 
   get id() {
     return this._id;
