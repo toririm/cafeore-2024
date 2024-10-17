@@ -89,4 +89,34 @@ export class ItemEntity implements Item {
       this._assignee = assignee;
     }
   }
+
+  // --------------------------------------------------
+  // methods
+  // --------------------------------------------------
+
+  /**
+   * ItemEntity をメソッドを持たない Item に変換する
+   * @returns Item
+   */
+  toItem(): WithId<Item>;
+  toItem(): Item;
+  toItem(): WithId<Item> | Item {
+    return {
+      id: this.id,
+      name: this.name,
+      price: this.price,
+      type: this.type,
+      assignee: this.assignee,
+    };
+  }
+
+  /**
+   * ItemEntity を複製する
+   * メソッドを含む Entity は structualClone などで複製できないため、このメソッドを使う
+   */
+  clone(): WithId<ItemEntity>;
+  clone(): ItemEntity;
+  clone(): WithId<ItemEntity> | ItemEntity {
+    return ItemEntity.fromItem(this.toItem());
+  }
 }
