@@ -98,7 +98,7 @@ const setReceived: OrderReducer<SetReceived> = (state, action) => {
 
 const setDescription: OrderReducer<SetDescription> = (state, action) => {
   const updated = state.clone();
-  updated.description = action.description || null;
+  updated.description = action.description;
   return updated;
 };
 
