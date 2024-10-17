@@ -60,7 +60,10 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
     if (newOrder.items.length === 0) {
       return;
     }
-    submitPayload(newOrder);
+    // 送信する直前に createdAt を更新する
+    const submitOne = newOrder.clone();
+    submitOne.nowCreated();
+    submitPayload(submitOne);
     resetAll();
   }, [newOrder, submitPayload, resetAll]);
 
