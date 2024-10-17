@@ -29,24 +29,25 @@ describe("[unit] order entity", () => {
     // メソッドが生えると型エラーが発生する。ちゃんと`fromItem`等を使って
     // インスタンスを生成するように修正する
 
-    const items: WithId<ItemEntity>[] = [
-      ItemEntity.fromItem({
+    const items: WithId<Item>[] = [
+      {
         id: "1",
         name: "item1",
         price: 100,
         type: "hot",
         assignee: null,
-      }),
-      ItemEntity.fromItem({
+      },
+      {
         id: "2",
         name: "item2",
         price: 341,
         type: "ice",
         assignee: null,
-      }),
+      },
     ];
+    const itemEntities = items.map((item) => ItemEntity.fromItem(item));
 
-    order.items = items;
+    order.items = itemEntities;
     expect(order.total).toBe(441);
 
     order.items.push(
@@ -82,25 +83,25 @@ describe("[unit] order entity", () => {
     const order = OrderEntity.createNew({ orderId: 2024 });
     expect(order.billingAmount).toBe(0);
 
-    const items: WithId<ItemEntity>[] = [
-      ItemEntity.fromItem({
+    const items: WithId<Item>[] = [
+      {
         id: "1",
         name: "item1",
         price: 400,
         type: "hot",
         assignee: null,
-      }),
-      ItemEntity.fromItem({
+      },
+      {
         id: "2",
         name: "item2",
         price: 500,
         type: "ice",
         assignee: null,
-      }),
+      },
     ];
-    // const itemEntities = items.map((item) => ItemEntity.fromItem(item));
+    const itemEntities = items.map((item) => ItemEntity.fromItem(item));
 
-    order.items = items;
+    order.items = itemEntities;
     expect(order.billingAmount).toBe(900);
 
     const previousOrder = OrderEntity.fromOrder({
@@ -108,7 +109,7 @@ describe("[unit] order entity", () => {
       orderId: 99999,
       createdAt: new Date(),
       servedAt: null,
-      items: items.slice(0, 1),
+      items: itemEntities.slice(0, 1),
       total: 900,
       orderReady: false,
       description: null,
