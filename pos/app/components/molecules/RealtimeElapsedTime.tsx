@@ -20,7 +20,7 @@ export const RealtimeElapsedTime = ({
       className={cn(
         "rounded-md",
         dayjs(currentTime).isAfter(createdAt.add(15, "minutes")) &&
-          "bg-red-500",
+          "bg-red-500 text-white",
         "px-2",
       )}
     >
