@@ -10,11 +10,11 @@ import { stringToJSONSchema } from "common/lib/custom-zod";
 import { type2label } from "common/models/item";
 import { OrderEntity, orderSchema } from "common/models/order";
 import { orderRepository } from "common/repositories/order";
-import dayjs from "dayjs";
 import { orderBy } from "firebase/firestore";
 import { useCallback } from "react";
 import useSWRSubscription from "swr/subscription";
 import { z } from "zod";
+import { RealtimeElapsedTime } from "~/components/molecules/RealtimeElapsedTime";
 import { Button } from "~/components/ui/button";
 import {
   Card,
@@ -60,15 +60,6 @@ export default function Serve() {
     [submit],
   );
 
-  const diffTime = (order: OrderEntity) => {
-    const now = new Date();
-    return dayjs(dayjs(now).diff(dayjs(order.createdAt))).format("m:ss");
-  };
-
-  // setInterval(() => {
-  //   diffTime;
-  // }, 1000);
-
   return (
     <div className="p-4 font-sans">
       <div className="flex justify-between pb-4">
@@ -90,7 +81,7 @@ export default function Serve() {
                       </CardTitle>
                       <div className="grid">
                         <div>{order.createdAt.toLocaleTimeString()}</div>
-                        <div>経過時間：{diffTime(order)}</div>
+                        <RealtimeElapsedTime order={order} />
                       </div>
                     </div>
                   </CardHeader>
