@@ -80,7 +80,9 @@ export default function Serve() {
                         {order.items.length}
                       </CardTitle>
                       <div className="grid">
-                        <div>{order.createdAt.toLocaleTimeString()}</div>
+                        <div className="px-2 text-right">
+                          {order.createdAt.toLocaleTimeString()}
+                        </div>
                         <RealtimeElapsedTime order={order} />
                       </div>
                     </div>
@@ -118,6 +120,7 @@ export default function Serve() {
               </div>
             ),
         )}
+        )
       </div>
     </div>
   );
