@@ -36,24 +36,57 @@ export const type2label = {
 
 export class ItemEntity implements Item {
   private constructor(
-    public readonly id: string | undefined,
-    public readonly name: string,
-    public readonly price: number,
-    public readonly type: ItemType,
-    public assignee: string | null,
+    private readonly _id: string | undefined,
+    private readonly _name: string,
+    private readonly _price: number,
+    private readonly _type: ItemType,
+    private _assignee: string | null,
   ) {}
 
   static createNew({ name, price, type }: Omit<Item, "assignee">): ItemEntity {
     return new ItemEntity(undefined, name, price, type, null);
   }
 
-  static fromItem(item: WithId<Item>): WithId<ItemEntity> {
+  static fromItem(item: WithId<Item>): WithId<ItemEntity>;
+  static fromItem(item: Item): ItemEntity;
+  static fromItem(item: WithId<Item> | Item): ItemEntity {
     return new ItemEntity(
       item.id,
       item.name,
       item.price,
       item.type,
       item.assignee,
-    ) as WithId<ItemEntity>;
+    );
+  }
+
+  // --------------------------------------------------
+  // getter / setter
+  // --------------------------------------------------
+
+  get id() {
+    return this._id;
+  }
+
+  get name() {
+    return this._name;
+  }
+
+  get price() {
+    return this._price;
+  }
+
+  get type() {
+    return this._type;
+  }
+
+  get assignee() {
+    return this._assignee;
+  }
+  set assignee(assignee: string | null) {
+    if (assignee === "") {
+      this._assignee = null;
+    } else {
+      this._assignee = assignee;
+    }
   }
 }

@@ -1,6 +1,7 @@
 import { beforeAll, describe, expect, test } from "bun:test";
 import { initializeTestEnvironment } from "@firebase/rules-unit-testing";
 import type { Firestore } from "firebase/firestore";
+import { ItemEntity } from "models/item";
 import firebasejson from "../firebase.json";
 import type { WithId } from "../lib/typeguard";
 import { OrderEntity } from "../models/order";
@@ -52,13 +53,15 @@ describe("[db] orderRepository", async () => {
   });
 
   test("orderRepository.save (update)", async () => {
-    savedOrderChange.items.push({
-      id: "1",
-      name: "item1",
-      price: 100,
-      type: "hot",
-      assignee: null,
-    });
+    savedOrderChange.items.push(
+      ItemEntity.fromItem({
+        id: "1",
+        name: "item1",
+        price: 100,
+        type: "hot",
+        assignee: null,
+      }),
+    );
     const savedOrder = await orderRepository.save(savedOrderChange);
     expect(savedOrder.id).toEqual(savedOrderChange.id);
     expect(savedOrder.items).toEqual(savedOrderChange.items);
