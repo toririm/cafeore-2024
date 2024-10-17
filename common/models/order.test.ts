@@ -46,7 +46,7 @@ describe("[unit] order entity", () => {
       }),
     ];
 
-    order.items.push(...items);
+    order.items = items;
     expect(order.total).toBe(441);
 
     order.items.push(
@@ -82,25 +82,25 @@ describe("[unit] order entity", () => {
     const order = OrderEntity.createNew({ orderId: 2024 });
     expect(order.billingAmount).toBe(0);
 
-    const items: WithId<Item>[] = [
-      {
+    const items: WithId<ItemEntity>[] = [
+      ItemEntity.fromItem({
         id: "1",
         name: "item1",
         price: 400,
         type: "hot",
         assignee: null,
-      },
-      {
+      }),
+      ItemEntity.fromItem({
         id: "2",
         name: "item2",
         price: 500,
         type: "ice",
         assignee: null,
-      },
+      }),
     ];
-    const itemEntities = items.map((item) => ItemEntity.fromItem(item));
+    // const itemEntities = items.map((item) => ItemEntity.fromItem(item));
 
-    order.items = itemEntities;
+    order.items = items;
     expect(order.billingAmount).toBe(900);
 
     const previousOrder = OrderEntity.fromOrder({
