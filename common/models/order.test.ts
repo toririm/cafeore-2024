@@ -24,11 +24,6 @@ describe("[unit] order entity", () => {
     const order = OrderEntity.createNew({ orderId: 2024 });
     expect(order.total).toBe(0);
 
-    // TODO(toririm):
-    // 現在はItemEntityにメソッドが生えていないためこれで正常に動くが
-    // メソッドが生えると型エラーが発生する。ちゃんと`fromItem`等を使って
-    // インスタンスを生成するように修正する
-
     const items: WithId<ItemEntity>[] = [
       ItemEntity.fromItem({
         id: "1",
