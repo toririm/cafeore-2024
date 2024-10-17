@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { WithId } from "../lib/typeguard";
-import { type ItemEntity, itemSchema } from "./item";
+import { ItemEntity, itemSchema } from "./item";
 
 export const orderSchema = z.object({
   id: z.string().optional(), // Firestore のドキュメント ID
@@ -73,7 +73,7 @@ export class OrderEntity implements Order {
       order.orderId,
       order.createdAt,
       order.servedAt,
-      order.items as WithId<ItemEntity>[],
+      order.items.map((item) => ItemEntity.fromItem(item)),
       order.total,
       order.orderReady,
       order.description,
