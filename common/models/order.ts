@@ -241,7 +241,7 @@ export class OrderEntity implements Order {
       orderId: this.orderId,
       createdAt: this.createdAt,
       servedAt: this.servedAt,
-      items: this.items,
+      items: this.items.map((item) => item.toItem()),
       total: this.total,
       orderReady: this.orderReady,
       description: this.description,
@@ -256,7 +256,6 @@ export class OrderEntity implements Order {
 
   /**
    * オーダーを複製する
-   * ただし、items は参照を共有することに注意
    */
   clone(): WithId<OrderEntity>;
   clone(): OrderEntity;

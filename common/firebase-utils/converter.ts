@@ -89,9 +89,6 @@ export const orderConverter: FirestoreDataConverter<WithId<OrderEntity>> = {
       snapshot,
       options,
     );
-    convertedData.items = convertedData.items.map((item) =>
-      ItemEntity.fromItem(item),
-    );
     return OrderEntity.fromOrder(convertedData);
   },
 };

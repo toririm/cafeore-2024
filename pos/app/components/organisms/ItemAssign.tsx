@@ -28,7 +28,7 @@ const ItemAssign = memo(
 
     const saveAssignInput = useCallback(() => {
       mutateItem(idx, (prev) => {
-        const copy = structuredClone(prev);
+        const copy = prev.clone();
         copy.assignee = assignee;
         return copy;
       });
