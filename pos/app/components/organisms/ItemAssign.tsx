@@ -63,7 +63,7 @@ const ItemAssign = memo(
                 <Input
                   ref={assignInputRef}
                   value={assignee ?? ""}
-                  onChange={(e) => setAssinee(e.target.value || null)}
+                  onChange={(e) => setAssinee(e.target.value)}
                   placeholder="指名"
                   className="h-6 w-1/2 border-stone-300 border-b-2 text-sm"
                 />
