@@ -132,7 +132,11 @@ export class OrderEntity implements Order {
     return this._description;
   }
   set description(description: string | null) {
-    this._description = description;
+    if (description === "") {
+      this._description = null;
+    } else {
+      this._description = description;
+    }
   }
 
   get billingAmount() {
