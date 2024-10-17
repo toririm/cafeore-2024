@@ -91,15 +91,15 @@ export default function Serve() {
                     <div className="grid grid-cols-2 gap-2">
                       {order.items.map((item, idx) => (
                         <div key={`${idx}-${item.id}`}>
-                          <Card>
-                            <CardContent
-                              className={cn(
-                                "pt-6",
-                                item.type === "milk" && "bg-yellow-200",
-                                item.type === "hotOre" && "bg-orange-300",
-                                item.type === "iceOre" && "bg-sky-300",
-                              )}
-                            >
+                          <Card
+                            className={cn(
+                              "pt-6",
+                              item.type === "milk" && "bg-yellow-200",
+                              item.type === "hotOre" && "bg-orange-300",
+                              item.type === "iceOre" && "bg-sky-300",
+                            )}
+                          >
+                            <CardContent>
                               <h3>{item.name}</h3>
                               <p className="text-sm text-stone-400">
                                 {type2label[item.type]}
