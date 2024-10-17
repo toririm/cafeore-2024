@@ -25,6 +25,7 @@ export type Order = z.infer<typeof orderSchema>;
 const STATIC_DISCOUNT_PER_CUP = 100;
 
 export class OrderEntity implements Order {
+  order: ItemEntity | undefined;
   // 全てのプロパティを private にして外部からの直接アクセスを禁止
   private constructor(
     private readonly _id: string | undefined,
