@@ -108,7 +108,7 @@ describe("[unit] order entity", () => {
       orderId: 99999,
       createdAt: new Date(),
       servedAt: null,
-      items: itemEntities.slice(0, 1),
+      items: items.slice(0, 1),
       total: 900,
       orderReady: false,
       description: null,
