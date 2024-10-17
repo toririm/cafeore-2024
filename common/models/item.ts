@@ -37,9 +37,9 @@ export const type2label = {
 export class ItemEntity implements Item {
   private constructor(
     private readonly _id: string | undefined,
-    private _name: string,
-    private _price: number,
-    private _type: ItemType,
+    private readonly _name: string,
+    private readonly _price: number,
+    private readonly _type: ItemType,
     private _assignee: string | null,
   ) {}
 
