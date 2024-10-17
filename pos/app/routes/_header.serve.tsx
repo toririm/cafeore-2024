@@ -14,6 +14,7 @@ import { orderBy } from "firebase/firestore";
 import { useCallback } from "react";
 import useSWRSubscription from "swr/subscription";
 import { z } from "zod";
+import { RealtimeElapsedTime } from "~/components/molecules/RealtimeElapsedTime";
 import { Button } from "~/components/ui/button";
 import {
   Card,
@@ -73,12 +74,15 @@ export default function Serve() {
               <div key={order.id}>
                 <Card>
                   <CardHeader>
-                    <div className="flex justify-between">
+                    <div className="flex items-center justify-between">
                       <CardTitle>{`No. ${order.orderId}`}</CardTitle>
                       <CardTitle className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-stone-500">
                         {order.items.length}
                       </CardTitle>
-                      <p>{order.createdAt.toLocaleTimeString()}</p>
+                      <div className="grid">
+                        <div>{order.createdAt.toLocaleTimeString()}</div>
+                        <RealtimeElapsedTime order={order} />
+                      </div>
                     </div>
                   </CardHeader>
                   <CardContent>
