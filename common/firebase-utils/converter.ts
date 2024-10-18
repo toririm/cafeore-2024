@@ -7,9 +7,9 @@ import {
 } from "firebase/firestore";
 import _ from "lodash";
 import type { ZodSchema } from "zod";
-import type { WithId } from "~/lib/typeguard";
-import { ItemEntity, itemSchema } from "~/models/item";
-import { OrderEntity, orderSchema } from "~/models/order";
+import type { WithId } from "../lib/typeguard";
+import { ItemEntity, itemSchema } from "../models/item";
+import { OrderEntity, orderSchema } from "../models/order";
 
 export const converter = <T>(
   schema: ZodSchema<T>,
@@ -61,6 +61,9 @@ const parseDateProperty = (data: DocumentData): DocumentData => {
 
 /**
  * Firestore のデータを ItemEntity に変換する
+ *
+ * @deprecated アイテムはソースコードに直接ハードコードするようになりました
+ * @see `data/items.ts`
  */
 export const itemConverter: FirestoreDataConverter<WithId<ItemEntity>> = {
   toFirestore: converter(itemSchema).toFirestore,
@@ -88,9 +91,6 @@ export const orderConverter: FirestoreDataConverter<WithId<OrderEntity>> = {
     const convertedData = converter(orderSchema.required()).fromFirestore(
       snapshot,
       options,
-    );
-    convertedData.items = convertedData.items.map((item) =>
-      ItemEntity.fromItem(item),
     );
     return OrderEntity.fromOrder(convertedData);
   },

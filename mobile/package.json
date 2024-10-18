@@ -18,7 +18,7 @@
     "@remix-run/cloudflare": "^2.12.1",
     "@remix-run/cloudflare-pages": "^2.12.1",
     "@remix-run/react": "^2.12.1",
-    "isbot": "^5.0.0",
+    "isbot": "^5.1.17",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
@@ -30,10 +30,10 @@
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.13",
-    "typescript": "^5.6.2",
+    "typescript": "^5.6.3",
     "vite": "^5.4.8",
-    "vite-tsconfig-paths": "^5.0.0",
-    "wrangler": "3.80.0"
+    "vite-tsconfig-paths": "^5.0.1",
+    "wrangler": "3.80.4"
   },
   "engines": {
     "node": ">=20.0.0"

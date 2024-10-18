@@ -1,28 +1,15 @@
-name: pos / check
+name: status / check
 
 on:
   push:
     paths:
-      - "pos/**"
-      - "common/**"
-      - ".github/workflows/pos-check.yml"
-
-defaults:
-  run:
-    working-directory: ./pos
+      - "**"
+      - "!mobile/**"
+      - "!common/**"
+      - "!pos/**"
+      - ".github/workflows/status-check.yml"
 
 jobs:
-  biome:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Biome
-        uses: biomejs/setup-biome@v2
-        with:
-          version: "1.9.2"
-      - name: Run Biome
-        run: biome ci .
-
   tsc:
     runs-on: ubuntu-latest
     steps:
@@ -39,4 +26,4 @@ jobs:
       - name: Install dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: bun install --frozen-lockfile
-      - run: bun run typecheck
+      - run: bun tsc

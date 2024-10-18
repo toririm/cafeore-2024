@@ -6,6 +6,10 @@ import {
   useActionData,
   useNavigation,
 } from "@remix-run/react";
+import { itemConverter } from "common/firebase-utils/converter";
+import { collectionSub } from "common/firebase-utils/subscription";
+import type { ItemEntity, ItemType } from "common/models/item";
+import { itemSchema, itemtypes, type2label } from "common/models/item";
 import { useMemo } from "react";
 import useSWRSubscription from "swr/subscription";
 import { usePreventNumberKeyUpDown } from "~/components/functional/usePreventNumberKeyUpDown";
@@ -13,10 +17,6 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
-import { itemConverter } from "~/firebase/converter";
-import { collectionSub } from "~/firebase/subscription";
-import type { ItemEntity, ItemType } from "~/models/item";
-import { itemSchema, itemtypes, type2label } from "~/models/item";
 import type { addItem } from "./actions/addItem";
 
 export { action as clientAction } from "./action";
@@ -73,7 +73,8 @@ export default function Item() {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <div>
           <h2 className="mb-4 font-semibold text-2xl text-gray-700">
-            新規アイテム登録
+            <s>新規アイテム登録</s>
+            【非推奨】現在アイテムはソースコードにハードコードされています
           </h2>
           <Form
             method="POST"

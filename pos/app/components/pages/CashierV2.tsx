@@ -1,7 +1,7 @@
+import type { WithId } from "common/lib/typeguard";
+import type { ItemEntity } from "common/models/item";
+import type { OrderEntity } from "common/models/order";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import type { WithId } from "~/lib/typeguard";
-import type { ItemEntity } from "~/models/item";
-import type { OrderEntity } from "~/models/order";
 import { useInputStatus } from "../functional/useInputStatus";
 import { useLatestOrderId } from "../functional/useLatestOrderId";
 import { useOrderState } from "../functional/useOrderState";
@@ -60,7 +60,10 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
     if (newOrder.items.length === 0) {
       return;
     }
-    submitPayload(newOrder);
+    // 送信する直前に createdAt を更新する
+    const submitOne = newOrder.clone();
+    submitOne.nowCreated();
+    submitPayload(submitOne);
     resetAll();
   }, [newOrder, submitPayload, resetAll]);
 

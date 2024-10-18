@@ -1,6 +1,6 @@
 import { z } from "zod";
-import type { WithId } from "~/lib/typeguard";
-import { type ItemEntity, itemSchema } from "./item";
+import type { WithId } from "../lib/typeguard";
+import { ItemEntity, itemSchema } from "./item";
 
 export const orderSchema = z.object({
   id: z.string().optional(), // Firestore のドキュメント ID
@@ -25,6 +25,7 @@ export type Order = z.infer<typeof orderSchema>;
 const STATIC_DISCOUNT_PER_CUP = 100;
 
 export class OrderEntity implements Order {
+  order: ItemEntity | undefined;
   // 全てのプロパティを private にして外部からの直接アクセスを禁止
   private constructor(
     private readonly _id: string | undefined,
@@ -72,7 +73,7 @@ export class OrderEntity implements Order {
       order.orderId,
       order.createdAt,
       order.servedAt,
-      order.items,
+      order.items.map((item) => ItemEntity.fromItem(item)),
       order.total,
       order.orderReady,
       order.description,
@@ -131,7 +132,11 @@ export class OrderEntity implements Order {
     return this._description;
   }
   set description(description: string | null) {
-    this._description = description;
+    if (description === "") {
+      this._description = null;
+    } else {
+      this._description = description;
+    }
   }
 
   get billingAmount() {
@@ -240,7 +245,7 @@ export class OrderEntity implements Order {
       orderId: this.orderId,
       createdAt: this.createdAt,
       servedAt: this.servedAt,
-      items: this.items,
+      items: this.items.map((item) => item.toItem()),
       total: this.total,
       orderReady: this.orderReady,
       description: this.description,
@@ -255,7 +260,6 @@ export class OrderEntity implements Order {
 
   /**
    * オーダーを複製する
-   * ただし、items は参照を共有することに注意
    */
   clone(): WithId<OrderEntity>;
   clone(): OrderEntity;

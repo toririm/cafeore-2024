@@ -1,7 +1,6 @@
 import type { ClientActionFunction } from "@remix-run/react";
-
-import { OrderEntity } from "~/models/order";
-import { orderRepository } from "~/repositories/order";
+import { OrderEntity } from "common/models/order";
+import { orderRepository } from "common/repositories/order";
 
 export const createOrder: ClientActionFunction = async () => {
   console.log("save(create)のテスト");

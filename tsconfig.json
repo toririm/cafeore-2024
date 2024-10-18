@@ -1,8 +1,9 @@
 {
   "include": ["env.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["common/**", "pos/**", "mobile/**"],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
-    "types": ["@remix-run/react", "vite/client", "bun-types"],
+    "types": ["@remix-run/node", "vite/client", "bun-types"],
     "isolatedModules": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",
@@ -15,9 +16,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
-    "paths": {
-      "~/*": ["./app/*"]
-    },
+    "paths": {},
 
     // Remix takes care of building everything in `remix build`.
     "noEmit": true

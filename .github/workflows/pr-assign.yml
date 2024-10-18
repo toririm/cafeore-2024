@@ -1,4 +1,4 @@
-name: Assign creator
+name: PR bot
 
 on:
   pull_request:

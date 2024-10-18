@@ -4,25 +4,20 @@ import {
   type MetaFunction,
   useSubmit,
 } from "@remix-run/react";
+import { orderConverter } from "common/firebase-utils/converter";
+import { collectionSub } from "common/firebase-utils/subscription";
+import { stringToJSONSchema } from "common/lib/custom-zod";
+import { type2label } from "common/models/item";
+import { OrderEntity, orderSchema } from "common/models/order";
+import { orderRepository } from "common/repositories/order";
 import { orderBy } from "firebase/firestore";
 import { useCallback } from "react";
 import useSWRSubscription from "swr/subscription";
 import { z } from "zod";
+import { RealtimeElapsedTime } from "~/components/molecules/RealtimeElapsedTime";
 import { Button } from "~/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
-import { orderConverter } from "~/firebase/converter";
-import { collectionSub } from "~/firebase/subscription";
-import { stringToJSONSchema } from "~/lib/custom-zod";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { cn } from "~/lib/utils";
-import { type2label } from "~/models/item";
-import { OrderEntity, orderSchema } from "~/models/order";
-import { orderRepository } from "~/repositories/order";
 
 export const meta: MetaFunction = () => {
   return [{ title: "提供画面" }];
@@ -73,27 +68,32 @@ export default function Serve() {
               <div key={order.id}>
                 <Card>
                   <CardHeader>
-                    <div className="flex justify-between">
+                    <div className="flex items-center justify-between">
                       <CardTitle>{`No. ${order.orderId}`}</CardTitle>
                       <CardTitle className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-stone-500">
                         {order.items.length}
                       </CardTitle>
-                      <p>{order.createdAt.toLocaleTimeString()}</p>
+                      <div className="grid">
+                        <div className="px-2 text-right">
+                          {order.createdAt.toLocaleTimeString()}
+                        </div>
+                        <RealtimeElapsedTime order={order} />
+                      </div>
                     </div>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-2 gap-2">
                       {order.items.map((item, idx) => (
                         <div key={`${idx}-${item.id}`}>
-                          <Card>
-                            <CardContent
-                              className={cn(
-                                "pt-6",
-                                item.type === "milk" && "bg-yellow-200",
-                                item.type === "hotOre" && "bg-orange-300",
-                                item.type === "iceOre" && "bg-sky-300",
-                              )}
-                            >
+                          <Card
+                            className={cn(
+                              "pt-6",
+                              item.type === "milk" && "bg-yellow-200",
+                              item.type === "hotOre" && "bg-orange-300",
+                              item.type === "iceOre" && "bg-sky-300",
+                            )}
+                          >
+                            <CardContent>
                               <h3>{item.name}</h3>
                               <p className="text-sm text-stone-400">
                                 {type2label[item.type]}
@@ -104,12 +104,16 @@ export default function Serve() {
                       ))}
                     </div>
                     <p>{order.orderReady}</p>
-                    <div className="flex justify-between pt-4">
-                      {/* <p className="flex items-center">{`提供時間：${order.servedAt?.toLocaleTimeString()}`}</p> */}
+                    {order?.description && (
+                      <div className="mt-4 flex rounded-md bg-gray-200 p-1">
+                        <div className="flex-none">備考：</div>
+                        <div>{order?.description}</div>
+                      </div>
+                    )}
+                    <div className="mt-4 flex justify-between">
                       <Button onClick={() => submitPayload(order)}>提供</Button>
                     </div>
                   </CardContent>
-                  <CardFooter>備考欄：{order?.description}</CardFooter>
                 </Card>
               </div>
             ),

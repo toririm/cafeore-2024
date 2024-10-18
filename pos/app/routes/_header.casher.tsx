@@ -2,6 +2,14 @@ import { parseWithZod } from "@conform-to/zod";
 import { AlertDialogCancel } from "@radix-ui/react-alert-dialog";
 import { TrashIcon } from "@radix-ui/react-icons";
 import { type ClientActionFunction, useSubmit } from "@remix-run/react";
+import { itemSource } from "common/data/items";
+import { orderConverter } from "common/firebase-utils/converter";
+import { collectionSub } from "common/firebase-utils/subscription";
+import { stringToJSONSchema } from "common/lib/custom-zod";
+import type { WithId } from "common/lib/typeguard";
+import type { ItemEntity } from "common/models/item";
+import { OrderEntity, orderSchema } from "common/models/order";
+import { orderRepository } from "common/repositories/order";
 import { useState } from "react";
 import useSWRSubscription from "swr/subscription";
 import { z } from "zod";
@@ -35,19 +43,9 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
-import { itemConverter, orderConverter } from "~/firebase/converter";
-import { collectionSub } from "~/firebase/subscription";
-import { stringToJSONSchema } from "~/lib/custom-zod";
-import type { WithId } from "~/lib/typeguard";
-import type { ItemEntity } from "~/models/item";
-import { OrderEntity, orderSchema } from "~/models/order";
-import { orderRepository } from "~/repositories/order";
 
 export default function Casher() {
-  const { data: items } = useSWRSubscription(
-    "items",
-    collectionSub({ converter: itemConverter }),
-  );
+  const items = itemSource;
   const { data: orders } = useSWRSubscription(
     "orders",
     collectionSub({ converter: orderConverter }),
@@ -93,7 +91,7 @@ export default function Casher() {
             className="grid grid-cols-3 items-center justify-items-center gap-[30px]"
             style={{ gridTemplateRows: "auto" }}
           >
-            {items?.map(
+            {items.map(
               (item) =>
                 item.type === "hot" && (
                   <Button
@@ -118,7 +116,7 @@ export default function Casher() {
             className="grid grid-cols-3 items-center justify-items-center gap-[30px]"
             style={{ gridTemplateRows: "auto" }}
           >
-            {items?.map(
+            {items.map(
               (item) =>
                 (item.type === "ice" || item.type === "milk") && (
                   <Button
@@ -143,7 +141,7 @@ export default function Casher() {
             className="grid grid-cols-3 items-center justify-items-center gap-[30px]"
             style={{ gridTemplateRows: "auto" }}
           >
-            {items?.map(
+            {items.map(
               (item) =>
                 (item.type === "hotOre" || item.type === "iceOre") && (
                   <Button
@@ -168,7 +166,7 @@ export default function Casher() {
             className="grid grid-cols-3 items-center justify-items-center gap-[30px]"
             style={{ gridTemplateRows: "auto" }}
           >
-            {items?.map(
+            {items.map(
               (item) =>
                 item.type === "others" && (
                   <Button

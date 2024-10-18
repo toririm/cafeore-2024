@@ -1,4 +1,8 @@
 import type { MetaFunction } from "@remix-run/react";
+import { itemSource } from "common/data/items";
+import { orderConverter } from "common/firebase-utils/converter";
+import { collectionSub } from "common/firebase-utils/subscription";
+import type { OrderEntity } from "common/models/order";
 import dayjs from "dayjs";
 import { orderBy } from "firebase/firestore";
 import {
@@ -23,7 +27,6 @@ import {
   ChartTooltipContent,
 } from "~/components/ui/chart";
 import type { ChartConfig } from "~/components/ui/chart";
-
 import {
   Table,
   TableBody,
@@ -34,10 +37,7 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
-import { itemConverter, orderConverter } from "~/firebase/converter";
-import { collectionSub } from "~/firebase/subscription";
 import { cn } from "~/lib/utils";
-import type { OrderEntity } from "~/models/order";
 
 export const meta: MetaFunction = () => {
   return [{ title: "注文状況" }];
@@ -48,17 +48,14 @@ export default function Dashboard() {
     "orders",
     collectionSub({ converter: orderConverter }, orderBy("orderId", "desc")),
   );
-  const { data: items } = useSWRSubscription(
-    "items",
-    collectionSub({ converter: itemConverter }),
-  );
+  const items = itemSource;
   const unseved = orders?.reduce((acc, cur) => {
     if (cur.servedAt == null) {
       return acc + 1;
     }
     return acc;
   }, 0);
-  const itemNamesArray = items?.map((items) => items.name);
+  const itemNamesArray = items.map((items) => items.name);
   const init = new Map<string, number>();
   const numPerItem = orders?.reduce((acc, cur) => {
     if (itemNamesArray !== undefined) {

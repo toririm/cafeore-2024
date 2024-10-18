@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "mobile/**"
+      - "common/**"
       - ".github/workflows/mobile-check.yml"
 
 defaults:
