@@ -56,6 +56,18 @@ export default function Serve() {
     [submit],
   );
 
+  const undoServe = useCallback(
+    (servedOrder: OrderEntity) => {
+      const order = servedOrder.clone();
+      order.undoServed();
+      submit(
+        { servedOrder: JSON.stringify(order.toOrder()) },
+        { method: "PUT" },
+      );
+    },
+    [submit],
+  );
+
   return (
     <div className="p-4 font-sans">
       <div className="flex justify-between pb-4">
@@ -121,7 +133,7 @@ export default function Serve() {
                             description: `${dayjs(now).format("H:mm:ss")}`,
                             action: {
                               label: "取消",
-                              onClick: () => console.log("Undo"),
+                              onClick: () => undoServe(order),
                             },
                           });
                         }}
