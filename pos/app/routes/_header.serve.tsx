@@ -13,13 +13,12 @@ import { orderRepository } from "common/repositories/order";
 import dayjs from "dayjs";
 import { orderBy } from "firebase/firestore";
 import { useCallback } from "react";
+import { toast } from "sonner";
 import useSWRSubscription from "swr/subscription";
 import { z } from "zod";
 import { RealtimeElapsedTime } from "~/components/molecules/RealtimeElapsedTime";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import { ToastAction } from "~/components/ui/toast";
-import { useToast } from "~/hooks/use-toast";
 import { cn } from "~/lib/utils";
 
 export const meta: MetaFunction = () => {
@@ -56,9 +55,6 @@ export default function Serve() {
     },
     [submit],
   );
-
-  const { toast } = useToast();
-  const now = new Date();
 
   return (
     <div className="p-4 font-sans">
@@ -119,13 +115,14 @@ export default function Serve() {
                     <div className="mt-4 flex justify-between">
                       <Button
                         onClick={() => {
+                          const now = new Date();
                           submitPayload(order);
-                          toast({
-                            title: `提供完了 No.${order.orderId}`,
+                          toast(`提供完了 No.${order.orderId}`, {
                             description: `${dayjs(now).format("H:mm:ss")}`,
-                            action: (
-                              <ToastAction altText="undo">取消</ToastAction>
-                            ),
+                            action: {
+                              label: "取消",
+                              onClick: () => console.log("Undo"),
+                            },
                           });
                         }}
                       >
