@@ -16,13 +16,7 @@ import useSWRSubscription from "swr/subscription";
 import { z } from "zod";
 import { RealtimeElapsedTime } from "~/components/molecules/RealtimeElapsedTime";
 import { Button } from "~/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { cn } from "~/lib/utils";
 
 export const meta: MetaFunction = () => {
@@ -110,12 +104,16 @@ export default function Serve() {
                       ))}
                     </div>
                     <p>{order.orderReady}</p>
-                    <div className="flex justify-between pt-4">
-                      {/* <p className="flex items-center">{`提供時間：${order.servedAt?.toLocaleTimeString()}`}</p> */}
+                    {order?.description && (
+                      <div className="mt-4 flex rounded-md bg-gray-200 p-1">
+                        <div className="flex-none">備考：</div>
+                        <div>{order?.description}</div>
+                      </div>
+                    )}
+                    <div className="mt-4 flex justify-between">
                       <Button onClick={() => submitPayload(order)}>提供</Button>
                     </div>
                   </CardContent>
-                  <CardFooter>備考欄：{order?.description}</CardFooter>
                 </Card>
               </div>
             ),
