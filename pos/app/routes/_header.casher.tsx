@@ -63,6 +63,12 @@ export default function Casher() {
   const charge = recieved - order.total;
   const [description, setDescription] = useState("");
   order.description = description;
+  const discountNo = "";
+
+  const justPayed = () => {
+    order.received = order.billingAmount;
+    submitOrder;
+  };
 
   const submitOrder = () => {
     console.log(charge);
@@ -269,8 +275,10 @@ export default function Casher() {
                     金額・備考欄を確認してください
                   </AlertDialogTitle>
                   <AlertDialogDescription>
-                    <p>備考欄：{order.description}</p>
-                    <p>合計： {order.total} 円</p>
+                    <p>備考欄： {order.description}</p>
+                    <p>小計： {order.total} 円</p>
+                    <p>割引： {order.discount} 円</p>
+                    <p>合計： {order.billingAmount} 円</p>
                     <p>
                       受領額：
                       <Input
@@ -293,6 +301,9 @@ export default function Casher() {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>戻る</AlertDialogCancel>
+                  <AlertDialogAction onClick={justPayed}>
+                    丁度
+                  </AlertDialogAction>
                   <AlertDialogAction onClick={submitOrder}>
                     送信
                   </AlertDialogAction>
@@ -328,4 +339,11 @@ export const clientAction: ClientActionFunction = async ({ request }) => {
   console.log("savedOrder", savedOrder);
 
   return new Response("ok");
+};
+
+const findByOrderId = (
+  orders: WithId<OrderEntity>[] | undefined,
+  orderId: number,
+): WithId<OrderEntity> | undefined => {
+  return orders?.find((order) => order.orderId === orderId);
 };
