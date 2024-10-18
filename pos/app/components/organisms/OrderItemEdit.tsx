@@ -1,3 +1,4 @@
+import { keyEventHandler } from "common/data/items";
 import type { WithId } from "common/lib/typeguard";
 import type { ItemEntity } from "common/models/item";
 import type { OrderEntity } from "common/models/order";
@@ -106,25 +107,18 @@ const OrderItemEdit = memo(
     // キー操作でアイテムを追加
     // Backspace でアイテムを削除
     useEffect(() => {
-      if (!items) return;
       const handler = (event: KeyboardEvent) => {
-        for (const [idx, item] of items.entries()) {
-          if (editable) return;
-          if (event.key === keys[idx]) {
-            onAddItem(item);
-          }
-        }
+        if (!focus) return;
+        keyEventHandler(event, onAddItem);
         if (event.key === "Backspace") {
           removeItem();
         }
       };
-      if (focus) {
-        window.addEventListener("keydown", handler);
-      }
+      window.addEventListener("keydown", handler);
       return () => {
         window.removeEventListener("keydown", handler);
       };
-    }, [items, focus, editable, onAddItem, removeItem]);
+    }, [focus, onAddItem, removeItem]);
 
     // focus が外れたときに itemFocus をリセット
     useEffect(() => {

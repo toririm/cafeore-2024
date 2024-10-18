@@ -64,4 +64,8 @@ export const itemRepoFactory = (db: Firestore): ItemRepository => {
   };
 };
 
+/**
+ * @deprecated アイテムはソースコードに直接ハードコードするようになりました
+ * @see `data/items.ts`
+ */
 export const itemRepository: ItemRepository = itemRepoFactory(prodDB);

@@ -73,7 +73,8 @@ export default function Item() {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <div>
           <h2 className="mb-4 font-semibold text-2xl text-gray-700">
-            新規アイテム登録
+            <s>新規アイテム登録</s>
+            【非推奨】現在アイテムはソースコードにハードコードされています
           </h2>
           <Form
             method="POST"

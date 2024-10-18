@@ -1,5 +1,6 @@
 import type { MetaFunction } from "@remix-run/react";
-import { itemConverter, orderConverter } from "common/firebase-utils/converter";
+import { itemSource } from "common/data/items";
+import { orderConverter } from "common/firebase-utils/converter";
 import { collectionSub } from "common/firebase-utils/subscription";
 import type { OrderEntity } from "common/models/order";
 import dayjs from "dayjs";
@@ -46,17 +47,14 @@ export default function Dashboard() {
     "orders",
     collectionSub({ converter: orderConverter }, orderBy("orderId", "desc")),
   );
-  const { data: items } = useSWRSubscription(
-    "items",
-    collectionSub({ converter: itemConverter }),
-  );
+  const items = itemSource;
   const unseved = orders?.reduce((acc, cur) => {
     if (cur.servedAt == null) {
       return acc + 1;
     }
     return acc;
   }, 0);
-  const itemNamesArray = items?.map((items) => items.name);
+  const itemNamesArray = items.map((items) => items.name);
   const init = new Map<string, number>();
   const numPerItem = orders?.reduce((acc, cur) => {
     if (itemNamesArray !== undefined) {
