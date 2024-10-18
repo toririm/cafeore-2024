@@ -37,6 +37,7 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
+import { cn } from "~/lib/utils";
 
 export const meta: MetaFunction = () => {
   return [{ title: "注文状況" }];
@@ -70,12 +71,10 @@ export default function Dashboard() {
     return acc;
   }, init);
   const itemValue = (name: string): number | undefined => {
-    console.log(name);
     let valueNum = undefined;
     if (numPerItem !== undefined) {
       valueNum = numPerItem.get(name);
     }
-    console.log(numPerItem);
     return valueNum;
   };
   const chartData = [
@@ -140,7 +139,10 @@ export default function Dashboard() {
             </TableHeader>
             <TableBody>
               {orders?.map((order) => (
-                <TableRow key={order.orderId}>
+                <TableRow
+                  className={cn(pass15Minutes(order) === true && "bg-red-300")}
+                  key={order.orderId}
+                >
                   <TableCell className="font-medium">{order.orderId}</TableCell>
                   <TableCell>{numOfCups(order)}</TableCell>
                   <TableCell>￥{order.total}</TableCell>
@@ -215,6 +217,15 @@ const diffTime = (order: OrderEntity) => {
   return dayjs(dayjs(order.servedAt).diff(dayjs(order.createdAt))).format(
     "m:ss",
   );
+};
+
+const pass15Minutes = (order: OrderEntity) => {
+  if (order.servedAt === null)
+    return dayjs(dayjs().diff(dayjs(order.createdAt))).minute() >= 15;
+  if (order.servedAt !== null)
+    return (
+      dayjs(dayjs(order.servedAt).diff(dayjs(order.createdAt))).minute() >= 15
+    );
 };
 
 const chartConfig = {
