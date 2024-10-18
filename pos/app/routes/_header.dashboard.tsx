@@ -36,6 +36,7 @@ import {
 } from "~/components/ui/table";
 import { itemConverter, orderConverter } from "~/firebase/converter";
 import { collectionSub } from "~/firebase/subscription";
+import { cn } from "~/lib/utils";
 import type { OrderEntity } from "~/models/order";
 
 export const meta: MetaFunction = () => {
@@ -142,12 +143,8 @@ export default function Dashboard() {
             <TableBody>
               {orders?.map((order) => (
                 <TableRow
+                  className={cn(pass15Minutes(order) === true && "bg-red-300")}
                   key={order.orderId}
-                  style={
-                    pass15Minutes(order) === true
-                      ? { background: "#ffe4e1" }
-                      : {}
-                  }
                 >
                   <TableCell className="font-medium">{order.orderId}</TableCell>
                   <TableCell>{numOfCups(order)}</TableCell>
@@ -226,10 +223,12 @@ const diffTime = (order: OrderEntity) => {
 };
 
 const pass15Minutes = (order: OrderEntity) => {
-  let drawn = dayjs();
-  if (order.servedAt !== null) drawn = dayjs(order.servedAt);
-  const time = dayjs(drawn.diff(dayjs(order.createdAt))).format("m:ss");
-  return Number(time.split(":")[0]) >= 15;
+  if (order.servedAt === null)
+    return dayjs(dayjs().diff(dayjs(order.createdAt))).minute() >= 15;
+  if (order.servedAt !== null)
+    return (
+      dayjs(dayjs(order.servedAt).diff(dayjs(order.createdAt))).minute() >= 15
+    );
 };
 
 const chartConfig = {
