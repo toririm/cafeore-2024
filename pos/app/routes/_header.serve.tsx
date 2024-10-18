@@ -58,6 +58,7 @@ export default function Serve() {
   );
 
   const { toast } = useToast();
+  const now = new Date();
 
   return (
     <div className="p-4 font-sans">
@@ -120,10 +121,10 @@ export default function Serve() {
                         onClick={() => {
                           submitPayload(order);
                           toast({
-                            title: "提供済み",
-                            description: "注文番号と提供時間",
+                            title: `提供完了 No.${order.orderId}`,
+                            description: `${dayjs(now).format("H:mm:ss")}`,
                             action: (
-                              <ToastAction altText="undo">提供取消</ToastAction>
+                              <ToastAction altText="undo">取消</ToastAction>
                             ),
                           });
                         }}
