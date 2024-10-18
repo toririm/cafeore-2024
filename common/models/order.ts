@@ -203,6 +203,13 @@ export class OrderEntity implements Order {
   }
 
   /**
+   * 提供済み状態を取り消す
+   */
+  undoServed() {
+    this._servedAt = null;
+  }
+
+  /**
    * 割引を適用する
    * @param previousOrder 割引の参照となる前回のオーダー
    */
