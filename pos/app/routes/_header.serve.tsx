@@ -1,5 +1,4 @@
 import { parseWithZod } from "@conform-to/zod";
-import { ToastAction } from "@radix-ui/react-toast";
 import {
   type ClientActionFunction,
   type MetaFunction,
@@ -19,6 +18,8 @@ import { z } from "zod";
 import { RealtimeElapsedTime } from "~/components/molecules/RealtimeElapsedTime";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { ToastAction } from "~/components/ui/toast";
+import { useToast } from "~/hooks/use-toast";
 import { cn } from "~/lib/utils";
 
 export const meta: MetaFunction = () => {
@@ -56,13 +57,7 @@ export default function Serve() {
     [submit],
   );
 
-  function toast(arg0: {
-    title: string;
-    description: string;
-    action: import("react/jsx-runtime").JSX.Element;
-  }): void {
-    throw new Error("Function not implemented.");
-  }
+  const { toast } = useToast();
 
   return (
     <div className="p-4 font-sans">
