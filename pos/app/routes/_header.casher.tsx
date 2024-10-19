@@ -100,6 +100,10 @@ export default function Casher() {
     return orders?.find((order) => order.orderId === orderId);
   };
 
+  function assign(item: WithId<ItemEntity>, assignee: string | null): void {
+    item.assignee = assignee;
+  }
+
   return (
     <div className="p-[20px]">
       <div className="flex flex-row flex-wrap ">
@@ -225,7 +229,7 @@ export default function Casher() {
                     <div>
                       <Select
                         onValueChange={(value) => {
-                          item.assignee = value;
+                          assign(item, value);
                         }}
                       >
                         <SelectTrigger className="w-[100px] justify-center">
@@ -236,7 +240,7 @@ export default function Casher() {
                             <SelectLabel>指名</SelectLabel>
                             <SelectItem value="first">1st</SelectItem>
                             <SelectItem value="second">2nd</SelectItem>
-                            <SelectItem value="3rd">3rd</SelectItem>
+                            <SelectItem value="third">3rd</SelectItem>
                             <SelectItem value="fourth">4th</SelectItem>
                             <SelectItem value="fifth">5th</SelectItem>
                             <SelectItem value="">指名なし</SelectItem>
