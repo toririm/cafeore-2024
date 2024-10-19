@@ -83,7 +83,7 @@ export class ItemEntity implements Item {
     return this._assignee;
   }
   set assignee(assignee: string | null) {
-    if (assignee === "") {
+    if (assignee === "notAssigned") {
       this._assignee = null;
     } else {
       this._assignee = assignee;
