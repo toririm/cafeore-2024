@@ -104,11 +104,11 @@ export default function Serve() {
                               "pt-6",
                               item.type === "milk" && "bg-yellow-200",
                               item.type === "hotOre" && "bg-orange-300",
-                              item.type === "iceOre" && "bg-sky-300",
+                              item.type === "iceOre" && "bg-sky-200",
                             )}
                           >
                             <CardContent>
-                              <h3>{item.name}</h3>
+                              <h3 className="font-bold">{item.name}</h3>
                               <p className="text-sm text-stone-400">
                                 {type2label[item.type]}
                               </p>
