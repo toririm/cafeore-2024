@@ -33,7 +33,7 @@ export default function FielsOfMaster() {
               <div key={order.id}>
                 <Card>
                   <CardHeader>
-                    <div className="flex justify-between">
+                    <div className="flex items-center justify-between">
                       <CardTitle>{`No. ${order.orderId}`}</CardTitle>
                       <CardTitle className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-stone-500">
                         {order.items.length}
@@ -53,8 +53,6 @@ export default function FielsOfMaster() {
                           <Card
                             className={cn(
                               "pt-6",
-                              // (item.type === "ice" || item.type === "iceOre") &&
-                              //   "bg-blue-300",
                               item.type === "iceOre" && "bg-sky-200",
                               item.type === "ice" && "bg-blue-200",
                               item.type === "milk" && "bg-yellow-200",
