@@ -97,11 +97,6 @@ export default function Casher() {
     submitOrder();
   }
 
-  function assign(item: WithId<ItemEntity>, assignee: string | null): void {
-    const newAssignee = assignee === "null" ? null : assignee;
-    item.assignee = newAssignee;
-  }
-
   return (
     <div className="p-[20px]">
       <div className="flex flex-row flex-wrap ">
@@ -227,7 +222,15 @@ export default function Casher() {
                     <div>
                       <Select
                         onValueChange={(value) => {
-                          assign(item, value);
+                          setQueue((prev) => {
+                            const newItems = [...prev];
+                            let newValue = value;
+                            if (newValue === "null") {
+                              newValue = "";
+                            }
+                            newItems[index].assignee = newValue;
+                            return newItems;
+                          });
                         }}
                       >
                         <SelectTrigger className="w-[100px] justify-center">
