@@ -108,7 +108,7 @@ export default function Serve() {
                             )}
                           >
                             <CardContent>
-                              <h3>{item.name}</h3>
+                              <h3 className="font-bold">{item.name}</h3>
                               <p className="text-sm text-stone-400">
                                 {type2label[item.type]}
                               </p>
