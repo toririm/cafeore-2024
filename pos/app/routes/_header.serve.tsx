@@ -104,7 +104,7 @@ export default function Serve() {
                               "pt-6",
                               item.type === "milk" && "bg-yellow-200",
                               item.type === "hotOre" && "bg-orange-300",
-                              item.type === "iceOre" && "bg-sky-300",
+                              item.type === "iceOre" && "bg-sky-200",
                             )}
                           >
                             <CardContent>

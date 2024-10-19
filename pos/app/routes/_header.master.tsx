@@ -53,8 +53,10 @@ export default function FielsOfMaster() {
                           <Card
                             className={cn(
                               "pt-6",
-                              item.type === "ice" && "bg-blue-300",
-                              item.type === "iceOre" && "bg-sky-300",
+                              // (item.type === "ice" || item.type === "iceOre") &&
+                              //   "bg-blue-300",
+                              item.type === "iceOre" && "bg-sky-200",
+                              item.type === "ice" && "bg-blue-200",
                               item.type === "milk" && "bg-yellow-200",
                               item.name === "限定" && "bg-red-300",
                             )}
