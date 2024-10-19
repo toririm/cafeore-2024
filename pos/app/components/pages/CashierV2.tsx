@@ -43,7 +43,7 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { nextOrderId } = useLatestOrderId(orders);
 
-  const { connect, connStat, print, addQueue, addFeed } = usePrinter();
+  const { connect, connStat, print, addQueue } = usePrinter();
 
   usePreventNumberKeyUpDown();
 

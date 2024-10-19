@@ -54,5 +54,5 @@ export const usePrinter = () => {
     prn.send();
   };
 
-  return { connect, connStat, addQueue, addFeed, print };
+  return { connect, connStat, addQueue, print };
 };
