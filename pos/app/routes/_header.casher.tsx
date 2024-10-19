@@ -98,7 +98,8 @@ export default function Casher() {
   }
 
   function assign(item: WithId<ItemEntity>, assignee: string | null): void {
-    item.assignee = assignee;
+    const newAssignee = assignee === "null" ? null : assignee;
+    item.assignee = newAssignee;
   }
 
   return (
@@ -240,9 +241,7 @@ export default function Casher() {
                             <SelectItem value="third">3rd</SelectItem>
                             <SelectItem value="fourth">4th</SelectItem>
                             <SelectItem value="fifth">5th</SelectItem>
-                            <SelectItem value="notAssigned">
-                              指名なし
-                            </SelectItem>
+                            <SelectItem value="null">指名なし</SelectItem>
                           </SelectGroup>
                         </SelectContent>
                       </Select>
