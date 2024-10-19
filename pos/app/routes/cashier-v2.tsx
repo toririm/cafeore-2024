@@ -21,7 +21,7 @@ export default function Cashier() {
   const submit = useSubmit();
 
   const submitPayload = useCallback(
-    async (newOrder: OrderEntity) => {
+    (newOrder: OrderEntity) => {
       submit(
         { newOrder: JSON.stringify(newOrder.toOrder()) },
         { method: "POST" },
