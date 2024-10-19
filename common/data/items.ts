@@ -2,7 +2,7 @@ import { IncludedIn, type WithId } from "../lib/typeguard";
 import { type Item, ItemEntity } from "../models/item";
 
 type RawItemSource = {
-  [keymap: string]: Omit<WithId<Item>, "assignee"> & {abbr: string};
+  [keymap: string]: Omit<WithId<Item>, "assignee"> & { abbr: string };
 };
 
 export const ITEM_MASTER = {
