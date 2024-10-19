@@ -10,9 +10,11 @@ import type { WithId } from "common/lib/typeguard";
 import type { ItemEntity } from "common/models/item";
 import { OrderEntity, orderSchema } from "common/models/order";
 import { orderRepository } from "common/repositories/order";
+import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { useState } from "react";
 import useSWRSubscription from "swr/subscription";
 import { z } from "zod";
+import { useOrderState } from "~/components/functional/useOrderState";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,6 +27,11 @@ import {
 } from "~/components/ui/alert-dialog";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "~/components/ui/input-otp";
 import {
   Select,
   SelectContent,
@@ -61,6 +68,13 @@ export default function Casher() {
   const charge = recieved - order.total;
   const [description, setDescription] = useState("");
   order.description = description;
+  const [discountNo, setDiscountNo] = useState("");
+  const [newOrder, newOrderDispatch] = useOrderState();
+
+  const justPayed = () => {
+    order.received = order.billingAmount;
+    submitOrder();
+  };
 
   const submitOrder = () => {
     console.log(charge);
@@ -75,6 +89,13 @@ export default function Casher() {
     setQueue([]);
     setReceived(0);
     setDescription("");
+  };
+
+  const findByOrderId = (
+    orders: WithId<OrderEntity>[] | undefined,
+    orderId: number,
+  ): WithId<OrderEntity> | undefined => {
+    return orders?.find((order) => order.orderId === orderId);
   };
 
   return (
@@ -222,7 +243,7 @@ export default function Casher() {
                       </Select>
                     </div>
                     <div>
-                      <Button // ここで削除ボタンを押すと、mockOrder.itemsから削除する
+                      <Button
                         type="button"
                         className="justify-center"
                         onClick={() => {
@@ -251,25 +272,58 @@ export default function Casher() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
-          <p className="relative pt-[20px] pl-[20px] font-medium text-3xl">
-            合計金額：{order.total} 円
-          </p>
+          <div>割引No.</div>
+          <InputOTP
+            maxLength={3}
+            pattern={REGEXP_ONLY_DIGITS}
+            value={discountNo}
+            onChange={(value: string) => {
+              setDiscountNo(value);
+            }}
+          >
+            <InputOTPGroup>
+              <InputOTPSlot index={0} className="font-mono text-3xl" />
+              <InputOTPSlot index={1} className="font-mono text-3xl" />
+              <InputOTPSlot index={2} className="font-mono text-3xl" />
+            </InputOTPGroup>
+          </InputOTP>
+          <div className="relative pt-[20px] pl-[20px] font-medium text-3xl">
+            合計金額：{order.billingAmount} 円
+          </div>
           <form>
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button className="absolute right-[30px] h-[50px] w-[150px] text-xl hover:bg-theme hover:ring-4 hover:ring-theme">
+                <Button
+                  className="absolute right-[30px] h-[50px] w-[150px] text-xl hover:bg-theme hover:ring-4 hover:ring-theme"
+                  disabled={queue.length === 0}
+                  onClick={() => {
+                    const discountOrder = findByOrderId(
+                      orders,
+                      Number(discountNo),
+                    );
+                    console.log(discountOrder);
+                    if (discountNo !== null && discountOrder !== undefined) {
+                      order.applyDiscount(discountOrder);
+                      console.log(order);
+                    } else {
+                      order.removeDiscount();
+                    }
+                  }}
+                >
                   確定
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle>
-                    金額・備考欄を確認してください
+                    備考欄・金額を確認してください
                   </AlertDialogTitle>
                   <AlertDialogDescription>
-                    <p>備考欄：{order.description}</p>
-                    <p>合計： {order.total} 円</p>
-                    <p>
+                    <div>備考欄： {order.description}</div>
+                    <div>小計： {order.total} 円</div>
+                    <div>割引： {order.discount} 円</div>
+                    <div>合計： {order.billingAmount} 円</div>
+                    <div>
                       受領額：
                       <Input
                         id="recieved"
@@ -278,19 +332,21 @@ export default function Casher() {
                         placeholder="受け取った金額を入力してください"
                         value={recieved}
                         onChange={(e) => {
-                          const value = Number.parseInt(e.target.value);
-                          setReceived(Number.isNaN(value) ? 0 : value); // NaN のチェック
+                          setReceived(Number.parseInt(e.target.value)); // NaN のチェック
                         }}
                       />
-                    </p>
-                    <p>
+                    </div>
+                    <div>
                       お釣り： {Number.isNaN(charge) || charge < 0 ? 0 : charge}{" "}
                       円
-                    </p>
+                    </div>
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>戻る</AlertDialogCancel>
+                  <AlertDialogAction onClick={justPayed}>
+                    丁度
+                  </AlertDialogAction>
                   <AlertDialogAction onClick={submitOrder}>
                     送信
                   </AlertDialogAction>
