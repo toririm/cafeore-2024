@@ -10,7 +10,6 @@ import { useCallback } from "react";
 import useSWRSubscription from "swr/subscription";
 import { z } from "zod";
 import { CashierV2 } from "~/components/pages/CashierV2";
-import { printLabel } from "~/label/printer";
 
 // コンポーネントではデータの取得と更新のみを行う
 export default function Cashier() {
@@ -23,7 +22,6 @@ export default function Cashier() {
 
   const submitPayload = useCallback(
     async (newOrder: OrderEntity) => {
-      printLabel(newOrder.items);
       submit(
         { newOrder: JSON.stringify(newOrder.toOrder()) },
         { method: "POST" },

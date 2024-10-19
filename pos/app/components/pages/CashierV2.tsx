@@ -2,6 +2,7 @@ import type { WithId } from "common/lib/typeguard";
 import type { ItemEntity } from "common/models/item";
 import type { OrderEntity } from "common/models/order";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { usePrinter } from "~/label/printer";
 import { useInputStatus } from "../functional/useInputStatus";
 import { useLatestOrderId } from "../functional/useLatestOrderId";
 import { useOrderState } from "../functional/useOrderState";
@@ -21,6 +22,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "../ui/alert-dialog";
+import { Button } from "../ui/button";
 
 type props = {
   items: WithId<ItemEntity>[] | undefined;
@@ -40,6 +42,8 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
   const [UISession, renewUISession] = useUISession();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { nextOrderId } = useLatestOrderId(orders);
+
+  const { connect, connStat, print, addQueue, addFeed } = usePrinter();
 
   usePreventNumberKeyUpDown();
 
@@ -63,9 +67,19 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
     // 送信する直前に createdAt を更新する
     const submitOne = newOrder.clone();
     submitOne.nowCreated();
-    submitPayload(submitOne);
+    const items = submitOne.items.toSorted((a, b) =>
+      a.name.localeCompare(b.name),
+    );
+    for (let idx = 0; idx < items.length; idx++) {
+      const item = items[idx];
+      addQueue(
+        `No.${submitOne.orderId}\n${item.name}\n${idx + 1}/${items.length}`,
+      );
+      print();
+    }
+    // submitPayload(submitOne);
     resetAll();
-  }, [newOrder, submitPayload, resetAll]);
+  }, [newOrder, resetAll, print, addQueue]);
 
   const keyEventHandlers = useMemo(() => {
     return {
@@ -175,6 +189,8 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
                 focus={inputStatus === "description"}
               />
             </div>
+            <Button onClick={() => connect()}>接続</Button>
+            <p>{connStat}</p>
           </div>
           <div className="flex-1">
             <InputHeader

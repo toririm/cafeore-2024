@@ -1,57 +1,89 @@
+import { useRef, useState } from "react";
+
+export const usePrinter = () => {
+  const [connStat, setConnStat] = useState("disconnected");
+  const ePosDevice = useRef();
+  const printer = useRef();
+
+  const connect = () => {
+    setConnStat("connecting");
+    const ePosDev = new window.epson.ePOSDevice();
+    ePosDevice.current = ePosDev;
+
+    ePosDev.connect("192.168.77.2", 8008, (data) => {
+      if (data === "OK" || data === "SSL_CONNECT_OK") {
+        ePosDev.createDevice(
+          "local_printer",
+          ePosDev.DEVICE_TYPE_PRINTER,
+          { crypto: true, buffer: false },
+          (devobj, retcode) => {
+            if (retcode === "OK") {
+              printer.current = devobj;
+              setConnStat("connected");
+            } else {
+              throw retcode;
+            }
+          },
+        );
+      } else {
+        console.log(data);
+      }
+    });
+  };
+
+  const addQueue = (text) => {
+    const prn = printer.current;
+    if (!prn) {
+      console.error("Printer not connected");
+      return;
+    }
+
+    prn.addTextLang("ja");
+    prn.addTextDouble(true, true);
+    prn.addText(` ${text}`);
+    prn.addFeedLine(6);
+  };
+
+  const print = () => {
+    const prn = printer.current;
+    if (!prn) {
+      console.error("Printer not connected");
+      return;
+    }
+
+    prn.send();
+  };
+
+  const addFeed = () => {
+    const prn = printer.current;
+    if (!prn) {
+      console.error("Printer not connected");
+      return;
+    }
+
+    prn.addFeedLine(6);
+    prn.send();
+  };
+
+  return { connect, connStat, addQueue, addFeed, print };
+};
+
 /**
  *
- * @param {ItemEntity[]} items
+ * @param {string[]} texts
  */
-export const printLabel = (items) => {
+export const printLabel = (texts) => {
   const ePosDev = new window.epson.ePOSDevice();
-  let printer = null;
-
-  const cbConnect = (data) => {
-    if (data === "OK" || data === "SSL_CONNECT_OK") {
-      ePosDev.createDevice(
-        "local_printer",
-        ePosDev.DEVICE_TYPE_PRINTER,
-        { crypto: false, buffer: false },
-        cbCreateDevice_printer,
-      );
-    } else {
-      console.log(data);
-    }
-  };
-  const cbCreateDevice_printer = (devobj, retcode) => {
-    if (retcode === "OK") {
-      printer = devobj;
-      printer.timeout = 60000;
-      printer.onreceive = (res) => {
-        console.log(res.success);
-      };
-      printer.oncoveropen = () => {
-        console.log("coveropen");
-      };
-      print();
-    } else {
-      console.log(retcode);
-    }
-  };
+  const prn = null;
 
   /**
    *
-   * @param {ItemEntity} item
+   * @param {string} text
    */
-  const print = (item) => {
-    printer.addFeedPosition(printer.FEED_NEXT_TOF);
-    printer.addTextLang("ja");
-    printer.addTextFont(printer.FONT_A);
-    printer.addTextDouble(true, true);
-    printer.addText(item.name);
-    printer.addFeedPosition(printer.FEED_CUTTING);
-    printer.addCut(printer.CUT_FEED);
-    printer.send();
-  };
 
   ePosDev.connect("192.168.77.2", 8008, cbConnect);
 
-  for (const item of items) {
-    print(item);
+  for (const text of texts) {
+    print(text);
   }
 };
