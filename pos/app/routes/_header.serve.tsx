@@ -7,7 +7,6 @@ import {
 import { orderConverter } from "common/firebase-utils/converter";
 import { collectionSub } from "common/firebase-utils/subscription";
 import { stringToJSONSchema } from "common/lib/custom-zod";
-import { type2label } from "common/models/item";
 import { OrderEntity, orderSchema } from "common/models/order";
 import { orderRepository } from "common/repositories/order";
 import dayjs from "dayjs";
@@ -109,9 +108,6 @@ export default function Serve() {
                           >
                             <CardContent>
                               <h3 className="font-bold">{item.name}</h3>
-                              <p className="text-sm text-stone-400">
-                                {type2label[item.type]}
-                              </p>
                             </CardContent>
                           </Card>
                         </div>
