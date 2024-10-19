@@ -1,6 +1,7 @@
 import { parseWithZod } from "@conform-to/zod";
 import { type ClientActionFunction, useSubmit } from "@remix-run/react";
-import { itemConverter, orderConverter } from "common/firebase-utils/converter";
+import { itemSource } from "common/data/items";
+import { orderConverter } from "common/firebase-utils/converter";
 import { collectionSub } from "common/firebase-utils/subscription";
 import { stringToJSONSchema } from "common/lib/custom-zod";
 import { OrderEntity, orderSchema } from "common/models/order";
@@ -12,10 +13,7 @@ import { CashierV2 } from "~/components/pages/CashierV2";
 
 // コンポーネントではデータの取得と更新のみを行う
 export default function Cashier() {
-  const { data: items } = useSWRSubscription(
-    "items",
-    collectionSub({ converter: itemConverter }),
-  );
+  const items = itemSource;
   const { data: orders } = useSWRSubscription(
     "orders",
     collectionSub({ converter: orderConverter }),

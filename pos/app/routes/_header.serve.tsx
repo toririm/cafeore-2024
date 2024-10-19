@@ -10,19 +10,15 @@ import { stringToJSONSchema } from "common/lib/custom-zod";
 import { type2label } from "common/models/item";
 import { OrderEntity, orderSchema } from "common/models/order";
 import { orderRepository } from "common/repositories/order";
+import dayjs from "dayjs";
 import { orderBy } from "firebase/firestore";
 import { useCallback } from "react";
+import { toast } from "sonner";
 import useSWRSubscription from "swr/subscription";
 import { z } from "zod";
 import { RealtimeElapsedTime } from "~/components/molecules/RealtimeElapsedTime";
 import { Button } from "~/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { cn } from "~/lib/utils";
 
 export const meta: MetaFunction = () => {
@@ -60,6 +56,18 @@ export default function Serve() {
     [submit],
   );
 
+  const undoServe = useCallback(
+    (servedOrder: OrderEntity) => {
+      const order = servedOrder.clone();
+      order.undoServed();
+      submit(
+        { servedOrder: JSON.stringify(order.toOrder()) },
+        { method: "PUT" },
+      );
+    },
+    [submit],
+  );
+
   return (
     <div className="p-4 font-sans">
       <div className="flex justify-between pb-4">
@@ -81,7 +89,7 @@ export default function Serve() {
                       </CardTitle>
                       <div className="grid">
                         <div className="px-2 text-right">
-                          {order.createdAt.toLocaleTimeString()}
+                          {dayjs(order.createdAt).format("H:mm:ss")}
                         </div>
                         <RealtimeElapsedTime order={order} />
                       </div>
@@ -110,12 +118,30 @@ export default function Serve() {
                       ))}
                     </div>
                     <p>{order.orderReady}</p>
-                    <div className="flex justify-between pt-4">
-                      {/* <p className="flex items-center">{`提供時間：${order.servedAt?.toLocaleTimeString()}`}</p> */}
-                      <Button onClick={() => submitPayload(order)}>提供</Button>
+                    {order?.description && (
+                      <div className="mt-4 flex rounded-md bg-gray-200 p-1">
+                        <div className="flex-none">備考：</div>
+                        <div>{order?.description}</div>
+                      </div>
+                    )}
+                    <div className="mt-4 flex justify-between">
+                      <Button
+                        onClick={() => {
+                          const now = new Date();
+                          submitPayload(order);
+                          toast(`提供完了 No.${order.orderId}`, {
+                            description: `${dayjs(now).format("H:mm:ss")}`,
+                            action: {
+                              label: "取消",
+                              onClick: () => undoServe(order),
+                            },
+                          });
+                        }}
+                      >
+                        提供
+                      </Button>
                     </div>
                   </CardContent>
-                  <CardFooter>備考欄：{order?.description}</CardFooter>
                 </Card>
               </div>
             ),

@@ -2,7 +2,8 @@ import { parseWithZod } from "@conform-to/zod";
 import { AlertDialogCancel } from "@radix-ui/react-alert-dialog";
 import { TrashIcon } from "@radix-ui/react-icons";
 import { type ClientActionFunction, useSubmit } from "@remix-run/react";
-import { itemConverter, orderConverter } from "common/firebase-utils/converter";
+import { itemSource } from "common/data/items";
+import { orderConverter } from "common/firebase-utils/converter";
 import { collectionSub } from "common/firebase-utils/subscription";
 import { stringToJSONSchema } from "common/lib/custom-zod";
 import type { WithId } from "common/lib/typeguard";
@@ -13,7 +14,6 @@ import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { useState } from "react";
 import useSWRSubscription from "swr/subscription";
 import { z } from "zod";
-import { useOrderState } from "~/components/functional/useOrderState";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -51,10 +51,7 @@ import {
 } from "~/components/ui/table";
 
 export default function Casher() {
-  const { data: items } = useSWRSubscription(
-    "items",
-    collectionSub({ converter: itemConverter }),
-  );
+  const items = itemSource;
   const { data: orders } = useSWRSubscription(
     "orders",
     collectionSub({ converter: orderConverter }),
@@ -70,13 +67,8 @@ export default function Casher() {
   const charge = recieved - order.total;
   const [description, setDescription] = useState("");
   order.description = description;
-  const [discountNo, setDiscountNo] = useState("");
-  const [newOrder, newOrderDispatch] = useOrderState();
 
-  const justPayed = () => {
-    order.received = order.billingAmount;
-    submitOrder();
-  };
+  const [discountNo, setDiscountNo] = useState("");
 
   const submitOrder = () => {
     console.log(charge);
@@ -100,6 +92,11 @@ export default function Casher() {
     return orders?.find((order) => order.orderId === orderId);
   };
 
+  function justPayed() {
+    order.received = order.billingAmount;
+    submitOrder();
+  }
+
   function assign(item: WithId<ItemEntity>, assignee: string | null): void {
     item.assignee = assignee;
   }
@@ -118,7 +115,7 @@ export default function Casher() {
             className="grid grid-cols-3 items-center justify-items-center gap-[30px]"
             style={{ gridTemplateRows: "auto" }}
           >
-            {items?.map(
+            {items.map(
               (item) =>
                 item.type === "hot" && (
                   <Button
@@ -143,7 +140,7 @@ export default function Casher() {
             className="grid grid-cols-3 items-center justify-items-center gap-[30px]"
             style={{ gridTemplateRows: "auto" }}
           >
-            {items?.map(
+            {items.map(
               (item) =>
                 (item.type === "ice" || item.type === "milk") && (
                   <Button
@@ -168,7 +165,7 @@ export default function Casher() {
             className="grid grid-cols-3 items-center justify-items-center gap-[30px]"
             style={{ gridTemplateRows: "auto" }}
           >
-            {items?.map(
+            {items.map(
               (item) =>
                 (item.type === "hotOre" || item.type === "iceOre") && (
                   <Button
@@ -193,7 +190,7 @@ export default function Casher() {
             className="grid grid-cols-3 items-center justify-items-center gap-[30px]"
             style={{ gridTemplateRows: "auto" }}
           >
-            {items?.map(
+            {items.map(
               (item) =>
                 item.type === "others" && (
                   <Button

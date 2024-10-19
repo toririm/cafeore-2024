@@ -1,5 +1,6 @@
 import type { MetaFunction } from "@remix-run/react";
-import { itemConverter, orderConverter } from "common/firebase-utils/converter";
+import { itemSource } from "common/data/items";
+import { orderConverter } from "common/firebase-utils/converter";
 import { collectionSub } from "common/firebase-utils/subscription";
 import type { OrderEntity } from "common/models/order";
 import dayjs from "dayjs";
@@ -36,6 +37,7 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
+import { cn } from "~/lib/utils";
 
 export const meta: MetaFunction = () => {
   return [{ title: "注文状況" }];
@@ -46,17 +48,14 @@ export default function Dashboard() {
     "orders",
     collectionSub({ converter: orderConverter }, orderBy("orderId", "desc")),
   );
-  const { data: items } = useSWRSubscription(
-    "items",
-    collectionSub({ converter: itemConverter }),
-  );
+  const items = itemSource;
   const unseved = orders?.reduce((acc, cur) => {
     if (cur.servedAt == null) {
       return acc + 1;
     }
     return acc;
   }, 0);
-  const itemNamesArray = items?.map((items) => items.name);
+  const itemNamesArray = items.map((items) => items.name);
   const init = new Map<string, number>();
   const numPerItem = orders?.reduce((acc, cur) => {
     if (itemNamesArray !== undefined) {
@@ -72,12 +71,10 @@ export default function Dashboard() {
     return acc;
   }, init);
   const itemValue = (name: string): number | undefined => {
-    console.log(name);
     let valueNum = undefined;
     if (numPerItem !== undefined) {
       valueNum = numPerItem.get(name);
     }
-    console.log(numPerItem);
     return valueNum;
   };
   const chartData = [
@@ -142,7 +139,10 @@ export default function Dashboard() {
             </TableHeader>
             <TableBody>
               {orders?.map((order) => (
-                <TableRow key={order.orderId}>
+                <TableRow
+                  className={cn(pass15Minutes(order) === true && "bg-red-300")}
+                  key={order.orderId}
+                >
                   <TableCell className="font-medium">{order.orderId}</TableCell>
                   <TableCell>{numOfCups(order)}</TableCell>
                   <TableCell>￥{order.total}</TableCell>
@@ -217,6 +217,15 @@ const diffTime = (order: OrderEntity) => {
   return dayjs(dayjs(order.servedAt).diff(dayjs(order.createdAt))).format(
     "m:ss",
   );
+};
+
+const pass15Minutes = (order: OrderEntity) => {
+  if (order.servedAt === null)
+    return dayjs(dayjs().diff(dayjs(order.createdAt))).minute() >= 15;
+  if (order.servedAt !== null)
+    return (
+      dayjs(dayjs(order.servedAt).diff(dayjs(order.createdAt))).minute() >= 15
+    );
 };
 
 const chartConfig = {
