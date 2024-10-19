@@ -16,6 +16,7 @@ export default function handleRequest(
     .toString();
 
   const appHtml = renderToString(
+    // @ts-ignore - わからん
     <RemixServer context={remixContext} url={request.url} />,
   );
 
