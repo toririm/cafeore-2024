@@ -1,9 +1,12 @@
-export const run = async () => {
+/**
+ *
+ * @param {ItemEntity[]} items
+ */
+export const printLabel = (items) => {
   const ePosDev = new window.epson.ePOSDevice();
   let printer = null;
-  ePosDev.connect("192.168.77.2", 8008, cbConnect);
-  console.log("start");
-  function cbConnect(data) {
+
+  const cbConnect = (data) => {
     if (data === "OK" || data === "SSL_CONNECT_OK") {
       ePosDev.createDevice(
         "local_printer",
@@ -14,8 +17,8 @@ export const run = async () => {
     } else {
       console.log(data);
     }
-  }
-  function cbCreateDevice_printer(devobj, retcode) {
+  };
+  const cbCreateDevice_printer = (devobj, retcode) => {
     if (retcode === "OK") {
       printer = devobj;
       printer.timeout = 60000;
@@ -29,15 +32,26 @@ export const run = async () => {
     } else {
       console.log(retcode);
     }
-  }
+  };
 
-  function print() {
+  /**
+   *
+   * @param {ItemEntity} item
+   */
+  const print = (item) => {
     printer.addFeedPosition(printer.FEED_NEXT_TOF);
     printer.addTextLang("ja");
     printer.addTextFont(printer.FONT_A);
     printer.addTextDouble(true, true);
-    printer.addText("Hello\nWorld\nたけとハウス\nはっぴ～");
+    printer.addText(item.name);
     printer.addFeedPosition(printer.FEED_CUTTING);
+    printer.addCut(printer.CUT_FEED);
     printer.send();
+  };
+
+  ePosDev.connect("192.168.77.2", 8008, cbConnect);
+
+  for (const item of items) {
+    print(item);
   }
 };
