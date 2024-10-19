@@ -9,14 +9,8 @@ import { StrictMode, startTransition } from "react";
 import { hydrateRoot } from "react-dom/client";
 
 startTransition(() => {
-  const rootElement = document.querySelector("#app");
-  if (!rootElement) {
-    throw new Error(
-      'Could not find an element with the id of "app" in the document',
-    );
-  }
   hydrateRoot(
-    rootElement,
+    document,
     <StrictMode>
       <RemixBrowser />
     </StrictMode>,

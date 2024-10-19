@@ -1,42 +1,38 @@
-import { Outlet, Scripts } from "@remix-run/react";
+import {
+  Links,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+} from "@remix-run/react";
 import "./tailwind.css";
 import { Toaster } from "~/components/ui/sonner";
 
-// export function Layout({ children }: { children: React.ReactNode }) {
-//   return (
-//     <html lang="ja">
-//       <head>
-//         <meta charSet="utf-8" />
-//         <meta name="viewport" content="width=device-width, initial-scale=1" />
-//         <Meta />
-//         <Links />
-//       </head>
-//       <body>
-//         {children}
-//         <ScrollRestoration />
-//         <Scripts />
-//         <Toaster />
-//       </body>
-//     </html>
-//   );
-// }
+export function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="ja">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <Meta />
+        <Links />
+      </head>
+      <body>
+        {children}
+        <ScrollRestoration />
+        <Scripts />
+        <Toaster />
+        <script src="epos-2.27.0.js" />
+      </body>
+    </html>
+  );
+}
 
 export default function App() {
-  return (
-    <>
-      <Outlet />
-      <Scripts />
-      <Toaster />
-    </>
-  );
+  return <Outlet />;
 }
 
 // TODO(toririm): もっとリッチなローディング画面を作る
 export function HydrateFallback() {
-  return (
-    <>
-      <p>Loading...</p>
-      <Scripts />
-    </>
-  );
+  return <p>Loading...</p>;
 }
