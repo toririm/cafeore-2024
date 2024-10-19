@@ -32,7 +32,7 @@ export const ITEM_MASTER = {
   },
   s: {
     id: "05_pink_bourbon",
-    name: "ピンクボルボン",
+    name: "ピンクブルボン",
     price: 400,
     type: "hot",
   },
