@@ -1,7 +1,6 @@
 import type { MetaFunction } from "@remix-run/react";
 import { orderConverter } from "common/firebase-utils/converter";
 import { collectionSub } from "common/firebase-utils/subscription";
-import { type2label } from "common/models/item";
 import dayjs from "dayjs";
 import { orderBy } from "firebase/firestore";
 import useSWRSubscription from "swr/subscription";
@@ -61,9 +60,6 @@ export default function FielsOfMaster() {
                           >
                             <CardContent>
                               <h3 className="font-bold">{item.name}</h3>
-                              <p className="text-sm text-stone-500">
-                                {type2label[item.type]}
-                              </p>
                               {item.assignee && (
                                 <p className="text-sm">指名:{item.assignee}</p>
                               )}
