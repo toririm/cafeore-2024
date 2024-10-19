@@ -41,7 +41,7 @@ export const usePrinter = () => {
     prn.addTextLang("ja");
     prn.addTextDouble(true, true);
     prn.addText(` ${text}`);
-    prn.addFeedLine(6);
+    prn.addFeedLine(5);
   };
 
   const print = () => {
@@ -54,36 +54,5 @@ export const usePrinter = () => {
     prn.send();
   };
 
-  const addFeed = () => {
-    const prn = printer.current;
-    if (!prn) {
-      console.error("Printer not connected");
-      return;
-    }
-
-    prn.addFeedLine(6);
-    prn.send();
-  };
-
   return { connect, connStat, addQueue, addFeed, print };
-};
-
-/**
- *
- * @param {string[]} texts
- */
-export const printLabel = (texts) => {
-  const ePosDev = new window.epson.ePOSDevice();
-  const prn = null;
-
-  /**
-   *
-   * @param {string} text
-   */
-
-  ePosDev.connect("192.168.77.2", 8008, cbConnect);
-
-  for (const text of texts) {
-    print(text);
-  }
 };

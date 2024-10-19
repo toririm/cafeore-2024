@@ -72,14 +72,16 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
     );
     for (let idx = 0; idx < items.length; idx++) {
       const item = items[idx];
+      const assigneeView = item.assignee ? `指名:${item.assignee}` : "　";
       addQueue(
-        `No.${submitOne.orderId}\n${item.name}\n${idx + 1}/${items.length}`,
+        `No.${submitOne.orderId}\n${item.name}\n${idx + 1}/${items.length}\n${assigneeView}`,
       );
-      print();
     }
-    // submitPayload(submitOne);
+    addQueue("　\n　\n　\n　");
+    print();
+    submitPayload(submitOne);
     resetAll();
-  }, [newOrder, resetAll, print, addQueue]);
+  }, [newOrder, resetAll, print, addQueue, submitPayload]);
 
   const keyEventHandlers = useMemo(() => {
     return {
