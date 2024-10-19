@@ -1,5 +1,6 @@
 import type { MetaFunction } from "@remix-run/react";
 import { itemSource } from "common/data/items";
+import { ITEM_MASTER } from "common/data/items";
 import { orderConverter } from "common/firebase-utils/converter";
 import { collectionSub } from "common/firebase-utils/subscription";
 import type { OrderEntity } from "common/models/order";
@@ -80,40 +81,52 @@ export default function Dashboard() {
   const chartData = [
     {
       name: "べっぴん",
-      num: itemValue("べっぴんブレンド"),
+      num: itemValue(ITEM_MASTER.q.name),
       fill: "var(--color-hot)",
     },
     {
       name: "俺ブレ",
-      num: itemValue("珈琲・俺ブレンド"),
+      num: itemValue(ITEM_MASTER.w.name),
       fill: "var(--color-hot)",
     },
     {
       name: "ピンク",
-      num: itemValue("ピンクブルボン"),
+      num: itemValue(ITEM_MASTER.s.name),
       fill: "var(--color-hot)",
     },
     {
       name: "コスタ",
-      num: itemValue("コスタリカ レッドハニー"),
+      num: itemValue(ITEM_MASTER.d.name),
       fill: "var(--color-hot)",
     },
-    { name: "マンデ", num: itemValue("マンデリン"), fill: "var(--color-hot)" },
-    { name: "限定", num: itemValue("限定（仮）"), fill: "var(--color-hot)" },
-    { name: "氷", num: itemValue("アイスコーヒー"), fill: "var(--color-ice)" },
+    {
+      name: "マンデ",
+      num: itemValue(ITEM_MASTER.a.name),
+      fill: "var(--color-hot)",
+    },
+    {
+      name: "限定",
+      num: itemValue(ITEM_MASTER.e.name),
+      fill: "var(--color-hot)",
+    },
+    {
+      name: "氷",
+      num: itemValue(ITEM_MASTER.z.name),
+      fill: "var(--color-ice)",
+    },
     {
       name: "Iceオレ",
-      num: itemValue("アイスオレ"),
+      num: itemValue(ITEM_MASTER.c.name),
       fill: "var(--color-aulait)",
     },
     {
       name: "Hotオレ",
-      num: itemValue("ホットオレ"),
+      num: itemValue(ITEM_MASTER.x.name),
       fill: "var(--color-aulait)",
     },
     {
       name: "ミルク",
-      num: itemValue("アイスミルク"),
+      num: itemValue(ITEM_MASTER.v.name),
       fill: "var(--color-milk)",
     },
   ];
