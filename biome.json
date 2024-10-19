@@ -1,7 +1,12 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.9.3/schema.json",
   "files": {
-    "ignore": ["**/node_modules/**", "**/build", "**/public/build"]
+    "ignore": [
+      "**/node_modules/**",
+      "**/build",
+      "**/public/build",
+      "**/epos-2.27.0.js"
+    ]
   },
   "formatter": {
     "indentStyle": "space"
