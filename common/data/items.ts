@@ -17,7 +17,7 @@ export const ITEM_MASTER = {
     id: "02_cafeore_brend",
     name: "珈琲・俺ブレンド",
     abbr: "俺ブレ",
-    price: 400,
+    price: 300,
     type: "hot",
   },
   e: {
