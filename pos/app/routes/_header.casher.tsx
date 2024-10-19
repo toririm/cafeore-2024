@@ -237,7 +237,7 @@ export default function Casher() {
                             <SelectItem value="3rd">3rd</SelectItem>
                             <SelectItem value="fourth">4th</SelectItem>
                             <SelectItem value="fifth">5th</SelectItem>
-                            <SelectItem value="null">指名なし</SelectItem>
+                            <SelectItem value="">指名なし</SelectItem>
                           </SelectGroup>
                         </SelectContent>
                       </Select>
