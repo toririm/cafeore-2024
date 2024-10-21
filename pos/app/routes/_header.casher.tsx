@@ -14,7 +14,6 @@ import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { useState } from "react";
 import useSWRSubscription from "swr/subscription";
 import { z } from "zod";
-import { useOrderState } from "~/components/functional/useOrderState";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -68,13 +67,8 @@ export default function Casher() {
   const charge = recieved - order.total;
   const [description, setDescription] = useState("");
   order.description = description;
-  const [discountNo, setDiscountNo] = useState("");
-  const [newOrder, newOrderDispatch] = useOrderState();
 
-  const justPayed = () => {
-    order.received = order.billingAmount;
-    submitOrder();
-  };
+  const [discountNo, setDiscountNo] = useState("");
 
   const submitOrder = () => {
     console.log(charge);
@@ -97,6 +91,11 @@ export default function Casher() {
   ): WithId<OrderEntity> | undefined => {
     return orders?.find((order) => order.orderId === orderId);
   };
+
+  function justPayed() {
+    order.received = order.billingAmount;
+    submitOrder();
+  }
 
   return (
     <div className="p-[20px]">
@@ -223,7 +222,15 @@ export default function Casher() {
                     <div>
                       <Select
                         onValueChange={(value) => {
-                          item.assignee = value;
+                          setQueue((prev) => {
+                            const newItems = [...prev];
+                            let newValue = value;
+                            if (newValue === "null") {
+                              newValue = "";
+                            }
+                            newItems[index].assignee = newValue;
+                            return newItems;
+                          });
                         }}
                       >
                         <SelectTrigger className="w-[100px] justify-center">
@@ -234,10 +241,10 @@ export default function Casher() {
                             <SelectLabel>指名</SelectLabel>
                             <SelectItem value="first">1st</SelectItem>
                             <SelectItem value="second">2nd</SelectItem>
-                            <SelectItem value="3rd">3rd</SelectItem>
+                            <SelectItem value="third">3rd</SelectItem>
                             <SelectItem value="fourth">4th</SelectItem>
                             <SelectItem value="fifth">5th</SelectItem>
-                            <SelectItem value="">指名なし</SelectItem>
+                            <SelectItem value="null">指名なし</SelectItem>
                           </SelectGroup>
                         </SelectContent>
                       </Select>
