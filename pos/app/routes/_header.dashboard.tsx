@@ -173,7 +173,7 @@ export default function Dashboard() {
           </Table>
         </div>
         <div className="w-1/2">
-          <div className="sticky top-0">
+          <div className="sticky top-24">
             <Card>
               <CardHeader>
                 <CardTitle>商品ごとの杯数</CardTitle>

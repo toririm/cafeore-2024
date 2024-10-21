@@ -6,7 +6,7 @@ export default function BaseHeader() {
     <div>
       {/* TODO(toririm): デザインが微妙にダサいので何とかする。
       この手のコンポーネントは必要だが別にこの形でなくてもいい */}
-      <header className="bg-gray-800 p-4 text-white">
+      <header className="sticky top-0 z-10 bg-gray-800 p-4 text-white">
         <h1 className="text-3xl">かふぇおれPOS 2024</h1>
         <OnlineStatus />
       </header>
