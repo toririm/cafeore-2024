@@ -10,6 +10,7 @@ import { usePreventNumberKeyUpDown } from "../functional/usePreventNumberKeyUpDo
 import { useUISession } from "../functional/useUISession";
 import { AttractiveTextArea } from "../molecules/AttractiveTextArea";
 import { InputHeader } from "../molecules/InputHeader";
+import { PrinterStatus } from "../molecules/PrinterStatus";
 import { DiscountInput } from "../organisms/DiscountInput";
 import { OrderItemEdit } from "../organisms/OrderItemEdit";
 import { OrderReceivedInput } from "../organisms/OrderReceivedInput";
@@ -22,7 +23,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "../ui/alert-dialog";
-import { Button } from "../ui/button";
 
 type props = {
   items: WithId<ItemEntity>[] | undefined;
@@ -42,7 +42,7 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
   const [UISession, renewUISession] = useUISession();
   const { nextOrderId } = useLatestOrderId(orders);
 
-  const { connect, connStat, print, addQueue } = usePrinter();
+  const printer = usePrinter();
 
   usePreventNumberKeyUpDown();
 
@@ -72,15 +72,15 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
     for (let idx = 0; idx < items.length; idx++) {
       const item = items[idx];
       const assigneeView = item.assignee ? `指名:${item.assignee}` : "　";
-      addQueue(
+      printer.addQueue(
         `No.${submitOne.orderId}\n${item.name}\n${idx + 1}/${items.length}\n${assigneeView}`,
       );
     }
-    addQueue("　\n　\n　\n　");
-    print();
+    printer.addQueue("　\n　\n　\n　");
+    printer.print();
     submitPayload(submitOne);
     resetAll();
-  }, [newOrder, resetAll, print, addQueue, submitPayload]);
+  }, [newOrder, resetAll, printer, submitPayload]);
 
   const keyEventHandlers = useMemo(() => {
     return {
@@ -110,7 +110,10 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
   return (
     <>
       <div className="p-4">
-        <p className="font-extrabold text-3xl">No.{newOrder.orderId}</p>
+        <div className="flex justify-between">
+          <div className="font-extrabold text-3xl">No.{newOrder.orderId}</div>
+          <PrinterStatus status={printer.status} />
+        </div>
         <div className="flex gap-5 px-2">
           <div className="flex-1">
             <InputHeader
@@ -184,8 +187,6 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
                 focus={inputStatus === "description"}
               />
             </div>
-            <Button onClick={() => connect()}>接続</Button>
-            <p>{connStat}</p>
           </div>
           <div className="flex-1">
             <InputHeader

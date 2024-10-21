@@ -1,14 +1,29 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
+/**
+ *
+ * @returns {{
+ * connect: () => void,
+ * status: "init" | "disconnected" | "connecting" | "connected",
+ * addQueue: (text: string) => void,
+ * print: () => void
+ * }}
+ */
 export const usePrinter = () => {
-  const [connStat, setConnStat] = useState("disconnected");
-  const ePosDevice = useRef();
-  const printer = useRef();
+  const [status, setConnStat] = useState("init");
+  const ePosDeviceRef = useRef();
+  const printerRef = useRef();
+
+  useEffect(() => {
+    if (status === "init") {
+      connect();
+    }
+  }, [status]);
 
   const connect = () => {
     setConnStat("connecting");
     const ePosDev = new window.epson.ePOSDevice();
-    ePosDevice.current = ePosDev;
+    ePosDeviceRef.current = ePosDev;
 
     ePosDev.connect("192.168.77.2", 8008, (data) => {
       if (data === "OK" || data === "SSL_CONNECT_OK") {
@@ -18,22 +33,25 @@ export const usePrinter = () => {
           { crypto: true, buffer: false },
           (devobj, retcode) => {
             if (retcode === "OK") {
-              printer.current = devobj;
+              printerRef.current = devobj;
               setConnStat("connected");
             } else {
+              setConnStat("disconnected");
               throw retcode;
             }
           },
         );
       } else {
+        setConnStat("disconnected");
         console.log(data);
       }
     });
   };
 
   const addQueue = (text) => {
-    const prn = printer.current;
+    const prn = printerRef.current;
     if (!prn) {
+      setConnStat("disconnected");
       console.error("Printer not connected");
       return;
     }
@@ -45,8 +63,9 @@ export const usePrinter = () => {
   };
 
   const print = () => {
-    const prn = printer.current;
+    const prn = printerRef.current;
     if (!prn) {
+      setConnStat("disconnected");
       console.error("Printer not connected");
       return;
     }
@@ -54,5 +73,12 @@ export const usePrinter = () => {
     prn.send();
   };
 
-  return { connect, connStat, addQueue, print };
+  const printer = {
+    connect,
+    status,
+    addQueue,
+    print,
+  };
+
+  return printer;
 };
