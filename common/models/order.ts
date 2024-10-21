@@ -1,5 +1,5 @@
+import type { WithId } from "common/lib/typeguard";
 import { z } from "zod";
-import type { WithId } from "../lib/typeguard";
 import { ItemEntity, itemSchema } from "./item";
 
 export const orderSchema = z.object({

@@ -1,6 +1,3 @@
-import { type2label } from "common/models/item";
-import type { OrderEntity } from "common/models/order";
-import { type ComponentPropsWithoutRef, forwardRef } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,7 +7,10 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "../ui/alert-dialog";
+} from "common/components/ui/alert-dialog";
+import { type2label } from "common/models/item";
+import type { OrderEntity } from "common/models/order";
+import { type ComponentPropsWithoutRef, forwardRef } from "react";
 
 // TODO: 表示内容が整ってないので、きれいにする
 /**

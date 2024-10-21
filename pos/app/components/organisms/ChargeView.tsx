@@ -1,6 +1,6 @@
+import { Input } from "common/components/ui/input";
 import type { OrderEntity } from "common/models/order";
 import { useMemo } from "react";
-import { Input } from "../ui/input";
 
 type props = {
   order: OrderEntity;

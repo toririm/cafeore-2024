@@ -1,10 +1,14 @@
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "common/components/ui/input-otp";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import {
   type ComponentPropsWithoutRef,
   type ElementRef,
   forwardRef,
 } from "react";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
 
 /**
  * 3桁の数字を入力するためのコンポーネント

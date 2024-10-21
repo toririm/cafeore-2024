@@ -1,8 +1,32 @@
 import type { MetaFunction } from "@remix-run/react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "common/components/ui/card";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "common/components/ui/chart";
+import type { ChartConfig } from "common/components/ui/chart";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "common/components/ui/table";
 import { itemSource } from "common/data/items";
 import { ITEM_MASTER } from "common/data/items";
 import { orderConverter } from "common/firebase-utils/converter";
 import { collectionSub } from "common/firebase-utils/subscription";
+import { cn } from "common/lib/utils";
 import type { OrderEntity } from "common/models/order";
 import dayjs from "dayjs";
 import { orderBy } from "firebase/firestore";
@@ -15,30 +39,6 @@ import {
   YAxis,
 } from "recharts";
 import useSWRSubscription from "swr/subscription";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "~/components/ui/chart";
-import type { ChartConfig } from "~/components/ui/chart";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "~/components/ui/table";
-import { cn } from "~/lib/utils";
 
 export const meta: MetaFunction = () => {
   return [{ title: "注文状況" }];
