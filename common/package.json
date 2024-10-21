@@ -30,6 +30,8 @@
   "devDependencies": {
     "@firebase/rules-unit-testing": "^3.0.4",
     "firebase-tools": "^13.20.2",
+    "@types/lodash": "^4.17.10",
+    "@types/bun": "^1.1.11",
     "vite": "^5.4.8"
   }
 }
