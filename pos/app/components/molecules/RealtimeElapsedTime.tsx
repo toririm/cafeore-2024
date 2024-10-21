@@ -1,7 +1,7 @@
 import type { WithId } from "common/lib/typeguard";
+import { cn } from "common/lib/utils";
 import type { OrderEntity } from "common/models/order";
 import dayjs from "dayjs";
-import { cn } from "~/lib/utils";
 import { useCurrentTime } from "../functional/useCurrentTime";
 
 export const RealtimeElapsedTime = ({

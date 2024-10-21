@@ -14,6 +14,7 @@ import {
 import { orderConverter } from "common/firebase-utils/converter";
 import { collectionSub } from "common/firebase-utils/subscription";
 import { stringToJSONSchema } from "common/lib/custom-zod";
+import { cn } from "common/lib/utils";
 import { OrderEntity, orderSchema } from "common/models/order";
 import { orderRepository } from "common/repositories/order";
 import dayjs from "dayjs";
@@ -23,7 +24,6 @@ import { toast } from "sonner";
 import useSWRSubscription from "swr/subscription";
 import { z } from "zod";
 import { RealtimeElapsedTime } from "~/components/molecules/RealtimeElapsedTime";
-import { cn } from "~/lib/utils";
 
 export const meta: MetaFunction = () => {
   return [{ title: "提供画面" }];

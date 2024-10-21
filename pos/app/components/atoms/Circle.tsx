@@ -1,6 +1,6 @@
 import type { ClassValue } from "clsx";
+import { cn } from "common/lib/utils";
 import type { ReactNode } from "react";
-import { cn } from "~/lib/utils";
 
 type props = {
   focus: boolean;

@@ -26,6 +26,7 @@ import { itemSource } from "common/data/items";
 import { ITEM_MASTER } from "common/data/items";
 import { orderConverter } from "common/firebase-utils/converter";
 import { collectionSub } from "common/firebase-utils/subscription";
+import { cn } from "common/lib/utils";
 import type { OrderEntity } from "common/models/order";
 import dayjs from "dayjs";
 import { orderBy } from "firebase/firestore";
@@ -38,7 +39,6 @@ import {
   YAxis,
 } from "recharts";
 import useSWRSubscription from "swr/subscription";
-import { cn } from "~/lib/utils";
 
 export const meta: MetaFunction = () => {
   return [{ title: "注文状況" }];

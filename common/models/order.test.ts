@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import type { WithId } from "../lib/typeguard";
+import type { WithId } from "common/lib/typeguard";
 import { type Item, ItemEntity } from "./item";
 import { OrderEntity } from "./order";
 

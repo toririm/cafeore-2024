@@ -1,5 +1,5 @@
+import { cn } from "common/lib/utils";
 import { memo } from "react";
-import { cn } from "~/lib/utils";
 import { Circle } from "../atoms/Circle";
 
 type props = {

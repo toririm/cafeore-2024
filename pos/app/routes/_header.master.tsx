@@ -7,11 +7,11 @@ import {
 } from "common/components/ui/card";
 import { orderConverter } from "common/firebase-utils/converter";
 import { collectionSub } from "common/firebase-utils/subscription";
+import { cn } from "common/lib/utils";
 import dayjs from "dayjs";
 import { orderBy } from "firebase/firestore";
 import useSWRSubscription from "swr/subscription";
 import { RealtimeElapsedTime } from "~/components/molecules/RealtimeElapsedTime";
-import { cn } from "~/lib/utils";
 
 export const meta: MetaFunction = () => {
   return [{ title: "マスター画面" }];

@@ -1,5 +1,5 @@
-import { IncludedIn, type WithId } from "../lib/typeguard";
-import { type Item, ItemEntity } from "../models/item";
+import { IncludedIn, type WithId } from "common/lib/typeguard";
+import { type Item, ItemEntity } from "common/models/item";
 
 type RawItemSource = {
   [keymap: string]: Omit<WithId<Item>, "assignee"> & { abbr: string };
