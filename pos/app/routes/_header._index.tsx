@@ -1,9 +1,9 @@
 import { type MetaFunction, useLoaderData } from "@remix-run/react";
+import { Button } from "common/components/ui/button";
 import { converter } from "common/firebase-utils/converter";
 import { prodDB } from "common/firebase-utils/firestore";
 import { itemSchema } from "common/models/item";
 import { collection, getDocs } from "firebase/firestore";
-import { Button } from "~/components/ui/button";
 
 export const meta: MetaFunction = () => {
   return [

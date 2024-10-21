@@ -1,3 +1,4 @@
+import { Input, type InputProps } from "common/components/ui/input";
 import {
   type ChangeEventHandler,
   useCallback,
@@ -5,7 +6,6 @@ import {
   useState,
 } from "react";
 import { useFocusRef } from "../functional/useFocusRef";
-import { Input, type InputProps } from "../ui/input";
 
 type props = InputProps & {
   onTextSet: (text: string) => void;

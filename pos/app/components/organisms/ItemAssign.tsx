@@ -1,10 +1,10 @@
 import { Pencil2Icon } from "@radix-ui/react-icons";
+import { Input } from "common/components/ui/input";
 import type { WithId } from "common/lib/typeguard";
 import { type ItemEntity, type2label } from "common/models/item";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { cn } from "~/lib/utils";
 import { useFocusRef } from "../functional/useFocusRef";
-import { Input } from "../ui/input";
 
 type props = {
   item: WithId<ItemEntity>;

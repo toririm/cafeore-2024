@@ -1,9 +1,9 @@
 import { Form, type MetaFunction } from "@remix-run/react";
+import { Button } from "common/components/ui/button";
+import { Input } from "common/components/ui/input";
 import { useClientLoaderData } from "common/lib/custom-loader";
 import { type2label } from "common/models/item";
 import { orderRepository } from "common/repositories/order";
-import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
 export { clientAction } from "./action";
 
 export const meta: MetaFunction = () => {

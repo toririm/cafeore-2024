@@ -1,3 +1,4 @@
+import { Textarea, type TextareaProps } from "common/components/ui/textarea";
 import {
   type ChangeEventHandler,
   useCallback,
@@ -5,7 +6,6 @@ import {
   useState,
 } from "react";
 import { useFocusRef } from "../functional/useFocusRef";
-import { Textarea, type TextareaProps } from "../ui/textarea";
 
 type props = TextareaProps & {
   onTextSet: (text: string) => void;

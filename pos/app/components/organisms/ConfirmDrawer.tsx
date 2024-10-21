@@ -1,13 +1,13 @@
-import { type ComponentProps, useEffect, useRef } from "react";
-import type { Drawer as DrawerPrimitive } from "vaul";
-import { Button } from "../ui/button";
+import { Button } from "common/components/ui/button";
 import {
   Drawer,
   DrawerContent,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-} from "../ui/drawer";
+} from "common/components/ui/drawer";
+import { type ComponentProps, useEffect, useRef } from "react";
+import type { Drawer as DrawerPrimitive } from "vaul";
 
 const sleep = (time: number) =>
   new Promise((resolve) => setTimeout(resolve, time)); //timeはミリ秒
