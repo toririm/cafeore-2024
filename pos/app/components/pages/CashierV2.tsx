@@ -1,7 +1,8 @@
 import type { WithId } from "common/lib/typeguard";
 import type { ItemEntity } from "common/models/item";
 import type { OrderEntity } from "common/models/order";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
+import { usePrinter } from "~/label/printer";
 import { useInputStatus } from "../functional/useInputStatus";
 import { useLatestOrderId } from "../functional/useLatestOrderId";
 import { useOrderState } from "../functional/useOrderState";
@@ -9,6 +10,7 @@ import { usePreventNumberKeyUpDown } from "../functional/usePreventNumberKeyUpDo
 import { useUISession } from "../functional/useUISession";
 import { AttractiveTextArea } from "../molecules/AttractiveTextArea";
 import { InputHeader } from "../molecules/InputHeader";
+import { PrinterStatus } from "../molecules/PrinterStatus";
 import { DiscountInput } from "../organisms/DiscountInput";
 import { OrderItemEdit } from "../organisms/OrderItemEdit";
 import { OrderReceivedInput } from "../organisms/OrderReceivedInput";
@@ -38,8 +40,9 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
   const { inputStatus, proceedStatus, previousStatus, resetStatus } =
     useInputStatus();
   const [UISession, renewUISession] = useUISession();
-  const [drawerOpen, setDrawerOpen] = useState(false);
   const { nextOrderId } = useLatestOrderId(orders);
+
+  const printer = usePrinter();
 
   usePreventNumberKeyUpDown();
 
@@ -63,9 +66,21 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
     // 送信する直前に createdAt を更新する
     const submitOne = newOrder.clone();
     submitOne.nowCreated();
+    const items = submitOne.items.toSorted((a, b) =>
+      a.name.localeCompare(b.name),
+    );
+    for (let idx = 0; idx < items.length; idx++) {
+      const item = items[idx];
+      const assigneeView = item.assignee ? `指名:${item.assignee}` : "　";
+      printer.addQueue(
+        `No.${submitOne.orderId}\n${item.name}\n${idx + 1}/${items.length}\n${assigneeView}`,
+      );
+    }
+    printer.addQueue("　\n　\n　\n　");
+    printer.print();
     submitPayload(submitOne);
     resetAll();
-  }, [newOrder, submitPayload, resetAll]);
+  }, [newOrder, resetAll, printer, submitPayload]);
 
   const keyEventHandlers = useMemo(() => {
     return {
@@ -92,16 +107,13 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
     };
   }, [keyEventHandlers]);
 
-  useEffect(() => {
-    if (inputStatus === "submit") {
-      setDrawerOpen(true);
-    }
-  }, [inputStatus]);
-
   return (
     <>
       <div className="p-4">
-        <p className="font-extrabold text-3xl">No.{newOrder.orderId}</p>
+        <div className="flex justify-between">
+          <div className="font-extrabold text-3xl">No.{newOrder.orderId}</div>
+          <PrinterStatus status={printer.status} />
+        </div>
         <div className="flex gap-5 px-2">
           <div className="flex-1">
             <InputHeader
@@ -196,14 +208,6 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
             </div>
           </div>
         </div>
-        {/* <ConfirmDrawer focus={inputStatus === "submit"} onConfirm={submitOrder}>
-          <div className="grid grid-cols-2">
-            <p className="text-center text-sm text-stone-400">Enter で送信</p>
-            <p className="text-center text-sm text-stone-400">
-              左矢印キーで戻る
-            </p>
-          </div>
-        </ConfirmDrawer> */}
         <AlertDialog open={inputStatus === "submit"}>
           <AlertDialogContent>
             <AlertDialogHeader>

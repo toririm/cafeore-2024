@@ -109,6 +109,7 @@ const OrderItemEdit = memo(
     useEffect(() => {
       const handler = (event: KeyboardEvent) => {
         if (!focus) return;
+        if (editable) return;
         keyEventHandler(event, onAddItem);
         if (event.key === "Backspace") {
           removeItem();
@@ -118,7 +119,7 @@ const OrderItemEdit = memo(
       return () => {
         window.removeEventListener("keydown", handler);
       };
-    }, [focus, onAddItem, removeItem]);
+    }, [focus, onAddItem, removeItem, editable]);
 
     // focus が外れたときに itemFocus をリセット
     useEffect(() => {

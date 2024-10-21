@@ -22,6 +22,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <ScrollRestoration />
         <Scripts />
         <Toaster />
+        <script src="epos-2.27.0.js" />
       </body>
     </html>
   );
