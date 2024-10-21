@@ -113,7 +113,6 @@ export default function Serve() {
                         </div>
                       ))}
                     </div>
-                    <p>{order.orderReady}</p>
                     {order?.description && (
                       <div className="mt-4 flex rounded-md bg-gray-200 p-1">
                         <div className="flex-none">備考：</div>
