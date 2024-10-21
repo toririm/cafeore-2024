@@ -1,7 +1,7 @@
 import type { WithId } from "common/lib/typeguard";
 import type { ItemEntity } from "common/models/item";
 import type { OrderEntity } from "common/models/order";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { usePrinter } from "~/label/printer";
 import { useInputStatus } from "../functional/useInputStatus";
 import { useLatestOrderId } from "../functional/useLatestOrderId";
@@ -40,7 +40,6 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
   const { inputStatus, proceedStatus, previousStatus, resetStatus } =
     useInputStatus();
   const [UISession, renewUISession] = useUISession();
-  const [drawerOpen, setDrawerOpen] = useState(false);
   const { nextOrderId } = useLatestOrderId(orders);
 
   const { connect, connStat, print, addQueue } = usePrinter();
@@ -107,12 +106,6 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
       window.removeEventListener("keydown", handler);
     };
   }, [keyEventHandlers]);
-
-  useEffect(() => {
-    if (inputStatus === "submit") {
-      setDrawerOpen(true);
-    }
-  }, [inputStatus]);
 
   return (
     <>
@@ -214,14 +207,6 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
             </div>
           </div>
         </div>
-        {/* <ConfirmDrawer focus={inputStatus === "submit"} onConfirm={submitOrder}>
-          <div className="grid grid-cols-2">
-            <p className="text-center text-sm text-stone-400">Enter で送信</p>
-            <p className="text-center text-sm text-stone-400">
-              左矢印キーで戻る
-            </p>
-          </div>
-        </ConfirmDrawer> */}
         <AlertDialog open={inputStatus === "submit"}>
           <AlertDialogContent>
             <AlertDialogHeader>
