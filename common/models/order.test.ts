@@ -72,6 +72,31 @@ describe("[unit] order entity", () => {
     order.beServed();
     expect(order.servedAt).not.toBe(null);
     expect(order.servedAt).toBeInstanceOf(Date);
+    expect(order.readyAt).not.toBe(null);
+    expect(order.readyAt).toEqual(order.servedAt);
+  });
+
+  test("undoServed & undoReady", () => {
+    const order = OrderEntity.createNew({ orderId: 2024 });
+    expect(order.servedAt).toBe(null);
+
+    // 提供時には readyAt と servedAt が同じ
+    order.beServed();
+    expect(order.servedAt).not.toBe(null);
+    expect(order.readyAt).not.toBe(null);
+    expect(order.readyAt).toEqual(order.servedAt);
+
+    // undoServed で servedAt も readyAt も null になる
+    order.undoServed();
+    expect(order.servedAt).toBe(null);
+    expect(order.readyAt).toBe(null);
+
+    // 別々に設定した場合は undoServed では servedAt だけが null になる
+    order.beReady();
+    order.beServed();
+    order.undoServed();
+    expect(order.servedAt).toBe(null);
+    expect(order.readyAt).not.toBe(null);
   });
 
   test("billingAmount", () => {

@@ -202,15 +202,24 @@ export class OrderEntity implements Order {
 
   /**
    * オーダーを提供済み状態に変更する
+   * もし readyAt が null ならば readyAt を現在時刻に設定する
    */
   beServed() {
-    this._servedAt = new Date();
+    const now = new Date();
+    this._servedAt = now;
+    if (this._readyAt === null) {
+      this._readyAt = now;
+    }
   }
 
   /**
    * 提供済み状態を取り消す
    */
   undoServed() {
+    // readyAt も同時に更新された場合のみ readyAt を null にする
+    if (this._readyAt === this._servedAt) {
+      this._readyAt = null;
+    }
     this._servedAt = null;
   }
 
