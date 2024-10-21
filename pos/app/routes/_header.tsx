@@ -6,9 +6,9 @@ export default function BaseHeader() {
 
   if (!isOnline) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-100">
+      <div className="flex h-screen items-center justify-center bg-gray-100">
         <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">⛔オフライン</h1>
+          <h1 className="mb-4 font-bold text-4xl">⛔オフライン</h1>
           <p className="text-xl">
             インターネット接続が切断されています。
             <br />
