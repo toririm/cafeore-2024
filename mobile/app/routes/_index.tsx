@@ -1,5 +1,4 @@
 import type { MetaFunction } from "@remix-run/cloudflare";
-import { Button } from "common";
 
 export const meta: MetaFunction = () => {
   return [
@@ -48,9 +47,6 @@ export default function Index() {
               </li>
             ))}
           </ul>
-          <Button className="bg-blue-700 text-white hover:bg-blue-800">
-            hello
-          </Button>
         </nav>
       </div>
     </div>

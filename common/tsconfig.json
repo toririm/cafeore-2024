@@ -1,6 +1,5 @@
 {
   "include": ["env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["dist"],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "types": ["@remix-run/node", "vite/client", "bun-types"],
