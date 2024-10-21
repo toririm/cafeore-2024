@@ -5,8 +5,8 @@
   "main": "dist/index.js",
   "exports": {
     ".": {
-      "default": "./index.ts",
-      "types": "./dist/index.d.ts"
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
     }
   },
   "scripts": {
