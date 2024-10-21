@@ -40,7 +40,6 @@ export default function Order() {
             <p>{order.createdAt.toISOString()}</p>
             <p>{`提供時間：${order.servedAt?.toISOString()}`}</p>
             <p>{order.total}</p>
-            <p>{order.orderReady}</p>
           </li>
         ))}
       </ul>
