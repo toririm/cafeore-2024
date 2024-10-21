@@ -58,10 +58,11 @@ describe("[unit] order entity", () => {
 
   test("beReady", () => {
     const order = OrderEntity.createNew({ orderId: 2024 });
-    expect(order.orderReady).toBe(false);
+    expect(order.readyAt).toBe(null);
 
     order.beReady();
-    expect(order.orderReady).toBe(true);
+    expect(order.readyAt).not.toBe(null);
+    expect(order.readyAt).toBeInstanceOf(Date);
   });
 
   test("beServed", () => {
@@ -102,10 +103,10 @@ describe("[unit] order entity", () => {
       id: "1",
       orderId: 99999,
       createdAt: new Date(),
+      readyAt: null,
       servedAt: null,
       items: itemEntities.slice(0, 1),
       total: 900,
-      orderReady: false,
       description: null,
       billingAmount: 900,
       received: 0,
@@ -159,10 +160,10 @@ describe("[unit] order entity", () => {
       id: "1",
       orderId: 99999,
       createdAt: new Date(),
+      readyAt: null,
       servedAt: null,
       items: itemEntities,
       total: 900,
-      orderReady: false,
       description: null,
       billingAmount: 900,
       received: 0,

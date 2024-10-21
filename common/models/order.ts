@@ -6,10 +6,10 @@ export const orderSchema = z.object({
   id: z.string().optional(), // Firestore のドキュメント ID
   orderId: z.number(),
   createdAt: z.date(),
+  readyAt: z.date().nullable(),
   servedAt: z.date().nullable(),
   items: z.array(itemSchema.required()),
   total: z.number(), // sum of item.price
-  orderReady: z.boolean(),
   description: z.string().nullable(),
   billingAmount: z.number(), // total - discount
   received: z.number(), // お預かり金額
@@ -31,10 +31,10 @@ export class OrderEntity implements Order {
     private readonly _id: string | undefined,
     private _orderId: number,
     private _createdAt: Date,
+    private _readyAt: Date | null,
     private _servedAt: Date | null,
     private _items: WithId<ItemEntity>[],
     private _total: number,
-    private _orderReady: boolean,
     private _description: string | null,
     private _billingAmount: number,
     private _received: number,
@@ -50,9 +50,9 @@ export class OrderEntity implements Order {
       orderId,
       new Date(),
       null,
+      null,
       [],
       0,
-      false,
       null,
       0,
       0,
@@ -72,10 +72,10 @@ export class OrderEntity implements Order {
       order.id,
       order.orderId,
       order.createdAt,
+      order.readyAt,
       order.servedAt,
       order.items.map((item) => ItemEntity.fromItem(item)),
       order.total,
-      order.orderReady,
       order.description,
       order.billingAmount,
       order.received,
@@ -105,6 +105,10 @@ export class OrderEntity implements Order {
     return this._createdAt;
   }
 
+  get readyAt() {
+    return this._readyAt;
+  }
+
   get servedAt() {
     return this._servedAt;
   }
@@ -122,10 +126,6 @@ export class OrderEntity implements Order {
     // TODO(toririm): 計算するのは items が変更された時だけでいい
     this._total = this._items.reduce((acc, item) => acc + item.price, 0);
     return this._total;
-  }
-
-  get orderReady() {
-    return this._orderReady;
   }
 
   get description() {
@@ -190,15 +190,20 @@ export class OrderEntity implements Order {
    * オーダーを準備完了状態に変更する
    */
   beReady() {
-    // orderReady は false -> true にしか変更できないようにする
-    this._orderReady = true;
+    this._readyAt = new Date();
+  }
+
+  /**
+   * 準備完了状態を取り消す
+   */
+  undoReady() {
+    this._readyAt = null;
   }
 
   /**
    * オーダーを提供済み状態に変更する
    */
   beServed() {
-    // servedAt は null -> Date にしか変更できないようにする
     this._servedAt = new Date();
   }
 
@@ -251,10 +256,10 @@ export class OrderEntity implements Order {
       id: this.id,
       orderId: this.orderId,
       createdAt: this.createdAt,
+      readyAt: this.readyAt,
       servedAt: this.servedAt,
       items: this.items.map((item) => item.toItem()),
       total: this.total,
-      orderReady: this.orderReady,
       description: this.description,
       billingAmount: this.billingAmount,
       received: this.received,
