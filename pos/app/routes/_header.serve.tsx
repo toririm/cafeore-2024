@@ -108,7 +108,9 @@ export default function Serve() {
                             )}
                           >
                             <CardContent>
-                              <h3 className="text-center font-bold">{id2abbr(item.id)}</h3>
+                              <h3 className="text-center font-bold">
+                                {id2abbr(item.id)}
+                              </h3>
                             </CardContent>
                           </Card>
                         </div>

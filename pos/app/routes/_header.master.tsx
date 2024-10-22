@@ -67,7 +67,9 @@ export default function FielsOfMaster() {
                             )}
                           >
                             <CardContent>
-                              <h3 className="text-center font-bold">{id2abbr(item.id)}</h3>
+                              <h3 className="text-center font-bold">
+                                {id2abbr(item.id)}
+                              </h3>
                               {item.assignee && (
                                 <p className="text-sm">指名:{item.assignee}</p>
                               )}
