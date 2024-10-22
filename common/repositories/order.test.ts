@@ -57,6 +57,7 @@ describe("[db] orderRepository", async () => {
       ItemEntity.fromItem({
         id: "1",
         name: "item1",
+        abbr: "item1",
         price: 100,
         type: "hot",
         assignee: null,

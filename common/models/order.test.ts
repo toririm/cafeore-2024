@@ -6,6 +6,7 @@ import { OrderEntity } from "./order";
 const coffeeItem = ItemEntity.fromItem({
   id: "1",
   name: "item1",
+  abbr: "item1",
   price: 300,
   type: "hot",
   assignee: null,
@@ -14,6 +15,7 @@ const coffeeItem = ItemEntity.fromItem({
 const milkItem = ItemEntity.fromItem({
   id: "2",
   name: "item2",
+  abbr: "item2",
   price: 100,
   type: "milk",
   assignee: null,
@@ -28,6 +30,7 @@ describe("[unit] order entity", () => {
       ItemEntity.fromItem({
         id: "1",
         name: "item1",
+        abbr: "item1",
         price: 100,
         type: "hot",
         assignee: null,
@@ -35,6 +38,7 @@ describe("[unit] order entity", () => {
       ItemEntity.fromItem({
         id: "2",
         name: "item2",
+        abbr: "item2",
         price: 341,
         type: "ice",
         assignee: null,
@@ -48,6 +52,7 @@ describe("[unit] order entity", () => {
       ItemEntity.fromItem({
         id: "3",
         name: "item3",
+        abbr: "item3",
         price: 100,
         type: "hotOre",
         assignee: null,
@@ -81,6 +86,7 @@ describe("[unit] order entity", () => {
       {
         id: "1",
         name: "item1",
+        abbr: "item1",
         price: 400,
         type: "hot",
         assignee: null,
@@ -88,6 +94,7 @@ describe("[unit] order entity", () => {
       {
         id: "2",
         name: "item2",
+        abbr: "item2",
         price: 500,
         type: "ice",
         assignee: null,
@@ -138,6 +145,7 @@ describe("[unit] order entity", () => {
       {
         id: "1",
         name: "item1",
+        abbr: "item1",
         price: 400,
         type: "hot",
         assignee: null,
@@ -145,6 +153,7 @@ describe("[unit] order entity", () => {
       {
         id: "2",
         name: "item2",
+        abbr: "item2",
         price: 500,
         type: "ice",
         assignee: null,

@@ -107,7 +107,7 @@ export default function Serve() {
                             )}
                           >
                             <CardContent>
-                              <h3 className="font-bold">{item.name}</h3>
+                              <h3 className="font-bold">{item.abbr}</h3>
                             </CardContent>
                           </Card>
                         </div>

@@ -13,6 +13,7 @@ export const itemtypes = [
 export const itemSchema = z.object({
   id: z.string().optional(), // Firestore のドキュメント ID
   name: z.string({ required_error: "名前が未入力です" }),
+  abbr: z.string(),
   price: z.number({ required_error: "価格が未入力です" }),
   type: z.enum(itemtypes, {
     required_error: "種類が未選択です",
@@ -38,13 +39,14 @@ export class ItemEntity implements Item {
   private constructor(
     private readonly _id: string | undefined,
     private readonly _name: string,
+    private readonly _abbr: string,
     private readonly _price: number,
     private readonly _type: ItemType,
     private _assignee: string | null,
   ) {}
 
-  static createNew({ name, price, type }: Omit<Item, "assignee">): ItemEntity {
-    return new ItemEntity(undefined, name, price, type, null);
+  static createNew({ name, abbr, price, type }: Omit<Item, "assignee">): ItemEntity {
+    return new ItemEntity(undefined, name, abbr, price, type, null);
   }
 
   static fromItem(item: WithId<Item>): WithId<ItemEntity>;
@@ -53,6 +55,7 @@ export class ItemEntity implements Item {
     return new ItemEntity(
       item.id,
       item.name,
+      item.abbr,
       item.price,
       item.type,
       item.assignee,
@@ -69,6 +72,10 @@ export class ItemEntity implements Item {
 
   get name() {
     return this._name;
+  }
+
+  get abbr() {
+    return this._abbr;
   }
 
   get price() {
@@ -104,6 +111,7 @@ export class ItemEntity implements Item {
     return {
       id: this.id,
       name: this.name,
+      abbr: this.abbr,
       price: this.price,
       type: this.type,
       assignee: this.assignee,

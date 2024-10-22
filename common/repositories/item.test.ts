@@ -35,6 +35,7 @@ describe("[db] itemRepository", async () => {
   test("itemRepository.save (create)", async () => {
     const item = ItemEntity.createNew({
       name: "Hoge",
+      abbr: "hoge",
       price: 100,
       type: "hot",
     });
@@ -52,6 +53,7 @@ describe("[db] itemRepository", async () => {
   test("itemRepository.findById", async () => {
     const item = ItemEntity.createNew({
       name: "Fuga",
+      abbr: "fuga",
       price: 200,
       type: "ice",
     });
@@ -63,6 +65,7 @@ describe("[db] itemRepository", async () => {
   test("itemRepository.findAll", async () => {
     const item = ItemEntity.createNew({
       name: "Foo",
+      abbr: "foo",
       price: 300,
       type: "hotOre",
     });
@@ -74,6 +77,7 @@ describe("[db] itemRepository", async () => {
   test("itemRepository.delete", async () => {
     const item = ItemEntity.createNew({
       name: "Bar",
+      abbr: "bar",
       price: 400,
       type: "milk",
     });
