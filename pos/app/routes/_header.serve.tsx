@@ -4,6 +4,7 @@ import {
   type MetaFunction,
   useSubmit,
 } from "@remix-run/react";
+import { id2abbr } from "common/data/items";
 import { orderConverter } from "common/firebase-utils/converter";
 import { collectionSub } from "common/firebase-utils/subscription";
 import { stringToJSONSchema } from "common/lib/custom-zod";
@@ -107,7 +108,7 @@ export default function Serve() {
                             )}
                           >
                             <CardContent>
-                              <h3 className="font-bold">{item.name}</h3>
+                              <h3 className="font-bold">{id2abbr(item.id)}</h3>
                             </CardContent>
                           </Card>
                         </div>

@@ -85,12 +85,21 @@ export const ITEM_MASTER = {
   },
 } as const satisfies RawItemSource;
 
+type Keys = keyof typeof ITEM_MASTER;
+
+type Values = (typeof ITEM_MASTER)[Keys];
+
 export const itemSource: WithId<ItemEntity>[] = Object.entries(ITEM_MASTER).map(
   ([_key, item]) => ItemEntity.fromItem({ ...item, assignee: null }),
 );
 
-export const key2item = (key: keyof typeof ITEM_MASTER) =>
+export const key2item = (key: Keys) =>
   ItemEntity.fromItem({ ...ITEM_MASTER[key], assignee: null });
+
+export const id2abbr = (id: string): Values["abbr"] | undefined =>
+  Object.entries(ITEM_MASTER)
+    .map(([_key, value]) => value)
+    .find((item) => item.id === id)?.abbr;
 
 export const keyEventHandler = (
   e: KeyboardEvent,
