@@ -224,14 +224,18 @@ export default function Dashboard() {
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <CardTitle>{`No. ${detailOrder.orderId}`}</CardTitle>
+                      <CardTitle>合計金額: {detailOrder.total}円</CardTitle>
                       <CardTitle className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-stone-500">
                         {detailOrder.items.length}
                       </CardTitle>
                       <div className="grid">
                         <div className="px-2 text-right">
+                          受付時刻:{" "}
                           {dayjs(detailOrder.createdAt).format("H:mm:ss")}
                         </div>
-                        <p>時間 {diffTime(detailOrder)}</p>
+                        <p className="px-2 text-right">
+                          時間: {diffTime(detailOrder)}
+                        </p>
                       </div>
                     </div>
                   </CardHeader>
@@ -247,7 +251,6 @@ export default function Dashboard() {
                         </div>
                       ))}
                     </div>
-                    <p>{detailOrder.orderReady}</p>
                     {detailOrder?.description && (
                       <div className="mt-4 flex rounded-md bg-gray-200 p-1">
                         <div className="flex-none">備考：</div>
