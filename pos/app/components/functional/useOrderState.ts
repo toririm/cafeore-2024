@@ -26,7 +26,7 @@ type ApplyDiscount = Action<
 >;
 type RemoveDiscount = Action<"removeDiscount">;
 type SetReceived = Action<"setReceived", { received: string }>;
-type SetDescription = Action<"setDescription", { description: string }>;
+
 /**
  * オーダーの状態を更新するためのアクション型
  */
@@ -38,8 +38,7 @@ export type OrderAction =
   | MutateItem
   | ApplyDiscount
   | RemoveDiscount
-  | SetReceived
-  | SetDescription;
+  | SetReceived;
 
 type OrderReducer<T extends OrderAction> = (
   state: OrderEntity,
@@ -96,12 +95,6 @@ const setReceived: OrderReducer<SetReceived> = (state, action) => {
   return updated;
 };
 
-const setDescription: OrderReducer<SetDescription> = (state, action) => {
-  const updated = state.clone();
-  updated.addComment("cashier", action.description);
-  return updated;
-};
-
 const reducer: OrderReducer<OrderAction> = (state, action): OrderEntity => {
   switch (action.type) {
     case "clear":
@@ -118,8 +111,6 @@ const reducer: OrderReducer<OrderAction> = (state, action): OrderEntity => {
       return mutateItem(state, action);
     case "setReceived":
       return setReceived(state, action);
-    case "setDescription":
-      return setDescription(state, action);
     case "updateOrderId":
       return updateOrderId(state, action);
   }
@@ -128,15 +119,6 @@ const reducer: OrderReducer<OrderAction> = (state, action): OrderEntity => {
 /**
  * オーダーの状態を管理する
  *
- * reducer が受け付ける状態には下記がある：
- * - clear
- * - applyDiscount
- * - removeDiscount
- * - addItem
- * - mutateItem
- * - setReceived
- * - setDescription
- * - updateOrderId
  * @returns オーダーの状態とそれを更新する関数
  */
 const useOrderState = () =>

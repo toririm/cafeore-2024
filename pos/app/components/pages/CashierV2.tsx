@@ -1,7 +1,7 @@
 import type { WithId } from "common/lib/typeguard";
 import type { ItemEntity } from "common/models/item";
 import type { OrderEntity } from "common/models/order";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePrinter } from "~/label/printer";
 import { useInputStatus } from "../functional/useInputStatus";
 import { useLatestOrderId } from "../functional/useLatestOrderId";
@@ -39,6 +39,7 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
   const [newOrder, newOrderDispatch] = useOrderState();
   const { inputStatus, proceedStatus, previousStatus, resetStatus } =
     useInputStatus();
+  const [descComment, setDescComment] = useState("");
   const [UISession, renewUISession] = useUISession();
   const { nextOrderId } = useLatestOrderId(orders);
 
@@ -66,6 +67,10 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
     // 送信する直前に createdAt を更新する
     const submitOne = newOrder.clone();
     submitOne.nowCreated();
+    // 備考を追加
+    submitOne.addComment("cashier", descComment);
+    // TODO: 別関数に切り出す
+    // ラベル印刷
     const items = submitOne.items.toSorted((a, b) =>
       a.name.localeCompare(b.name),
     );
@@ -80,7 +85,7 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
     printer.print();
     submitPayload(submitOne);
     resetAll();
-  }, [newOrder, resetAll, printer, submitPayload]);
+  }, [newOrder, resetAll, printer, submitPayload, descComment]);
 
   const keyEventHandlers = useMemo(() => {
     return {
@@ -176,14 +181,7 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
             <div className="pt-5">
               <AttractiveTextArea
                 key={`Description-${UISession.key}`}
-                onTextSet={useCallback(
-                  (text) =>
-                    newOrderDispatch({
-                      type: "setDescription",
-                      description: text,
-                    }),
-                  [newOrderDispatch],
-                )}
+                onTextSet={setDescComment}
                 focus={inputStatus === "description"}
               />
             </div>
