@@ -45,7 +45,12 @@ export class ItemEntity implements Item {
     private _assignee: string | null,
   ) {}
 
-  static createNew({ name, abbr, price, type }: Omit<Item, "assignee">): ItemEntity {
+  static createNew({
+    name,
+    abbr,
+    price,
+    type,
+  }: Omit<Item, "assignee">): ItemEntity {
     return new ItemEntity(undefined, name, abbr, price, type, null);
   }
 
