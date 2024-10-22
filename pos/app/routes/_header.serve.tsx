@@ -96,7 +96,7 @@ export default function Serve() {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="mb-4 grid grid-cols-2 gap-2">
                       {order.items.map((item, idx) => (
                         <div key={`${idx}-${item.id}`}>
                           <Card
@@ -108,7 +108,9 @@ export default function Serve() {
                             )}
                           >
                             <CardContent>
-                              <h3 className="font-bold">{id2abbr(item.id)}</h3>
+                              <h3 className="text-center font-bold">
+                                {id2abbr(item.id)}
+                              </h3>
                             </CardContent>
                           </Card>
                         </div>
@@ -120,7 +122,7 @@ export default function Serve() {
                         {order.comments.map((comment, index) => (
                           <div
                             key={`${comment.author}-${comment.text}`}
-                            className="mt-4 flex rounded-md bg-gray-200 p-1"
+                            className="my-2 flex rounded-md bg-gray-200 p-1"
                           >
                             <div className="flex-none">{comment.author}：</div>
                             <div>{comment.text}</div>
