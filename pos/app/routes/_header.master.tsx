@@ -76,14 +76,18 @@ export default function FielsOfMaster() {
                         </div>
                       ))}
                     </div>
-                    {/* <p>{order.orderReady}</p> */}
-                    {/* <div className="flex justify-between pt-4">
-                      <p className="flex items-center">{`提供時間：${order.servedAt?.toLocaleTimeString()}`}</p>
-                    </div> */}
-                    {order?.description && (
-                      <div className="mt-4 flex rounded-md bg-gray-200 p-1">
-                        <div className="flex-none">備考：</div>
-                        <div>{order?.description}</div>
+
+                    {order?.comments.length !== 0 && (
+                      <div>
+                        {order.comments.map((comment, index) => (
+                          <div
+                            key={`${comment.author}-${comment.text}`}
+                            className="mt-4 flex rounded-md bg-gray-200 p-1"
+                          >
+                            <div className="flex-none">{comment.author}：</div>
+                            <div>{comment.text}</div>
+                          </div>
+                        ))}
                       </div>
                     )}
                   </CardContent>

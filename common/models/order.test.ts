@@ -132,7 +132,7 @@ describe("[unit] order entity", () => {
       servedAt: null,
       items: itemEntities.slice(0, 1),
       total: 900,
-      description: null,
+      comments: [],
       billingAmount: 900,
       received: 0,
       discountOrderId: null,
@@ -189,7 +189,7 @@ describe("[unit] order entity", () => {
       servedAt: null,
       items: itemEntities,
       total: 900,
-      description: null,
+      comments: [],
       billingAmount: 900,
       received: 0,
       discountOrderId: null,
@@ -213,5 +213,35 @@ describe("[unit] order entity", () => {
     expect(order.discount).toBe(100);
     expect(order.total).toBe(500);
     expect(order.billingAmount).toBe(400);
+  });
+
+  test("addComment", () => {
+    const order = OrderEntity.fromOrder({
+      id: "1",
+      orderId: 99999,
+      createdAt: new Date(),
+      readyAt: null,
+      servedAt: null,
+      items: [],
+      total: 900,
+      comments: [],
+      billingAmount: 900,
+      received: 0,
+      discountOrderId: null,
+      discountOrderCups: 0,
+      DISCOUNT_PER_CUP: 100,
+      discount: 0,
+    });
+
+    expect(order.comments).toEqual([]);
+    order.addComment("cashier", "testAddComments");
+    expect(order.comments).toEqual([
+      { author: "cashier", text: "testAddComments" },
+    ]);
+    order.addComment("master", "2");
+    expect(order.comments).toEqual([
+      { author: "cashier", text: "testAddComments" },
+      { author: "master", text: "2" },
+    ]);
   });
 });

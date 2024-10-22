@@ -65,8 +65,8 @@ export default function Casher() {
   const [queue, setQueue] = useState<WithId<ItemEntity>[]>([]);
   order.items = queue;
   const charge = recieved - order.total;
-  const [description, setDescription] = useState("");
-  order.description = description;
+  // const [description, setDescription] = useState("");
+  // order.description = description;
 
   const [discountNo, setDiscountNo] = useState("");
 
@@ -82,7 +82,7 @@ export default function Casher() {
     console.log("送信");
     setQueue([]);
     setReceived(0);
-    setDescription("");
+    // setDescription("");
   };
 
   const findByOrderId = (
@@ -276,8 +276,8 @@ export default function Casher() {
             name="description"
             type="string"
             placeholder="備考欄"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            // value={description}
+            // onChange={(e) => setDescription(e.target.value)}
           />
           <div>割引No.</div>
           <InputOTP
@@ -326,7 +326,7 @@ export default function Casher() {
                     備考欄・金額を確認してください
                   </AlertDialogTitle>
                   <AlertDialogDescription>
-                    <div>備考欄： {order.description}</div>
+                    {/* <div>備考欄： {order.description}</div> */}
                     <div>小計： {order.total} 円</div>
                     <div>割引： {order.discount} 円</div>
                     <div>合計： {order.billingAmount} 円</div>

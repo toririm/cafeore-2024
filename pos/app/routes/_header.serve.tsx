@@ -114,10 +114,18 @@ export default function Serve() {
                         </div>
                       ))}
                     </div>
-                    {order?.description && (
-                      <div className="mt-4 flex rounded-md bg-gray-200 p-1">
-                        <div className="flex-none">備考：</div>
-                        <div>{order?.description}</div>
+
+                    {order?.comments.length !== 0 && (
+                      <div>
+                        {order.comments.map((comment, index) => (
+                          <div
+                            key={`${comment.author}-${comment.text}`}
+                            className="mt-4 flex rounded-md bg-gray-200 p-1"
+                          >
+                            <div className="flex-none">{comment.author}：</div>
+                            <div>{comment.text}</div>
+                          </div>
+                        ))}
                       </div>
                     )}
                     <div className="mt-4 flex justify-between">

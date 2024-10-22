@@ -2,6 +2,10 @@ import { z } from "zod";
 import type { WithId } from "../lib/typeguard";
 import { ItemEntity, itemSchema } from "./item";
 
+const AUTHORS = ["cashier", "master", "serve", "others"] as const;
+
+export type Author = (typeof AUTHORS)[number];
+
 export const orderSchema = z.object({
   id: z.string().optional(), // Firestore のドキュメント ID
   orderId: z.number(),
@@ -10,7 +14,12 @@ export const orderSchema = z.object({
   servedAt: z.date().nullable(),
   items: z.array(itemSchema.required()),
   total: z.number(), // sum of item.price
-  description: z.string().nullable(),
+  comments: z.array(
+    z.object({
+      author: z.enum(AUTHORS),
+      text: z.string(),
+    }),
+  ),
   billingAmount: z.number(), // total - discount
   received: z.number(), // お預かり金額
   discountOrderId: z.number().nullable(),
@@ -35,7 +44,7 @@ export class OrderEntity implements Order {
     private _servedAt: Date | null,
     private _items: WithId<ItemEntity>[],
     private _total: number,
-    private _description: string | null,
+    private _comments: Order["comments"],
     private _billingAmount: number,
     private _received: number,
     private _discountOrderId: number | null,
@@ -53,7 +62,7 @@ export class OrderEntity implements Order {
       null,
       [],
       0,
-      null,
+      [],
       0,
       0,
       null,
@@ -76,7 +85,7 @@ export class OrderEntity implements Order {
       order.servedAt,
       order.items.map((item) => ItemEntity.fromItem(item)),
       order.total,
-      order.description,
+      order.comments,
       order.billingAmount,
       order.received,
       order.discountOrderId,
@@ -128,16 +137,16 @@ export class OrderEntity implements Order {
     return this._total;
   }
 
-  get description() {
-    return this._description;
+  get comments() {
+    return this._comments;
   }
-  set description(description: string | null) {
-    if (description === "") {
-      this._description = null;
-    } else {
-      this._description = description;
-    }
-  }
+  // set comments(a) {
+  //   if (description === "") {
+  //     this._description = null;
+  //   } else {
+  //     this._description = description;
+  //   }
+  // }
 
   get billingAmount() {
     this._billingAmount = this.total - this.discount;
@@ -198,6 +207,10 @@ export class OrderEntity implements Order {
    */
   undoReady() {
     this._readyAt = null;
+  }
+
+  addComment(author: Author, text: string) {
+    this._comments.push({ author, text });
   }
 
   /**
@@ -269,7 +282,7 @@ export class OrderEntity implements Order {
       servedAt: this.servedAt,
       items: this.items.map((item) => item.toItem()),
       total: this.total,
-      description: this.description,
+      comments: this.comments,
       billingAmount: this.billingAmount,
       received: this.received,
       discountOrderId: this.discountOrderId,
