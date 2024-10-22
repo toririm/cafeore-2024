@@ -6,6 +6,7 @@ import { collectionSub } from "common/firebase-utils/subscription";
 import type { OrderEntity } from "common/models/order";
 import dayjs from "dayjs";
 import { orderBy } from "firebase/firestore";
+import { useState } from "react";
 import {
   Bar,
   BarChart,
@@ -50,6 +51,7 @@ export default function Dashboard() {
     collectionSub({ converter: orderConverter }, orderBy("orderId", "desc")),
   );
   const items = itemSource;
+  const [focusedOrderId, setFocusedOrderId] = useState(1);
   const unseved = orders?.reduce((acc, cur) => {
     if (cur.servedAt == null) {
       return acc + 1;
@@ -130,6 +132,7 @@ export default function Dashboard() {
       fill: "var(--color-milk)",
     },
   ];
+  const detailOrder = orders?.find((order) => order.orderId === focusedOrderId);
   return (
     <div className="p-4 font-sans">
       <div className="flex justify-between pb-4">
@@ -155,6 +158,7 @@ export default function Dashboard() {
                 <TableRow
                   className={cn(pass15Minutes(order) === true && "bg-red-300")}
                   key={order.orderId}
+                  onClick={() => setFocusedOrderId(order.orderId)}
                 >
                   <TableCell className="font-medium">{order.orderId}</TableCell>
                   <TableCell>{numOfCups(order)}</TableCell>
@@ -214,6 +218,46 @@ export default function Dashboard() {
                 </ChartContainer>
               </CardContent>
             </Card>
+            {detailOrder && (
+              <div key={detailOrder.id}>
+                <Card>
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <CardTitle>{`No. ${detailOrder.orderId}`}</CardTitle>
+                      <CardTitle className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-stone-500">
+                        {detailOrder.items.length}
+                      </CardTitle>
+                      <div className="grid">
+                        <div className="px-2 text-right">
+                          {dayjs(detailOrder.createdAt).format("H:mm:ss")}
+                        </div>
+                        <p>時間 {diffTime(detailOrder)}</p>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 gap-2">
+                      {detailOrder.items.map((item, idx) => (
+                        <div key={`${idx}-${item.id}`}>
+                          <Card className={cn("pt-6")}>
+                            <CardContent>
+                              <h3 className="font-bold">{item.name}</h3>
+                            </CardContent>
+                          </Card>
+                        </div>
+                      ))}
+                    </div>
+                    <p>{detailOrder.orderReady}</p>
+                    {detailOrder?.description && (
+                      <div className="mt-4 flex rounded-md bg-gray-200 p-1">
+                        <div className="flex-none">備考：</div>
+                        <div>{detailOrder?.description}</div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+            )}
           </div>
         </div>
       </div>
