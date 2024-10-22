@@ -251,10 +251,17 @@ export default function Dashboard() {
                         </div>
                       ))}
                     </div>
-                    {detailOrder?.description && (
-                      <div className="mt-4 flex rounded-md bg-gray-200 p-1">
-                        <div className="flex-none">備考：</div>
-                        <div>{detailOrder?.description}</div>
+                    {detailOrder?.comments.length === 0 && (
+                      <div>
+                        {detailOrder.comments.map((comment, index) => (
+                          <div
+                            key={`${comment.author}-${comment.text}`}
+                            className="my-2 flex rounded-md bg-gray-200 p-1"
+                          >
+                            <div className="flex-none">{comment.author}：</div>
+                            <div>{comment.text}</div>
+                          </div>
+                        ))}
                       </div>
                     )}
                   </CardContent>
