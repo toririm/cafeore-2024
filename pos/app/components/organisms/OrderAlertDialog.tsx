@@ -55,7 +55,7 @@ const OrderAlertDialog = forwardRef<
             お釣り: &yen;{order.getCharge()}
           </AlertDialogDescription>
           <AlertDialogDescription>
-            備考: {order.description}
+            {/* 備考: {order.description} */}
           </AlertDialogDescription>
           <AlertDialogDescription>
             Tabで選択し、Enterで確定
