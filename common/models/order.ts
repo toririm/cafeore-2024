@@ -210,6 +210,9 @@ export class OrderEntity implements Order {
   }
 
   addComment(author: Author, text: string) {
+    if (text === "") {
+      return;
+    }
     this._comments.push({ author, text });
   }
 
