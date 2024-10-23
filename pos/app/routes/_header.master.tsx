@@ -1,19 +1,37 @@
-import type { MetaFunction } from "@remix-run/react";
+import { parseWithZod } from "@conform-to/zod";
+import {
+  type ClientActionFunction,
+  type MetaFunction,
+  useSubmit,
+} from "@remix-run/react";
 import { id2abbr } from "common/data/items";
 import { orderConverter } from "common/firebase-utils/converter";
 import { collectionSub } from "common/firebase-utils/subscription";
+import { stringToJSONSchema } from "common/lib/custom-zod";
+import { OrderEntity, orderSchema } from "common/models/order";
+import { orderRepository } from "common/repositories/order";
 import dayjs from "dayjs";
 import { orderBy } from "firebase/firestore";
+import { useCallback, useState } from "react";
 import useSWRSubscription from "swr/subscription";
+import { z } from "zod";
 import { RealtimeElapsedTime } from "~/components/molecules/RealtimeElapsedTime";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Input } from "~/components/ui/input";
 import { cn } from "~/lib/utils";
 
 export const meta: MetaFunction = () => {
   return [{ title: "マスター画面" }];
 };
 
+export const clientLoader = async () => {
+  const orders = await orderRepository.findAll();
+  return { orders };
+};
+
 export default function FielsOfMaster() {
+  const submit = useSubmit();
+
   const { data: orders } = useSWRSubscription(
     "orders",
     collectionSub({ converter: orderConverter }, orderBy("orderId", "asc")),
@@ -25,6 +43,20 @@ export default function FielsOfMaster() {
     }
     return acc;
   }, 0);
+
+  const submitComment = useCallback(
+    (servedOrder: OrderEntity) => {
+      const order = servedOrder.clone();
+      order.addComment("master", descComment);
+      submit(
+        { servedOrder: JSON.stringify(order.toOrder()) },
+        { method: "PUT" },
+      );
+    },
+    [submit],
+  );
+
+  const [descComment, setDescComment] = useState("");
 
   return (
     <div className="p-4 font-sans">
@@ -84,7 +116,7 @@ export default function FielsOfMaster() {
                         {order.comments.map((comment, index) => (
                           <div
                             key={`${comment.author}-${comment.text}`}
-                            className="my-2 flex rounded-md bg-gray-200 p-1"
+                            className="my-2 flex rounded-md bg-gray-200 px-2 py-1"
                           >
                             <div className="flex-none">{comment.author}：</div>
                             <div>{comment.text}</div>
@@ -92,6 +124,23 @@ export default function FielsOfMaster() {
                         ))}
                       </div>
                     )}
+                    <div className="my-2">
+                      <Input
+                        id="comment"
+                        name="comment"
+                        type="string"
+                        value={descComment}
+                        placeholder="追記事項"
+                        onChange={(e) => {
+                          setDescComment(e.target.value);
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            submitComment(order);
+                          }
+                        }}
+                      />
+                    </div>
                   </CardContent>
                 </Card>
               </div>
@@ -101,3 +150,27 @@ export default function FielsOfMaster() {
     </div>
   );
 }
+
+export const clientAction: ClientActionFunction = async ({ request }) => {
+  const formData = await request.formData();
+
+  const schema = z.object({
+    servedOrder: stringToJSONSchema.pipe(orderSchema),
+  });
+  const submission = parseWithZod(formData, {
+    schema,
+  });
+  if (submission.status !== "success") {
+    console.error(submission.error);
+    return submission.reply();
+  }
+
+  const { servedOrder } = submission.value;
+  const order = OrderEntity.fromOrder(servedOrder);
+
+  const savedOrder = await orderRepository.save(order);
+
+  console.log("savedOrder", savedOrder);
+
+  return new Response("ok");
+};
