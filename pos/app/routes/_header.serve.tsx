@@ -134,7 +134,7 @@ export default function Serve() {
                       <div>
                         {order.comments.map((comment, index) => (
                           <div
-                            key={`${comment.author}-${comment.text}`}
+                            key={`${index}-${comment.author}`}
                             className="my-2 flex rounded-md bg-gray-200 px-2 py-1"
                           >
                             <div className="flex-none">{comment.author}：</div>
