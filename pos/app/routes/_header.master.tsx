@@ -23,11 +23,6 @@ export const meta: MetaFunction = () => {
   return [{ title: "マスター画面" }];
 };
 
-export const clientLoader = async () => {
-  const orders = await orderRepository.findAll();
-  return { orders };
-};
-
 export default function FielsOfMaster() {
   const submit = useSubmit();
 
