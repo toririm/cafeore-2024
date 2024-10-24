@@ -12,12 +12,11 @@ import { OrderEntity, orderSchema } from "common/models/order";
 import { orderRepository } from "common/repositories/order";
 import dayjs from "dayjs";
 import { orderBy } from "firebase/firestore";
-import { useCallback, useState } from "react";
 import useSWRSubscription from "swr/subscription";
 import { z } from "zod";
+import { InputComment } from "~/components/molecules/InputComment";
 import { RealtimeElapsedTime } from "~/components/molecules/RealtimeElapsedTime";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import { Input } from "~/components/ui/input";
 import { cn } from "~/lib/utils";
 
 export const meta: MetaFunction = () => {
@@ -43,20 +42,6 @@ export default function FielsOfMaster() {
     }
     return acc;
   }, 0);
-
-  const submitComment = useCallback(
-    (servedOrder: OrderEntity) => {
-      const order = servedOrder.clone();
-      order.addComment("master", descComment);
-      submit(
-        { servedOrder: JSON.stringify(order.toOrder()) },
-        { method: "PUT" },
-      );
-    },
-    [submit],
-  );
-
-  const [descComment, setDescComment] = useState("");
 
   return (
     <div className="p-4 font-sans">
@@ -124,23 +109,7 @@ export default function FielsOfMaster() {
                         ))}
                       </div>
                     )}
-                    <div className="my-2">
-                      <Input
-                        id="comment"
-                        name="comment"
-                        type="string"
-                        value={descComment}
-                        placeholder="追記事項"
-                        onChange={(e) => {
-                          setDescComment(e.target.value);
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            submitComment(order);
-                          }
-                        }}
-                      />
-                    </div>
+                    <InputComment order={order} />
                   </CardContent>
                 </Card>
               </div>
