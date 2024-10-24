@@ -12,6 +12,7 @@ import { OrderEntity, orderSchema } from "common/models/order";
 import { orderRepository } from "common/repositories/order";
 import dayjs from "dayjs";
 import { orderBy } from "firebase/firestore";
+import { useCallback } from "react";
 import useSWRSubscription from "swr/subscription";
 import { z } from "zod";
 import { InputComment } from "~/components/molecules/InputComment";
@@ -25,6 +26,17 @@ export const meta: MetaFunction = () => {
 
 export default function FielsOfMaster() {
   const submit = useSubmit();
+  const mutateOrder = useCallback(
+    (servedOrder: OrderEntity, descComment: string) => {
+      const order = servedOrder.clone();
+      order.addComment("master", descComment);
+      submit(
+        { servedOrder: JSON.stringify(order.toOrder()) },
+        { method: "PUT" },
+      );
+    },
+    [submit],
+  );
 
   const { data: orders } = useSWRSubscription(
     "orders",
@@ -104,7 +116,7 @@ export default function FielsOfMaster() {
                         ))}
                       </div>
                     )}
-                    <InputComment order={order} author={"master"} />
+                    <InputComment order={order} mutateOrder={mutateOrder} />
                   </CardContent>
                 </Card>
               </div>

@@ -33,6 +33,18 @@ export const clientLoader = async () => {
 
 export default function Serve() {
   const submit = useSubmit();
+  const mutateOrder = useCallback(
+    (servedOrder: OrderEntity, descComment: string) => {
+      const order = servedOrder.clone();
+      order.addComment("serve", descComment);
+      submit(
+        { servedOrder: JSON.stringify(order.toOrder()) },
+        { method: "PUT" },
+      );
+    },
+    [submit],
+  );
+
   const { data: orders } = useSWRSubscription(
     "orders",
     collectionSub({ converter: orderConverter }, orderBy("orderId", "asc")),
@@ -123,7 +135,7 @@ export default function Serve() {
                         {order.comments.map((comment, index) => (
                           <div
                             key={`${comment.author}-${comment.text}`}
-                            className="my-2 flex rounded-md bg-gray-200 p-1"
+                            className="my-2 flex rounded-md bg-gray-200 px-2 py-1"
                           >
                             <div className="flex-none">{comment.author}：</div>
                             <div>{comment.text}</div>
@@ -131,7 +143,7 @@ export default function Serve() {
                         ))}
                       </div>
                     )}
-                    <InputComment order={order} author={"serve"} />
+                    <InputComment order={order} mutateOrder={mutateOrder} />
                     <div className="mt-4 flex justify-between">
                       <Button
                         onClick={() => {
