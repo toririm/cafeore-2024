@@ -16,6 +16,7 @@ import { useCallback } from "react";
 import { toast } from "sonner";
 import useSWRSubscription from "swr/subscription";
 import { z } from "zod";
+import { InputComment } from "~/components/molecules/InputComment";
 import { RealtimeElapsedTime } from "~/components/molecules/RealtimeElapsedTime";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
@@ -130,6 +131,7 @@ export default function Serve() {
                         ))}
                       </div>
                     )}
+                    <InputComment order={order} author={"serve"} />
                     <div className="mt-4 flex justify-between">
                       <Button
                         onClick={() => {

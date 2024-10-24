@@ -1,16 +1,19 @@
 import { useSubmit } from "@remix-run/react";
 import type { WithId } from "common/lib/typeguard";
-import type { OrderEntity } from "common/models/order";
+import type { Author, OrderEntity } from "common/models/order";
 import { useCallback, useState } from "react";
 import { Input } from "../ui/input";
 
-export const InputComment = ({ order }: { order: WithId<OrderEntity> }) => {
+export const InputComment = ({
+  order,
+  author,
+}: { order: WithId<OrderEntity>; author: Author }) => {
   const submit = useSubmit();
   const [descComment, setDescComment] = useState("");
   const submitComment = useCallback(
-    (servedOrder: OrderEntity, descComment: string) => {
+    (servedOrder: OrderEntity, author: Author, descComment: string) => {
       const order = servedOrder.clone();
-      order.addComment("master", descComment);
+      order.addComment(author, descComment);
       submit(
         { servedOrder: JSON.stringify(order.toOrder()) },
         { method: "PUT" },
@@ -25,13 +28,13 @@ export const InputComment = ({ order }: { order: WithId<OrderEntity> }) => {
         name="comment"
         type="string"
         value={descComment}
-        placeholder="追記事項"
+        placeholder="コメント"
         onChange={(e) => {
           setDescComment(e.target.value);
         }}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
-            submitComment(order, descComment);
+            submitComment(order, author, descComment);
             setDescComment("");
           }
         }}

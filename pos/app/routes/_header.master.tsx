@@ -109,7 +109,7 @@ export default function FielsOfMaster() {
                         ))}
                       </div>
                     )}
-                    <InputComment order={order} />
+                    <InputComment order={order} author={"master"} />
                   </CardContent>
                 </Card>
               </div>
