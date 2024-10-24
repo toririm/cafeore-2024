@@ -16,6 +16,7 @@ import { useCallback } from "react";
 import { toast } from "sonner";
 import useSWRSubscription from "swr/subscription";
 import { z } from "zod";
+import { InputComment } from "~/components/molecules/InputComment";
 import { RealtimeElapsedTime } from "~/components/molecules/RealtimeElapsedTime";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
@@ -32,6 +33,18 @@ export const clientLoader = async () => {
 
 export default function Serve() {
   const submit = useSubmit();
+  const mutateOrder = useCallback(
+    (servedOrder: OrderEntity, descComment: string) => {
+      const order = servedOrder.clone();
+      order.addComment("serve", descComment);
+      submit(
+        { servedOrder: JSON.stringify(order.toOrder()) },
+        { method: "PUT" },
+      );
+    },
+    [submit],
+  );
+
   const { data: orders } = useSWRSubscription(
     "orders",
     collectionSub({ converter: orderConverter }, orderBy("orderId", "asc")),
@@ -121,8 +134,8 @@ export default function Serve() {
                       <div>
                         {order.comments.map((comment, index) => (
                           <div
-                            key={`${comment.author}-${comment.text}`}
-                            className="my-2 flex rounded-md bg-gray-200 p-1"
+                            key={`${index}-${comment.author}`}
+                            className="my-2 flex rounded-md bg-gray-200 px-2 py-1"
                           >
                             <div className="flex-none">{comment.author}：</div>
                             <div>{comment.text}</div>
@@ -130,6 +143,7 @@ export default function Serve() {
                         ))}
                       </div>
                     )}
+                    <InputComment order={order} mutateOrder={mutateOrder} />
                     <div className="mt-4 flex justify-between">
                       <Button
                         onClick={() => {
