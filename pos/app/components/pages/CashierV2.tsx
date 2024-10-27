@@ -2,6 +2,7 @@ import type { WithId } from "common/lib/typeguard";
 import type { ItemEntity } from "common/models/item";
 import type { OrderEntity } from "common/models/order";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { Switch } from "~/components/ui/switch";
 import { usePrinter } from "~/label/printer";
 import { useInputStatus } from "../functional/useInputStatus";
 import { useLatestOrderId } from "../functional/useLatestOrderId";
@@ -12,6 +13,7 @@ import { AttractiveTextArea } from "../molecules/AttractiveTextArea";
 import { InputHeader } from "../molecules/InputHeader";
 import { PrinterStatus } from "../molecules/PrinterStatus";
 import { DiscountInput } from "../organisms/DiscountInput";
+import { ItemButtons } from "../organisms/ItemButtons";
 import { OrderItemEdit } from "../organisms/OrderItemEdit";
 import { OrderReceivedInput } from "../organisms/OrderReceivedInput";
 import {
@@ -40,6 +42,7 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
   const { inputStatus, proceedStatus, previousStatus, resetStatus } =
     useInputStatus();
   const [descComment, setDescComment] = useState("");
+  const [menuOpen, setMenuOpen] = useState(true);
   const [UISession, renewUISession] = useUISession();
   const { nextOrderId } = useLatestOrderId(orders);
 
@@ -112,14 +115,26 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
     };
   }, [keyEventHandlers]);
 
+  const itemMenu = (
+    <ItemButtons
+      items={items ?? []}
+      addItem={useCallback(
+        (item) => newOrderDispatch({ type: "addItem", item }),
+        [newOrderDispatch],
+      )}
+    />
+  );
+
   return (
     <>
       <div className="p-4">
         <div className="flex justify-between">
           <div className="font-extrabold text-3xl">No.{newOrder.orderId}</div>
+          <Switch checked={menuOpen} onCheckedChange={setMenuOpen} />
           <PrinterStatus status={printer.status} />
         </div>
         <div className="flex gap-5 px-2">
+          <div>{menuOpen && itemMenu}</div>
           <div className="flex-1">
             <InputHeader
               title="商品"
