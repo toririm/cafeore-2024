@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
  * connect: () => void,
  * status: "init" | "disconnected" | "connecting" | "connected",
  * addQueue: (text: string) => void,
+ * addNumber: (num: number) => void,
  * print: () => void
  * }}
  */
@@ -57,9 +58,24 @@ export const usePrinter = () => {
     }
 
     prn.addTextLang("ja");
-    prn.addTextDouble(true, true);
+    prn.addTextSize(2, 2);
     prn.addText(` ${text}`);
     prn.addFeedLine(5);
+  };
+
+  const addNumber = (num) => {
+    const prn = printerRef.current;
+    if (!prn) {
+      setConnStat("disconnected");
+      console.error("Printer not connected");
+      return;
+    }
+
+    prn.addTextLang("ja");
+    prn.addTextSize(5, 5);
+    prn.addText(`No. ${num.toString()}\n`);
+    prn.addTextSize(4, 4);
+    prn.addText("--------\n");
   };
 
   const print = () => {
@@ -77,6 +93,7 @@ export const usePrinter = () => {
     connect,
     status,
     addQueue,
+    addNumber,
     print,
   };
 

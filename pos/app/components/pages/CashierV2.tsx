@@ -86,7 +86,7 @@ const CashierV2 = ({ items, orders, submitPayload, syncOrder }: props) => {
         `No.${submitOne.orderId}\n${item.name}\n${idx + 1}/${items.length}\n${assigneeView}`,
       );
     }
-    printer.addQueue("　\n　\n　\n　");
+    printer.addNumber(submitOne.orderId);
     printer.print();
     submitPayload(submitOne);
     resetAll();
