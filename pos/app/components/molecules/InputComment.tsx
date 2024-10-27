@@ -23,7 +23,9 @@ export const InputComment = ({ order, mutateOrder }: props) => {
           setDescComment(e.target.value);
         }}
         onKeyDown={(e) => {
-          if (e.key === "Enter") {
+          // MacOSではIME確定時のEnterでもkey === "Enter"が発火してしまう
+          // deprecatedではあるがkeyCodeを使う
+          if (e.keyCode === 13) {
             mutateOrder(order, descComment);
             setDescComment("");
           }
