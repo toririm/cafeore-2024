@@ -6,6 +6,12 @@ const AUTHORS = ["cashier", "master", "serve", "others"] as const;
 
 export type Author = (typeof AUTHORS)[number];
 
+const commentSchema = z.object({
+  author: z.enum(AUTHORS),
+  text: z.string(),
+  createdAt: z.date(),
+});
+
 export const orderSchema = z.object({
   id: z.string().optional(), // Firestore のドキュメント ID
   orderId: z.number(),
@@ -14,12 +20,7 @@ export const orderSchema = z.object({
   servedAt: z.date().nullable(),
   items: z.array(itemSchema.required()),
   total: z.number(), // sum of item.price
-  comments: z.array(
-    z.object({
-      author: z.enum(AUTHORS),
-      text: z.string(),
-    }),
-  ),
+  comments: z.array(commentSchema),
   billingAmount: z.number(), // total - discount
   received: z.number(), // お預かり金額
   discountOrderId: z.number().nullable(),
@@ -30,8 +31,37 @@ export const orderSchema = z.object({
 
 export type Order = z.infer<typeof orderSchema>;
 
+type Comment = z.infer<typeof commentSchema>;
+
 // 途中から割引額を変更する場合はこの値を変更する
 const STATIC_DISCOUNT_PER_CUP = 100;
+
+class CommentEntity implements Comment {
+  constructor(
+    public readonly author: Author,
+    public readonly text: string,
+    public readonly createdAt: Date,
+  ) {}
+
+  static fromComment(comment: Comment): CommentEntity {
+    return new CommentEntity(comment.author, comment.text, comment.createdAt);
+  }
+
+  static createNew({
+    author,
+    text,
+  }: Omit<Comment, "createdAt">): CommentEntity {
+    return new CommentEntity(author, text, new Date());
+  }
+
+  toComment(): Comment {
+    return {
+      author: this.author,
+      text: this.text,
+      createdAt: this.createdAt,
+    };
+  }
+}
 
 export class OrderEntity implements Order {
   order: ItemEntity | undefined;
@@ -44,7 +74,7 @@ export class OrderEntity implements Order {
     private _servedAt: Date | null,
     private _items: WithId<ItemEntity>[],
     private _total: number,
-    private _comments: Order["comments"],
+    private _comments: CommentEntity[],
     private _billingAmount: number,
     private _received: number,
     private _discountOrderId: number | null,
@@ -85,7 +115,7 @@ export class OrderEntity implements Order {
       order.servedAt,
       order.items.map((item) => ItemEntity.fromItem(item)),
       order.total,
-      order.comments,
+      order.comments.map((comment) => CommentEntity.fromComment(comment)),
       order.billingAmount,
       order.received,
       order.discountOrderId,
@@ -140,13 +170,6 @@ export class OrderEntity implements Order {
   get comments() {
     return this._comments;
   }
-  // set comments(a) {
-  //   if (description === "") {
-  //     this._description = null;
-  //   } else {
-  //     this._description = description;
-  //   }
-  // }
 
   get billingAmount() {
     this._billingAmount = this.total - this.discount;
@@ -209,11 +232,16 @@ export class OrderEntity implements Order {
     this._readyAt = null;
   }
 
+  /**
+   * コメントを追加する
+   * @param author コメントの投稿者
+   * @param text コメントの内容
+   */
   addComment(author: Author, text: string) {
     if (text === "") {
       return;
     }
-    this._comments.push({ author, text });
+    this._comments.push(CommentEntity.createNew({ author, text }));
   }
 
   /**
@@ -285,7 +313,7 @@ export class OrderEntity implements Order {
       servedAt: this.servedAt,
       items: this.items.map((item) => item.toItem()),
       total: this.total,
-      comments: this.comments,
+      comments: this.comments.map((comment) => comment.toComment()),
       billingAmount: this.billingAmount,
       received: this.received,
       discountOrderId: this.discountOrderId,

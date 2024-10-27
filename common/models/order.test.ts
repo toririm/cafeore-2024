@@ -235,13 +235,10 @@ describe("[unit] order entity", () => {
 
     expect(order.comments).toEqual([]);
     order.addComment("cashier", "testAddComments");
-    expect(order.comments).toEqual([
-      { author: "cashier", text: "testAddComments" },
-    ]);
+    expect(order.comments[0].author).toBe("cashier");
+    expect(order.comments[0].text).toBe("testAddComments");
     order.addComment("master", "2");
-    expect(order.comments).toEqual([
-      { author: "cashier", text: "testAddComments" },
-      { author: "master", text: "2" },
-    ]);
+    expect(order.comments[1].author).toBe("master");
+    expect(order.comments[1].text).toBe("2");
   });
 });
