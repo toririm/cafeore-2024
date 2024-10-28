@@ -1,8 +1,7 @@
 name: PR bot
 
 on:
-  pull_request:
-    types: ["opened"]
+  pull_request
 
 permissions:
   pull-requests: write
