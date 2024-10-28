@@ -17,7 +17,7 @@ import { DiscountInput } from "../organisms/DiscountInput";
 import { ItemButtons } from "../organisms/ItemButtons";
 import { OrderItemEdit } from "../organisms/OrderItemEdit";
 import { OrderReceivedInput } from "../organisms/OrderReceivedInput";
-import { Button } from "../ui/button";
+import { SubmitSection } from "../organisms/SubmitSection";
 import { Label } from "../ui/label";
 
 type props = {
@@ -243,11 +243,11 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
               focus={inputStatus === "submit"}
               number={5}
             />
-            <div className="pt-5">
-              <div className="flex justify-center">
-                <Button onClick={() => submitOrder()}>送信</Button>
-              </div>
-            </div>
+            <SubmitSection
+              submitOrder={submitOrder}
+              order={newOrder}
+              focus={inputStatus === "submit"}
+            />
           </div>
         </div>
       </div>
