@@ -1,5 +1,9 @@
 import { parseWithZod } from "@conform-to/zod";
-import { type ClientActionFunction, useSubmit } from "@remix-run/react";
+import {
+  type ClientActionFunction,
+  type MetaFunction,
+  useSubmit,
+} from "@remix-run/react";
 import { itemSource } from "common/data/items";
 import { orderConverter } from "common/firebase-utils/converter";
 import { collectionSub } from "common/firebase-utils/subscription";
@@ -10,6 +14,10 @@ import { useCallback } from "react";
 import useSWRSubscription from "swr/subscription";
 import { z } from "zod";
 import { CashierV2 } from "~/components/pages/CashierV2";
+
+export const meta: MetaFunction = () => {
+  return [{ title: "レジ / 珈琲・俺POS" }];
+};
 
 // コンポーネントではデータの取得と更新のみを行う
 export default function Cashier() {

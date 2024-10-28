@@ -2,7 +2,9 @@ import type { WithId } from "common/lib/typeguard";
 import type { ItemEntity } from "common/models/item";
 import type { OrderEntity } from "common/models/order";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { Switch } from "~/components/ui/switch";
 import { usePrinter } from "~/label/printer";
+import { cn } from "~/lib/utils";
 import { useInputStatus } from "../functional/useInputStatus";
 import { useLatestOrderId } from "../functional/useLatestOrderId";
 import { useOrderState } from "../functional/useOrderState";
@@ -12,17 +14,11 @@ import { AttractiveTextArea } from "../molecules/AttractiveTextArea";
 import { InputHeader } from "../molecules/InputHeader";
 import { PrinterStatus } from "../molecules/PrinterStatus";
 import { DiscountInput } from "../organisms/DiscountInput";
+import { ItemButtons } from "../organisms/ItemButtons";
 import { OrderItemEdit } from "../organisms/OrderItemEdit";
 import { OrderReceivedInput } from "../organisms/OrderReceivedInput";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "../ui/alert-dialog";
+import { SubmitSection } from "../organisms/SubmitSection";
+import { Label } from "../ui/label";
 
 type props = {
   items: WithId<ItemEntity>[] | undefined;
@@ -37,9 +33,15 @@ type props = {
  */
 const CashierV2 = ({ items, orders, submitPayload }: props) => {
   const [newOrder, newOrderDispatch] = useOrderState();
-  const { inputStatus, proceedStatus, previousStatus, resetStatus } =
-    useInputStatus();
+  const {
+    inputStatus,
+    proceedStatus,
+    previousStatus,
+    resetStatus,
+    setInputStatus,
+  } = useInputStatus();
   const [descComment, setDescComment] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
   const [UISession, renewUISession] = useUISession();
   const { nextOrderId } = useLatestOrderId(orders);
 
@@ -112,14 +114,33 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
     };
   }, [keyEventHandlers]);
 
+  const itemMenu = (
+    <ItemButtons
+      items={items ?? []}
+      addItem={useCallback(
+        (item) => newOrderDispatch({ type: "addItem", item }),
+        [newOrderDispatch],
+      )}
+    />
+  );
+
   return (
     <>
       <div className="p-4">
         <div className="flex justify-between">
           <div className="font-extrabold text-3xl">No.{newOrder.orderId}</div>
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="menu-button"
+              checked={menuOpen}
+              onCheckedChange={setMenuOpen}
+            />
+            <Label htmlFor="menu-button">メニュー表示</Label>
+          </div>
           <PrinterStatus status={printer.status} />
         </div>
         <div className="flex gap-5 px-2">
+          <div>{menuOpen && itemMenu}</div>
           <div className="flex-1">
             <InputHeader
               title="商品"
@@ -127,7 +148,6 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
               number={1}
             />
             <OrderItemEdit
-              items={items}
               order={newOrder}
               onAddItem={useCallback(
                 (item) => newOrderDispatch({ type: "addItem", item }),
@@ -147,9 +167,12 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
                 () => newOrder.discountOrderId !== null,
                 [newOrder],
               )}
+              onClick={useCallback(() => {
+                setInputStatus("items");
+              }, [setInputStatus])}
             />
           </div>
-          <div className="flex-1">
+          <div className={cn("flex-1", menuOpen && "hidden")}>
             <InputHeader
               title="割引"
               focus={inputStatus === "discount"}
@@ -169,10 +192,13 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
                   () => newOrderDispatch({ type: "removeDiscount" }),
                   [newOrderDispatch],
                 )}
+                onClick={useCallback(() => {
+                  setInputStatus("discount");
+                }, [setInputStatus])}
               />
             </div>
           </div>
-          <div className="flex-1">
+          <div className={cn("flex-1", menuOpen && "hidden")}>
             <InputHeader
               title="備考"
               focus={inputStatus === "description"}
@@ -183,6 +209,9 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
                 key={`Description-${UISession.key}`}
                 onTextSet={setDescComment}
                 focus={inputStatus === "description"}
+                onClick={useCallback(() => {
+                  setInputStatus("description");
+                }, [setInputStatus])}
               />
             </div>
           </div>
@@ -202,24 +231,25 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
                 )}
                 focus={inputStatus === "received"}
                 order={newOrder}
+                onClick={useCallback(() => {
+                  setInputStatus("received");
+                }, [setInputStatus])}
               />
             </div>
           </div>
+          <div className={cn("flex-1", menuOpen && "hidden")}>
+            <InputHeader
+              title="確定"
+              focus={inputStatus === "submit"}
+              number={5}
+            />
+            <SubmitSection
+              submitOrder={submitOrder}
+              order={newOrder}
+              focus={inputStatus === "submit"}
+            />
+          </div>
         </div>
-        <AlertDialog open={inputStatus === "submit"}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>送信しますか？</AlertDialogTitle>
-              <AlertDialogDescription>
-                Tabを押してから、Enterで送信
-              </AlertDialogDescription>
-              <AlertDialogDescription>左矢印キーで戻る</AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogAction onClick={submitOrder}>送信</AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
       </div>
     </>
   );

@@ -1,4 +1,4 @@
-import { Pencil2Icon } from "@radix-ui/react-icons";
+import { Cross2Icon, Pencil2Icon } from "@radix-ui/react-icons";
 import type { WithId } from "common/lib/typeguard";
 import { type ItemEntity, type2label } from "common/models/item";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
@@ -13,15 +13,17 @@ type props = {
     idx: number,
     action: (prev: WithId<ItemEntity>) => WithId<ItemEntity>,
   ) => void;
+  removeItem: () => void;
   highlight: boolean;
   focus: boolean;
+  onClick: () => void;
 };
 
 /**
  * Enterでアサイン入力欄を開けて、アイテムのアサインを変更できるコンポーネント
  */
 const ItemAssign = memo(
-  ({ item, idx, mutateItem, focus, highlight }: props) => {
+  ({ item, idx, mutateItem, focus, highlight, onClick, removeItem }: props) => {
     const [assignee, setAssinee] = useState<string | null>(null);
 
     const assignInputRef = useFocusRef<HTMLInputElement>(focus);
@@ -43,7 +45,7 @@ const ItemAssign = memo(
 
     const assignView = useMemo(() => {
       if (item.assignee) return item.assignee;
-      return highlight ? "Enterで入力" : "　";
+      return highlight ? "Enterで入力" : "　　　　　　";
     }, [highlight, item.assignee]);
 
     return (
@@ -77,17 +79,26 @@ const ItemAssign = memo(
                   {highlight && (
                     <Pencil2Icon className="w-1/6 stroke-stone-400 pr-1" />
                   )}
-                  <p className="w-5/6 flex-none text-sm text-stone-400">
-                    {assignView}
-                  </p>
+                  <button type="button" onClick={onClick} className="w-5/6">
+                    <p className="flex-none text-sm text-stone-400">
+                      {assignView}
+                    </p>
+                  </button>
                 </div>
               )}
             </div>
           </div>
         </div>
-        <p className="flex items-center justify-end text-right">
-          &yen;{item.price}
-        </p>
+        <div className="flex flex-col">
+          <div className="flex flex-1 items-start justify-end">
+            <button type="button" className="mt-2" onClick={removeItem}>
+              <Cross2Icon className="h-4 w-4 stroke-stone-400" />
+            </button>
+          </div>
+          <div className="flex flex-1 items-start justify-center">
+            <p className="text-right">&yen;{item.price}</p>
+          </div>
+        </div>
       </div>
     );
   },

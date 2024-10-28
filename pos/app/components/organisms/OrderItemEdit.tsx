@@ -5,11 +5,8 @@ import type { OrderEntity } from "common/models/order";
 import { memo, useCallback, useEffect, useState } from "react";
 import { ItemAssign } from "./ItemAssign";
 
-const keys = ["q", "d", "c", "w", "a", "v", "e", "s", "z", "x", "b"];
-
 type props = {
   order: OrderEntity;
-  items: WithId<ItemEntity>[] | undefined;
   focus: boolean;
   onAddItem: (item: WithId<ItemEntity>) => void;
   onRemoveItem: (idx: number) => void;
@@ -18,6 +15,7 @@ type props = {
     action: (prev: WithId<ItemEntity>) => WithId<ItemEntity>,
   ) => void;
   discountOrder: boolean;
+  onClick: () => void;
 };
 
 /**
@@ -31,7 +29,7 @@ const OrderItemEdit = memo(
     onRemoveItem,
     mutateItem,
     order,
-    items,
+    onClick,
   }: props) => {
     const [itemFocus, setItemFocus] = useState<number>(0);
     const [editable, setEditable] = useState(false);
@@ -146,10 +144,16 @@ const OrderItemEdit = memo(
         <div className="grid gap-5 pb-10">
           {order.items.map((item, idx) => (
             <ItemAssign
+              onClick={() => {
+                setEditable(true);
+                setItemFocus(idx);
+                onClick();
+              }}
               key={`${idx}-${item.id}`}
               item={item}
               idx={idx}
               mutateItem={mutateItem}
+              removeItem={() => onRemoveItem(idx)}
               focus={editable && idx === itemFocus}
               highlight={idx === itemFocus}
             />

@@ -77,7 +77,6 @@ const DiscountInput = memo(
               ref={ref}
               value={discountOrderId}
               onChange={(value) => setDiscountOrderId(value)}
-              disabled={!focus}
               {...props}
             />
           </div>
@@ -85,7 +84,6 @@ const DiscountInput = memo(
         <div className="flex flex-col items-center gap-5">
           {!isComplete && (
             <div className="flex items-center">
-              {/* <ExclamationTriangleIcon className="mr-1 stroke-stone-400" /> */}
               <p className="text-sm text-stone-400">
                 3桁すべて入力してください
               </p>
