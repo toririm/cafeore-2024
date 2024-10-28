@@ -1,4 +1,4 @@
-import { Pencil2Icon } from "@radix-ui/react-icons";
+import { Cross2Icon, Pencil2Icon } from "@radix-ui/react-icons";
 import type { WithId } from "common/lib/typeguard";
 import { type ItemEntity, type2label } from "common/models/item";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
@@ -13,6 +13,7 @@ type props = {
     idx: number,
     action: (prev: WithId<ItemEntity>) => WithId<ItemEntity>,
   ) => void;
+  removeItem: () => void;
   highlight: boolean;
   focus: boolean;
   onClick: () => void;
@@ -22,7 +23,7 @@ type props = {
  * Enterでアサイン入力欄を開けて、アイテムのアサインを変更できるコンポーネント
  */
 const ItemAssign = memo(
-  ({ item, idx, mutateItem, focus, highlight, onClick }: props) => {
+  ({ item, idx, mutateItem, focus, highlight, onClick, removeItem }: props) => {
     const [assignee, setAssinee] = useState<string | null>(null);
 
     const assignInputRef = useFocusRef<HTMLInputElement>(focus);
@@ -88,9 +89,16 @@ const ItemAssign = memo(
             </div>
           </div>
         </div>
-        <p className="flex items-center justify-end text-right">
-          &yen;{item.price}
-        </p>
+        <div className="flex flex-col">
+          <div className="flex flex-1 items-start justify-end">
+            <button type="button" className="mt-2" onClick={removeItem}>
+              <Cross2Icon className="h-4 w-4 stroke-stone-400" />
+            </button>
+          </div>
+          <div className="flex flex-1 items-start justify-center">
+            <p className="text-right">&yen;{item.price}</p>
+          </div>
+        </div>
       </div>
     );
   },

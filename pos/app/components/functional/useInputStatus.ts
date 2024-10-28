@@ -34,7 +34,20 @@ const useInputStatus = () => {
     setIdx(0);
   }, []);
 
-  return { inputStatus, proceedStatus, previousStatus, resetStatus };
+  const setInputStatus = useCallback(
+    (status: (typeof InputStatusList)[number]) => {
+      setIdx(InputStatusList.indexOf(status));
+    },
+    [],
+  );
+
+  return {
+    inputStatus,
+    proceedStatus,
+    previousStatus,
+    resetStatus,
+    setInputStatus,
+  };
 };
 
 export { useInputStatus };
