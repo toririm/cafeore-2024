@@ -15,13 +15,14 @@ type props = {
   ) => void;
   highlight: boolean;
   focus: boolean;
+  onClick: () => void;
 };
 
 /**
  * Enterでアサイン入力欄を開けて、アイテムのアサインを変更できるコンポーネント
  */
 const ItemAssign = memo(
-  ({ item, idx, mutateItem, focus, highlight }: props) => {
+  ({ item, idx, mutateItem, focus, highlight, onClick }: props) => {
     const [assignee, setAssinee] = useState<string | null>(null);
 
     const assignInputRef = useFocusRef<HTMLInputElement>(focus);
@@ -43,7 +44,7 @@ const ItemAssign = memo(
 
     const assignView = useMemo(() => {
       if (item.assignee) return item.assignee;
-      return highlight ? "Enterで入力" : "　";
+      return highlight ? "Enterで入力" : "　　　　　　";
     }, [highlight, item.assignee]);
 
     return (
@@ -77,9 +78,11 @@ const ItemAssign = memo(
                   {highlight && (
                     <Pencil2Icon className="w-1/6 stroke-stone-400 pr-1" />
                   )}
-                  <p className="w-5/6 flex-none text-sm text-stone-400">
-                    {assignView}
-                  </p>
+                  <button type="button" onClick={onClick} className="w-5/6">
+                    <p className="flex-none text-sm text-stone-400">
+                      {assignView}
+                    </p>
+                  </button>
                 </div>
               )}
             </div>

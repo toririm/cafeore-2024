@@ -29,13 +29,7 @@ const AttractiveInput = ({ focus, onTextSet, ...props }: props) => {
   }, [text, onTextSet]);
 
   return (
-    <Input
-      value={text}
-      onChange={onChangeHandler}
-      ref={DOMRef}
-      disabled={!focus}
-      {...props}
-    />
+    <Input value={text} onChange={onChangeHandler} ref={DOMRef} {...props} />
   );
 };
 

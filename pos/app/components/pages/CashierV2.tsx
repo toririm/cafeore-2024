@@ -42,7 +42,7 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
   const { inputStatus, proceedStatus, previousStatus, resetStatus } =
     useInputStatus();
   const [descComment, setDescComment] = useState("");
-  const [menuOpen, setMenuOpen] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [UISession, renewUISession] = useUISession();
   const { nextOrderId } = useLatestOrderId(orders);
 

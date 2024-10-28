@@ -29,13 +29,7 @@ const AttractiveTextArea = ({ focus, onTextSet, ...props }: props) => {
   }, [text, onTextSet]);
 
   return (
-    <Textarea
-      value={text}
-      onChange={onChangeHandler}
-      ref={DOMRef}
-      disabled={!focus}
-      {...props}
-    />
+    <Textarea value={text} onChange={onChangeHandler} ref={DOMRef} {...props} />
   );
 };
 
