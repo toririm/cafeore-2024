@@ -42,7 +42,7 @@ import {
 import { cn } from "~/lib/utils";
 
 export const meta: MetaFunction = () => {
-  return [{ title: "注文状況" }];
+  return [{ title: "注文状況 / 珈琲・俺POS" }];
 };
 
 export default function Dashboard() {
