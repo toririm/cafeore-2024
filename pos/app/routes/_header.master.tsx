@@ -21,7 +21,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { cn } from "~/lib/utils";
 
 export const meta: MetaFunction = () => {
-  return [{ title: "マスター画面" }];
+  return [{ title: "マスター / 珈琲・俺POS" }];
 };
 
 export default function FielsOfMaster() {

@@ -23,7 +23,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { cn } from "~/lib/utils";
 
 export const meta: MetaFunction = () => {
-  return [{ title: "提供画面" }];
+  return [{ title: "提供 / 珈琲・俺POS" }];
 };
 
 export const clientLoader = async () => {
