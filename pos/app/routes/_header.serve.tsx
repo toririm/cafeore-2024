@@ -137,7 +137,13 @@ export default function Serve() {
                             key={`${index}-${comment.author}`}
                             className="my-2 flex rounded-md bg-gray-200 px-2 py-1"
                           >
-                            <div className="flex-none">{comment.author}：</div>
+                            <div className="flex-none">
+                              {(comment.author === "cashier" && "レジ") ||
+                                (comment.author === "master" && "マス") ||
+                                (comment.author === "serve" && "サー") ||
+                                (comment.author === "others" && "他")}
+                              ：
+                            </div>
                             <div>{comment.text}</div>
                           </div>
                         ))}
