@@ -135,14 +135,13 @@ export default function Serve() {
                         {order.comments.map((comment, index) => (
                           <div
                             key={`${index}-${comment.author}`}
-                            className="my-2 flex rounded-md bg-gray-200 px-2 py-1"
+                            className="my-2 flex gap-2 rounded-md bg-gray-200 px-2 py-1"
                           >
-                            <div className="flex-none">
-                              {(comment.author === "cashier" && "レジ") ||
-                                (comment.author === "master" && "マス") ||
-                                (comment.author === "serve" && "サー") ||
+                            <div className="flex-none font-bold">
+                              {(comment.author === "cashier" && "レ") ||
+                                (comment.author === "master" && "マ") ||
+                                (comment.author === "serve" && "提") ||
                                 (comment.author === "others" && "他")}
-                              ：
                             </div>
                             <div>{comment.text}</div>
                           </div>
