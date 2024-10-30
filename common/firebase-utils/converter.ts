@@ -6,13 +6,14 @@ import {
   Timestamp,
 } from "firebase/firestore";
 import _ from "lodash";
+import type { ZodSchema } from "zod";
+import type { WithId } from "../lib/typeguard";
 import {
   type GlobalCashierState,
   MasterStateEntity,
-  globalStatSchema,
-} from "models/global";
-import type { ZodSchema } from "zod";
-import type { WithId } from "../lib/typeguard";
+  globalCashierStateSchema,
+  globalMasterStateSchema,
+} from "../models/global";
 import { ItemEntity, itemSchema } from "../models/item";
 import { OrderEntity, orderSchema } from "../models/order";
 
@@ -103,37 +104,31 @@ export const orderConverter: FirestoreDataConverter<WithId<OrderEntity>> = {
 
 export const cashierStateConverter: FirestoreDataConverter<GlobalCashierState> =
   {
-    toFirestore: converter(globalStatSchema).toFirestore,
+    toFirestore: converter(globalCashierStateSchema).toFirestore,
     fromFirestore: (
       snapshot: QueryDocumentSnapshot,
       options: SnapshotOptions,
     ) => {
-      const convertedData = converter(globalStatSchema).fromFirestore(
+      const convertedData = converter(globalCashierStateSchema).fromFirestore(
         snapshot,
         options,
       );
 
-      if (convertedData.id === "cashier-state") {
-        return convertedData;
-      }
-      throw new Error("Invalid data");
+      return convertedData;
     },
   };
 
 export const masterStateConverter: FirestoreDataConverter<MasterStateEntity> = {
-  toFirestore: converter(globalStatSchema).toFirestore,
+  toFirestore: converter(globalMasterStateSchema).toFirestore,
   fromFirestore: (
     snapshot: QueryDocumentSnapshot,
     options: SnapshotOptions,
   ) => {
-    const convertedData = converter(globalStatSchema).fromFirestore(
+    const convertedData = converter(globalMasterStateSchema).fromFirestore(
       snapshot,
       options,
     );
 
-    if (convertedData.id === "master-state") {
-      return MasterStateEntity.fromMasterState(convertedData);
-    }
-    throw new Error("Invalid data");
+    return MasterStateEntity.fromMasterState(convertedData);
   },
 };

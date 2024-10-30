@@ -1,14 +1,14 @@
 import { z } from "zod";
 import { orderSchema } from "./order";
 
-export const GlobalCashierStateSchema = z.object({
+export const globalCashierStateSchema = z.object({
   id: z.literal("cashier-state"),
   edittingOrder: orderSchema,
 });
 
-export type GlobalCashierState = z.infer<typeof GlobalCashierStateSchema>;
+export type GlobalCashierState = z.infer<typeof globalCashierStateSchema>;
 
-const orderStatTypes = ["stop", "operational"] as const;
+export const orderStatTypes = ["stop", "operational"] as const;
 
 export const orderStatSchema = z.object({
   createdAt: z.date(),
@@ -18,16 +18,16 @@ export const orderStatSchema = z.object({
 export type OrderStatType = (typeof orderStatTypes)[number];
 export type OrderStat = z.infer<typeof orderStatSchema>;
 
-export const GlobalMasterStateSchema = z.object({
+export const globalMasterStateSchema = z.object({
   id: z.literal("master-state"),
   orderStats: z.array(orderStatSchema),
 });
 
-export type GlobalMasterState = z.infer<typeof GlobalMasterStateSchema>;
+export type GlobalMasterState = z.infer<typeof globalMasterStateSchema>;
 
 export const globalStatSchema = z.union([
-  GlobalCashierStateSchema,
-  GlobalMasterStateSchema,
+  globalCashierStateSchema,
+  globalMasterStateSchema,
 ]);
 
 export type GlobalStat = z.infer<typeof globalStatSchema>;
@@ -43,7 +43,11 @@ export class MasterStateEntity implements GlobalMasterState {
   }
 
   static createNew(): MasterStateEntity {
-    return new MasterStateEntity("master-state", []);
+    const initOrderStat: OrderStat = {
+      createdAt: new Date(),
+      type: "operational",
+    };
+    return new MasterStateEntity("master-state", [initOrderStat]);
   }
 
   get orderStats() {

@@ -5,18 +5,28 @@ import {
   useSubmit,
 } from "@remix-run/react";
 import { id2abbr } from "common/data/items";
-import { orderConverter } from "common/firebase-utils/converter";
-import { collectionSub } from "common/firebase-utils/subscription";
+import {
+  masterStateConverter,
+  orderConverter,
+} from "common/firebase-utils/converter";
+import { collectionSub, documentSub } from "common/firebase-utils/subscription";
 import { stringToJSONSchema } from "common/lib/custom-zod";
+import {
+  MasterStateEntity,
+  type OrderStatType,
+  orderStatTypes,
+} from "common/models/global";
 import { OrderEntity, orderSchema } from "common/models/order";
+import { masterRepository } from "common/repositories/global";
 import { orderRepository } from "common/repositories/order";
 import dayjs from "dayjs";
 import { orderBy } from "firebase/firestore";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import useSWRSubscription from "swr/subscription";
 import { z } from "zod";
 import { InputComment } from "~/components/molecules/InputComment";
 import { RealtimeElapsedTime } from "~/components/molecules/RealtimeElapsedTime";
+import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { cn } from "~/lib/utils";
 
@@ -37,6 +47,22 @@ export default function FielsOfMaster() {
     },
     [submit],
   );
+  const { data: masterRemoStat } = useSWRSubscription(
+    ["global", "master-state"],
+    documentSub({ converter: masterStateConverter }),
+  );
+  const masterStat = masterRemoStat ?? MasterStateEntity.createNew();
+  const orderStat = useMemo(() => {
+    const state = masterStat.orderStats[masterStat.orderStats.length - 1];
+    return state.type;
+  }, [masterStat]);
+
+  const changeOrderStat = useCallback(
+    (status: OrderStatType) => {
+      submit({ status }, { method: "POST" });
+    },
+    [submit],
+  );
 
   const { data: orders } = useSWRSubscription(
     "orders",
@@ -54,6 +80,20 @@ export default function FielsOfMaster() {
     <div className="p-4 font-sans">
       <div className="flex justify-between pb-4">
         <h1 className="text-3xl">マスター</h1>
+        <Button
+          type="submit"
+          className={cn(
+            orderStat === "operational" ? "bg-red-700" : "bg-sky-700",
+          )}
+          onClick={() =>
+            changeOrderStat(
+              orderStat === "operational" ? "stop" : "operational",
+            )
+          }
+        >
+          {orderStat === "operational" && "オーダーストップする"}
+          {orderStat === "stop" && "オーダー再開する"}
+        </Button>
         <p>提供待ちオーダー数：{unserved}</p>
       </div>
 
@@ -79,8 +119,8 @@ export default function FielsOfMaster() {
                   </CardHeader>
                   <CardContent>
                     <div className="mb-4 grid grid-cols-2 gap-2">
-                      {order.items.map((item) => (
-                        <div key={item.id}>
+                      {order.items.map((item, index) => (
+                        <div key={`${order.id}-${index}-${item.id}`}>
                           <Card
                             className={cn(
                               "pt-6",
@@ -132,7 +172,20 @@ export default function FielsOfMaster() {
   );
 }
 
-export const clientAction: ClientActionFunction = async ({ request }) => {
+// TODO: ファイル分割してリファクタリングする
+export const clientAction: ClientActionFunction = async (args) => {
+  const method = args.request.method;
+  switch (method) {
+    case "PUT":
+      return addComment(args);
+    case "POST":
+      return changeOrderStat(args);
+    default:
+      throw new Error(`Method ${method} is not allowed`);
+  }
+};
+
+export const addComment: ClientActionFunction = async ({ request }) => {
   const formData = await request.formData();
 
   const schema = z.object({
@@ -152,6 +205,34 @@ export const clientAction: ClientActionFunction = async ({ request }) => {
   const savedOrder = await orderRepository.save(order);
 
   console.log("savedOrder", savedOrder);
+
+  return new Response("ok");
+};
+
+export const changeOrderStat: ClientActionFunction = async ({ request }) => {
+  const formData = await request.formData();
+
+  const schema = z.object({
+    status: z.enum(orderStatTypes),
+  });
+  const submission = parseWithZod(formData, {
+    schema,
+  });
+  if (submission.status !== "success") {
+    console.error(submission.error);
+    return submission.reply();
+  }
+
+  const { status } = submission.value;
+
+  const masterStats: MasterStateEntity =
+    (await masterRepository.get()) ?? MasterStateEntity.createNew();
+
+  console.log(status);
+  masterStats.addOrderStat(status);
+  console.log(masterStats);
+
+  await masterRepository.set(masterStats);
 
   return new Response("ok");
 };

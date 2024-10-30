@@ -1,10 +1,10 @@
+import { type Firestore, doc, getDoc, setDoc } from "firebase/firestore";
 import {
   cashierStateConverter,
   masterStateConverter,
-} from "firebase-utils/converter";
-import { prodDB } from "firebase-utils/firestore";
-import { type Firestore, doc, getDoc, setDoc } from "firebase/firestore";
-import type { GlobalCashierState, MasterStateEntity } from "models/global";
+} from "../firebase-utils/converter";
+import { prodDB } from "../firebase-utils/firestore";
+import type { GlobalCashierState, MasterStateEntity } from "../models/global";
 
 export type CashierStateRepo = {
   get: () => Promise<GlobalCashierState | undefined>;
