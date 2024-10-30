@@ -147,7 +147,7 @@ export default function FielsOfMaster() {
                         ))}
                       </div>
                     )}
-                    <InputComment order={order} mutateOrder={mutateOrder} />
+                    <InputComment order={order} addComment={mutateOrder} />
                   </CardContent>
                 </Card>
               </div>

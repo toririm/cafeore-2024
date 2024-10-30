@@ -16,6 +16,7 @@ import { useCallback } from "react";
 import { toast } from "sonner";
 import useSWRSubscription from "swr/subscription";
 import { z } from "zod";
+import { ReadyBell } from "~/components/atoms/ReadyBell";
 import { InputComment } from "~/components/molecules/InputComment";
 import { RealtimeElapsedTime } from "~/components/molecules/RealtimeElapsedTime";
 import { Button } from "~/components/ui/button";
@@ -33,7 +34,7 @@ export const clientLoader = async () => {
 
 export default function Serve() {
   const submit = useSubmit();
-  const mutateOrder = useCallback(
+  const addComment = useCallback(
     (servedOrder: OrderEntity, descComment: string) => {
       const order = servedOrder.clone();
       order.addComment("serve", descComment);
@@ -57,7 +58,7 @@ export default function Serve() {
     return acc;
   }, 0);
 
-  const submitPayload = useCallback(
+  const beServed = useCallback(
     (servedOrder: OrderEntity) => {
       const order = servedOrder.clone();
       order.beServed();
@@ -73,6 +74,22 @@ export default function Serve() {
     (servedOrder: OrderEntity) => {
       const order = servedOrder.clone();
       order.undoServed();
+      submit(
+        { servedOrder: JSON.stringify(order.toOrder()) },
+        { method: "PUT" },
+      );
+    },
+    [submit],
+  );
+
+  const changeReady = useCallback(
+    (servedOrder: OrderEntity, ready: boolean) => {
+      const order = servedOrder.clone();
+      if (ready) {
+        order.beReady();
+      } else {
+        order.undoReady();
+      }
       submit(
         { servedOrder: JSON.stringify(order.toOrder()) },
         { method: "PUT" },
@@ -148,12 +165,16 @@ export default function Serve() {
                         ))}
                       </div>
                     )}
-                    <InputComment order={order} mutateOrder={mutateOrder} />
+                    <InputComment order={order} addComment={addComment} />
                     <div className="mt-4 flex justify-between">
+                      <ReadyBell
+                        order={order}
+                        changeReady={(ready) => changeReady(order, ready)}
+                      />
                       <Button
                         onClick={() => {
                           const now = new Date();
-                          submitPayload(order);
+                          beServed(order);
                           toast(`提供完了 No.${order.orderId}`, {
                             description: `${dayjs(now).format("H:mm:ss")}`,
                             action: {
