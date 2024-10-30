@@ -1,7 +1,7 @@
-import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { type FirebaseOptions, initializeApp } from "firebase/app";
+import { getFirestore, initializeFirestore } from "firebase/firestore";
 
-const firebaseConfig = {
+const firebaseConfig: FirebaseOptions = {
   apiKey: "AIzaSyC3llKAZQOVQEFV0-0xHiseDB55YXJilHM",
   authDomain: "cafeore-2024.firebaseapp.com",
   projectId: "cafeore-2024",
@@ -11,5 +11,9 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+
+initializeFirestore(app, {
+  ignoreUndefinedProperties: true,
+});
 
 export const prodDB = getFirestore(app);

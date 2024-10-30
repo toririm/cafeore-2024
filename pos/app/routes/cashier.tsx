@@ -7,6 +7,7 @@ import {
 import { itemSource } from "common/data/items";
 import { stringToJSONSchema } from "common/lib/custom-zod";
 import { OrderEntity, orderSchema } from "common/models/order";
+import { cashierRepository } from "common/repositories/global";
 import { orderRepository } from "common/repositories/order";
 import { useCallback } from "react";
 import { z } from "zod";
@@ -39,13 +40,37 @@ export default function Cashier() {
     [submit],
   );
 
+  const syncOrder = useCallback(
+    (order: OrderEntity) => {
+      submit({ syncOrder: JSON.stringify(order.toOrder()) }, { method: "PUT" });
+    },
+    [submit],
+  );
+
   return (
-    <CashierV2 items={items} orders={orders} submitPayload={submitPayload} />
+    <CashierV2
+      items={items}
+      orders={orders}
+      submitPayload={submitPayload}
+      syncOrder={syncOrder}
+    />
   );
 }
 
 // TODO(toririm): リファクタリングするときにファイルを切り出す
-export const clientAction: ClientActionFunction = async ({ request }) => {
+export const clientAction: ClientActionFunction = async (args) => {
+  const method = args.request.method;
+  switch (method) {
+    case "POST":
+      return submitOrderAction(args);
+    case "PUT":
+      return syncOrderAction(args);
+    default:
+      return new Response("Method not allowed", { status: 405 });
+  }
+};
+
+export const submitOrderAction: ClientActionFunction = async ({ request }) => {
   const formData = await request.formData();
 
   const schema = z.object({
@@ -65,6 +90,30 @@ export const clientAction: ClientActionFunction = async ({ request }) => {
   const savedOrder = await orderRepository.save(order);
 
   console.log("savedOrder", savedOrder);
+
+  return new Response("ok");
+};
+
+export const syncOrderAction: ClientActionFunction = async ({ request }) => {
+  const formData = await request.formData();
+
+  const schema = z.object({
+    syncOrder: stringToJSONSchema.pipe(orderSchema),
+  });
+  const submission = parseWithZod(formData, {
+    schema,
+  });
+  if (submission.status !== "success") {
+    console.error(submission.error);
+    return submission.reply();
+  }
+
+  const { syncOrder } = submission.value;
+
+  cashierRepository.set({
+    id: "cashier-state",
+    edittingOrder: OrderEntity.fromOrder(syncOrder),
+  });
 
   return new Response("ok");
 };

@@ -9,6 +9,7 @@ import { useInputStatus } from "../functional/useInputStatus";
 import { useLatestOrderId } from "../functional/useLatestOrderId";
 import { useOrderState } from "../functional/useOrderState";
 import { usePreventNumberKeyUpDown } from "../functional/usePreventNumberKeyUpDown";
+import { useSyncCahiserOrder } from "../functional/useSyncCahiserOrder";
 import { useUISession } from "../functional/useUISession";
 import { AttractiveTextArea } from "../molecules/AttractiveTextArea";
 import { InputHeader } from "../molecules/InputHeader";
@@ -24,6 +25,7 @@ type props = {
   items: WithId<ItemEntity>[] | undefined;
   orders: WithId<OrderEntity>[] | undefined;
   submitPayload: (order: OrderEntity) => void;
+  syncOrder: (order: OrderEntity) => void;
 };
 
 /**
@@ -31,7 +33,7 @@ type props = {
  *
  * データの入出力は親コンポーネントに任せる
  */
-const CashierV2 = ({ items, orders, submitPayload }: props) => {
+const CashierV2 = ({ items, orders, submitPayload, syncOrder }: props) => {
   const [newOrder, newOrderDispatch] = useOrderState();
   const {
     inputStatus,
@@ -44,6 +46,7 @@ const CashierV2 = ({ items, orders, submitPayload }: props) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [UISession, renewUISession] = useUISession();
   const { nextOrderId } = useLatestOrderId(orders);
+  useSyncCahiserOrder(newOrder, syncOrder);
 
   const printer = usePrinter();
 
