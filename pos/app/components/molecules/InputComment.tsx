@@ -5,10 +5,10 @@ import { Input } from "../ui/input";
 
 type props = {
   order: WithId<OrderEntity>;
-  mutateOrder: (order: WithId<OrderEntity>, descComment: string) => void; // これをコンポーネントの中で呼び出す
+  addComment: (order: WithId<OrderEntity>, descComment: string) => void; // これをコンポーネントの中で呼び出す
 };
 
-export const InputComment = ({ order, mutateOrder }: props) => {
+export const InputComment = ({ order, addComment }: props) => {
   const [descComment, setDescComment] = useState("");
 
   return (
@@ -26,7 +26,7 @@ export const InputComment = ({ order, mutateOrder }: props) => {
           // MacOSではIME確定時のEnterでもkey === "Enter"が発火してしまう
           // deprecatedではあるがkeyCodeを使う
           if (e.keyCode === 13) {
-            mutateOrder(order, descComment);
+            addComment(order, descComment);
             setDescComment("");
           }
         }}
