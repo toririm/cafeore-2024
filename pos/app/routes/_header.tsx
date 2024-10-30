@@ -1,30 +1,28 @@
 import { Outlet } from "@remix-run/react";
-import { OnlineStatus, useOnlineStatus } from "~/components/online-status";
+import { useOnlineStatus } from "~/components/functional/useOnlineStatus";
+import { useOrderStat } from "~/components/functional/useOrderStat";
+import { cn } from "~/lib/utils";
 
 export default function BaseHeader() {
   const isOnline = useOnlineStatus();
+  const isOperational = useOrderStat();
 
-  if (!isOnline) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-gray-100">
-        <div className="text-center">
-          <h1 className="mb-4 font-bold text-4xl">⛔オフライン</h1>
-          <p className="text-xl">
-            インターネット接続が切断されています。
-            <br />
-            接続が回復するまでお待ちください。
-          </p>
-        </div>
-      </div>
-    );
-  }
   return (
     <div>
-      {/* TODO(toririm): デザインが微妙にダサいので何とかする。
-      この手のコンポーネントは必要だが別にこの形でなくてもいい */}
-      <header className="sticky top-0 z-10 bg-gray-800 p-4 text-white">
-        <h1 className="text-3xl">かふぇおれPOS 2024</h1>
-        <OnlineStatus />
+      <header
+        className={cn(
+          "sticky top-0 z-10 h-2",
+          isOnline && "bg-green-600",
+          !isOnline && "h-min bg-red-700",
+          !isOperational && "h-min bg-violet-600",
+        )}
+      >
+        {!isOnline && (
+          <div className="p-2 text-center text-white">オフライン</div>
+        )}
+        {!isOperational && (
+          <div className="p-2 text-center text-white">オーダーストップ中</div>
+        )}
       </header>
       <Outlet />
     </div>

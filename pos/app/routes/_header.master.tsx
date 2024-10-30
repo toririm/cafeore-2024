@@ -5,11 +5,8 @@ import {
   useSubmit,
 } from "@remix-run/react";
 import { id2abbr } from "common/data/items";
-import {
-  masterStateConverter,
-  orderConverter,
-} from "common/firebase-utils/converter";
-import { collectionSub, documentSub } from "common/firebase-utils/subscription";
+import { orderConverter } from "common/firebase-utils/converter";
+import { collectionSub } from "common/firebase-utils/subscription";
 import { stringToJSONSchema } from "common/lib/custom-zod";
 import {
   MasterStateEntity,
@@ -21,9 +18,10 @@ import { masterRepository } from "common/repositories/global";
 import { orderRepository } from "common/repositories/order";
 import dayjs from "dayjs";
 import { orderBy } from "firebase/firestore";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import useSWRSubscription from "swr/subscription";
 import { z } from "zod";
+import { useOrderStat } from "~/components/functional/useOrderStat";
 import { InputComment } from "~/components/molecules/InputComment";
 import { RealtimeElapsedTime } from "~/components/molecules/RealtimeElapsedTime";
 import { Button } from "~/components/ui/button";
@@ -47,15 +45,7 @@ export default function FielsOfMaster() {
     },
     [submit],
   );
-  const { data: masterRemoStat } = useSWRSubscription(
-    ["global", "master-state"],
-    documentSub({ converter: masterStateConverter }),
-  );
-  const masterStat = masterRemoStat ?? MasterStateEntity.createNew();
-  const orderStat = useMemo(() => {
-    const state = masterStat.orderStats[masterStat.orderStats.length - 1];
-    return state.type;
-  }, [masterStat]);
+  const isOperational = useOrderStat();
 
   const changeOrderStat = useCallback(
     (status: OrderStatType) => {
@@ -82,17 +72,13 @@ export default function FielsOfMaster() {
         <h1 className="text-3xl">マスター</h1>
         <Button
           type="submit"
-          className={cn(
-            orderStat === "operational" ? "bg-red-700" : "bg-sky-700",
-          )}
+          className={cn(isOperational ? "bg-red-700" : "bg-sky-700")}
           onClick={() =>
-            changeOrderStat(
-              orderStat === "operational" ? "stop" : "operational",
-            )
+            changeOrderStat(isOperational ? "stop" : "operational")
           }
         >
-          {orderStat === "operational" && "オーダーストップする"}
-          {orderStat === "stop" && "オーダー再開する"}
+          {isOperational && "オーダーストップする"}
+          {!isOperational && "オーダー再開する"}
         </Button>
         <p>提供待ちオーダー数：{unserved}</p>
       </div>
