@@ -8,6 +8,12 @@ import {
 import _ from "lodash";
 import type { ZodSchema } from "zod";
 import type { WithId } from "../lib/typeguard";
+import {
+  type GlobalCashierState,
+  MasterStateEntity,
+  globalCashierStateSchema,
+  globalMasterStateSchema,
+} from "../models/global";
 import { ItemEntity, itemSchema } from "../models/item";
 import { OrderEntity, orderSchema } from "../models/order";
 
@@ -93,5 +99,36 @@ export const orderConverter: FirestoreDataConverter<WithId<OrderEntity>> = {
       options,
     );
     return OrderEntity.fromOrder(convertedData);
+  },
+};
+
+export const cashierStateConverter: FirestoreDataConverter<GlobalCashierState> =
+  {
+    toFirestore: converter(globalCashierStateSchema).toFirestore,
+    fromFirestore: (
+      snapshot: QueryDocumentSnapshot,
+      options: SnapshotOptions,
+    ) => {
+      const convertedData = converter(globalCashierStateSchema).fromFirestore(
+        snapshot,
+        options,
+      );
+
+      return convertedData;
+    },
+  };
+
+export const masterStateConverter: FirestoreDataConverter<MasterStateEntity> = {
+  toFirestore: converter(globalMasterStateSchema).toFirestore,
+  fromFirestore: (
+    snapshot: QueryDocumentSnapshot,
+    options: SnapshotOptions,
+  ) => {
+    const convertedData = converter(globalMasterStateSchema).fromFirestore(
+      snapshot,
+      options,
+    );
+
+    return MasterStateEntity.fromMasterState(convertedData);
   },
 };
