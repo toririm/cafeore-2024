@@ -1,29 +1,25 @@
-import { useSearchParams } from "@remix-run/react";
+import {
+  isRouteErrorResponse,
+  useRouteError,
+  useSearchParams,
+} from "@remix-run/react";
 import { orderConverter } from "common/firebase-utils/converter";
 import { documentSub } from "common/firebase-utils/subscription";
 import { useEffect, useState } from "react";
 import useSWRSubscription from "swr/subscription";
-import logoVideo from "~/assets/cafeore_logo_in.webm";
+import logoMotion from "~/assets/cafeore_logo_motion.webm";
 import { cn } from "~/lib/utils";
 
 export default function Welcome() {
   const [searchParam, setSearchParam] = useSearchParams();
   const [videoShown, setVideoShown] = useState(true);
-  const [logoShown, setLogoShown] = useState(true);
-  const id = searchParam.get("id");
-  if (!id) {
-    return <div>Missing ID</div>;
-  }
+  const id = searchParam.get("id") ?? "none";
 
   useEffect(() => {
-    const logoTimer = setTimeout(() => {
-      setLogoShown(false);
-    }, 1000);
     const timer = setTimeout(() => {
       setVideoShown(false);
     }, 1300);
     return () => {
-      clearTimeout(logoTimer);
       clearTimeout(timer);
     };
   }, []);
@@ -33,32 +29,59 @@ export default function Welcome() {
     documentSub({ converter: orderConverter }),
   );
 
-  if (videoShown) {
-    return (
+  return (
+    <>
       <div
         className={cn(
-          "h-screen w-screen transition-all duration-300",
-          "opacity-0",
-          logoShown && "opacity-100",
+          "absolute top-0 left-0 h-screen w-screen transition-all duration-300",
+          "flex items-center justify-center bg-black",
+          "grid columns-4",
+          !videoShown && "opacity-0",
         )}
       >
-        <div className="h-1/4" />
         <video
           playsInline
           muted
           autoPlay
-          src={logoVideo}
-          className="h-1/2 w-full object-cover"
+          src={logoMotion}
+          className="h-3/5 w-full object-contain"
         />
       </div>
-    );
-  }
-
-  return (
-    <>
-      <div>
+      <div
+        className={cn(
+          "opacity-0 transition-all duration-500",
+          !videoShown && "z-10 opacity-100",
+        )}
+      >
+        <h1 className="text-center font-serif text-4xl">珈琲・俺へようこそ</h1>
         <code>{JSON.stringify(order.data?.toOrder(), null, 2)}</code>
       </div>
     </>
   );
 }
+
+export const ErrorBoundary = () => {
+  const error = useRouteError();
+
+  if (isRouteErrorResponse(error)) {
+    return (
+      <div>
+        <h1>
+          {error.status} {error.statusText}
+        </h1>
+        <p>{error.data}</p>
+      </div>
+    );
+  }
+  if (error instanceof Error) {
+    return (
+      <div>
+        <h1>Error</h1>
+        <p>{error.message}</p>
+        <p>The stack trace is:</p>
+        <pre>{error.stack}</pre>
+      </div>
+    );
+  }
+  return <h1>Unknown Error</h1>;
+};
