@@ -3,7 +3,7 @@ import {
   cashierStateConverter,
   masterStateConverter,
 } from "../firebase-utils/converter";
-import { prodDB } from "../firebase-utils/firestore";
+import { prodDB } from "../firebase-utils/firebase";
 import type { GlobalCashierState, MasterStateEntity } from "../models/global";
 
 export type CashierStateRepo = {

@@ -7,7 +7,7 @@ import {
   query,
 } from "firebase/firestore";
 import type { SWRSubscription } from "swr/subscription";
-import { prodDB } from "./firestore";
+import { prodDB } from "./firebase";
 
 /**
  * Firestore のコレクションを監視する SWRSubscription を生成する

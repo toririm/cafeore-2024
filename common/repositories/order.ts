@@ -9,7 +9,7 @@ import {
   setDoc,
 } from "firebase/firestore";
 import { orderConverter } from "../firebase-utils/converter";
-import { prodDB } from "../firebase-utils/firestore";
+import { prodDB } from "../firebase-utils/firebase";
 import { type WithId, hasId } from "../lib/typeguard";
 import type { OrderEntity } from "../models/order";
 import type { OrderRepository } from "./type";

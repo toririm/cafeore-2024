@@ -2,14 +2,12 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /items/{itemId} {
-      allow read, write: if true;
-    }
     match /orders/{orderId} {
-      allow read, write: if true;
+      allow read: if resource.data.servedAt == null;
+      allow read, write: if request.auth.uid == "foobar";
     }
     match /global/{docId} {
-      allow read, write: if true;
+      allow read, write: if request.auth.uid == "foobar";
     }
   }
 }
