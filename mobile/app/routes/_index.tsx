@@ -1,10 +1,14 @@
-import type { MetaFunction } from "@remix-run/cloudflare";
+import { type MetaFunction, redirect } from "@remix-run/cloudflare";
 
 export const meta: MetaFunction = () => {
   return [
     { title: "New Remix App" },
     { name: "description", content: "Welcome to Remix!" },
   ];
+};
+
+export const loader = () => {
+  return redirect("/welcome");
 };
 
 export default function Index() {
