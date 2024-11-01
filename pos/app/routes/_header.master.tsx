@@ -154,7 +154,7 @@ export default function FielsOfMaster() {
                     {isReady && (
                       <div className="mt-5 flex items-center">
                         <LuHourglass className="mr-1 h-5 w-5 stroke-yellow-600" />
-                        <p className="">提供待ち</p>
+                        <p className="text-yellow-700">提供待ち</p>
                       </div>
                     )}
                   </CardContent>

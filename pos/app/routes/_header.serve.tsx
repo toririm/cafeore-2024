@@ -168,7 +168,7 @@ export default function Serve() {
                       </div>
                     )}
                     <InputComment order={order} addComment={addComment} />
-                    <div className="mt-4 flex justify-between">
+                    <div className="mt-4 flex items-center justify-between">
                       <ReadyBell
                         order={order}
                         changeReady={(ready) => changeReady(order, ready)}
@@ -185,6 +185,7 @@ export default function Serve() {
                             },
                           });
                         }}
+                        className="h-16 w-16 bg-green-700 text-lg hover:bg-green-500 "
                       >
                         提供
                       </Button>
