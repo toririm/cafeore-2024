@@ -18,7 +18,7 @@ export const ReadyBell = ({ order, changeReady }: props) => {
       className="items-cente flex h-16 w-20 flex-col bg-stone-200 hover:bg-orange-200"
     >
       {isReady ? (
-        <HiBellAlert className="h-7 w-7 fill-orange-600" />
+        <HiBellAlert className="h-7 w-7 rotate-12 fill-orange-600" />
       ) : (
         <HiBell className="h-7 w-7 fill-stone-500" />
       )}
