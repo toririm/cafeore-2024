@@ -106,11 +106,12 @@ export default function Serve() {
       </div>
 
       <div className="grid grid-cols-4 gap-4">
-        {orders?.map(
-          (order) =>
+        {orders?.map((order) => {
+          const isReady = order.readyAt !== null;
+          return (
             order.servedAt === null && (
               <div key={order.id}>
-                <Card>
+                <Card className={cn(isReady && "bg-gray-100 text-gray-500")}>
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <CardTitle>{`No. ${order.orderId}`}</CardTitle>
@@ -135,6 +136,7 @@ export default function Serve() {
                               item.type === "milk" && "bg-yellow-200",
                               item.type === "hotOre" && "bg-orange-300",
                               item.type === "iceOre" && "bg-sky-200",
+                              isReady && "bg-gray-200 text-gray-500",
                             )}
                           >
                             <CardContent>
@@ -190,8 +192,9 @@ export default function Serve() {
                   </CardContent>
                 </Card>
               </div>
-            ),
-        )}
+            )
+          );
+        })}
       </div>
     </div>
   );
