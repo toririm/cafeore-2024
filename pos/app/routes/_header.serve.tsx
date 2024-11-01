@@ -27,11 +27,6 @@ export const meta: MetaFunction = () => {
   return [{ title: "提供 / 珈琲・俺POS" }];
 };
 
-export const clientLoader = async () => {
-  const orders = await orderRepository.findAll();
-  return { orders };
-};
-
 export default function Serve() {
   const submit = useSubmit();
   const addComment = useCallback(
