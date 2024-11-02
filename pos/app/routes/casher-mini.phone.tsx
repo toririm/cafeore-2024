@@ -34,7 +34,8 @@ export default function CasherMini() {
             お預り： {order?.received ?? 0} 円
           </p>
           <p className="sans-serif text-base">
-            お釣り： {(order?.received ?? 0) - (order?.billingAmount ?? 0)} 円
+            {/* お釣り： {(order?.received ?? 0) - (order?.billingAmount ?? 0)} 円 */}
+            お釣り： {order?.getCharge() ?? 0} 円
           </p>
         </div>
       </div>
