@@ -187,6 +187,12 @@ export default function Serve() {
                         order={order}
                         changeReady={(ready) => changeReady(order, ready)}
                       />
+                      {/* {isReady && (
+                        <div className="flex-1 px-2">
+                          <div>呼び出し時刻</div>
+                          <div>{dayjs(order.readyAt).format("H時m分")}</div>
+                        </div>
+                      )} */}
                       <Button
                         onClick={() => {
                           const now = new Date();
@@ -199,7 +205,7 @@ export default function Serve() {
                             },
                           });
                         }}
-                        className="h-16 w-16 bg-green-700 text-lg hover:bg-green-500 "
+                        className="h-16 w-16 bg-green-700 text-lg hover:bg-green-600 "
                       >
                         提供
                       </Button>

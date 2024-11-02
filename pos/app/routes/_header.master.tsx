@@ -114,7 +114,7 @@ export default function FielsOfMaster() {
                               "pt-6",
                               item.type === "iceOre" && "bg-sky-200",
                               item.type === "ice" && "bg-blue-200",
-                              item.type === "milk" && "bg-yellow-200",
+                              item.type === "milk" && "bg-gray-300",
                               item.name === "限定" && "bg-red-300",
                               isReady && "bg-gray-200 text-gray-500",
                             )}
