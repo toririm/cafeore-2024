@@ -120,7 +120,7 @@ export default function Serve() {
                         rel="noreferrer"
                       >
                         <CardTitle className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-stone-500">
-                          {order.items.length}
+                          {order.getDrinkCups().length}
                         </CardTitle>
                       </a>
                       <div className="grid">
@@ -133,7 +133,7 @@ export default function Serve() {
                   </CardHeader>
                   <CardContent>
                     <div className="mb-4 grid grid-cols-2 gap-2">
-                      {order.items.map((item, idx) => (
+                      {order.getDrinkCups().map((item, idx) => (
                         <div key={`${idx}-${item.id}`}>
                           <Card
                             className={cn(

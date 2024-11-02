@@ -107,7 +107,7 @@ export default function FielsOfMaster() {
                   </CardHeader>
                   <CardContent>
                     <div className="mb-4 grid grid-cols-2 gap-2">
-                      {order.items.map((item, index) => (
+                      {order.getDrinkCups().map((item, index) => (
                         <div key={`${order.id}-${index}-${item.id}`}>
                           <Card
                             className={cn(

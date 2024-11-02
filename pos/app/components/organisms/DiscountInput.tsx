@@ -52,7 +52,7 @@ const DiscountInput = memo(
     }, [orders, isComplete, discountOrderId]);
 
     const lastPurchasedCups = useMemo(
-      () => discountOrder?.getCoffeeCount() ?? 0,
+      () => discountOrder?.getCoffeeCups().length ?? 0,
       [discountOrder],
     );
 
