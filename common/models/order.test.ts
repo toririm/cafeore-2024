@@ -139,6 +139,7 @@ describe("[unit] order entity", () => {
       discountOrderCups: 0,
       DISCOUNT_PER_CUP: 100,
       discount: 0,
+      estimateTime: -1,
     });
 
     order.applyDiscount(previousOrder);
@@ -196,6 +197,7 @@ describe("[unit] order entity", () => {
       discountOrderCups: 0,
       DISCOUNT_PER_CUP: 100,
       discount: 0,
+      estimateTime: -1,
     });
 
     order.applyDiscount(previousOrder);
@@ -231,6 +233,7 @@ describe("[unit] order entity", () => {
       discountOrderCups: 0,
       DISCOUNT_PER_CUP: 100,
       discount: 0,
+      estimateTime: -1,
     });
 
     expect(order.comments).toEqual([]);
