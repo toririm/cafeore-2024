@@ -51,10 +51,10 @@ export const ItemButtons = ({ items, addItem }: props) => {
         style={{ gridTemplateRows: "auto" }}
       >
         <Button
-          key="."
+          key="/"
           className="h-[50px] w-[150px] bg-theme text-lg hover:bg-theme hover:ring-4"
           onClick={() => {
-            addItem(key2item("."));
+            addItem(key2item("/"));
           }}
         >
           限定
@@ -136,10 +136,10 @@ export const ItemButtons = ({ items, addItem }: props) => {
           アイスコーヒー
         </Button>
         <Button
-          key="/"
+          key="."
           className="h-[50px] w-[150px] bg-ice text-lg hover:bg-ice hover:ring-4"
           onClick={() => {
-            addItem(key2item("/"));
+            addItem(key2item("."));
           }}
         >
           アイスミルク

@@ -109,7 +109,7 @@ export default function Dashboard() {
     },
     {
       name: "限定",
-      num: itemValue(ITEM_MASTER["."].name),
+      num: itemValue(ITEM_MASTER["/"].name),
       fill: "var(--color-hot)",
     },
     {
@@ -129,7 +129,7 @@ export default function Dashboard() {
     },
     {
       name: "ミルク",
-      num: itemValue(ITEM_MASTER["/"].name),
+      num: itemValue(ITEM_MASTER["."].name),
       fill: "var(--color-milk)",
     },
   ];

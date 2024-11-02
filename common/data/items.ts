@@ -20,7 +20,7 @@ export const ITEM_MASTER = {
     price: 300,
     type: "hot",
   },
-  ".": {
+  "/": {
     id: "03_special",
     name: "限定",
     abbr: "限定",
@@ -69,7 +69,7 @@ export const ITEM_MASTER = {
     price: 500,
     type: "iceOre",
   },
-  "/": {
+  ".": {
     id: "40_ice_milk",
     name: "アイスミルク",
     abbr: "ミルク",
