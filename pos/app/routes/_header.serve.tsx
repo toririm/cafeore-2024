@@ -23,6 +23,8 @@ import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { cn } from "~/lib/utils";
 
+const BASE_CLIENT_URL = "https://cafeore-2024.pages.dev";
+
 export const meta: MetaFunction = () => {
   return [{ title: "提供 / 珈琲・俺POS" }];
 };
@@ -110,11 +112,19 @@ export default function Serve() {
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <CardTitle>{`No. ${order.orderId}`}</CardTitle>
-                      <CardTitle className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-stone-500">
-                        {order.items.length}
-                      </CardTitle>
+                      <a
+                        // link for debug
+                        className="px-2"
+                        href={`${BASE_CLIENT_URL}/welcome?id=${order.id}`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <CardTitle className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-stone-500">
+                          {order.items.length}
+                        </CardTitle>
+                      </a>
                       <div className="grid">
-                        <div className="px-2 text-right">
+                        <div className="text-right">
                           {dayjs(order.createdAt).format("H:mm:ss")}
                         </div>
                         <RealtimeElapsedTime order={order} />
