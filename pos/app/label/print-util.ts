@@ -27,13 +27,7 @@ export const usePrinter = () => {
     const items = order.items.toSorted((a, b) => a.name.localeCompare(b.name));
     rawPrinter.init();
 
-    const coffees = items.filter(
-      (item) =>
-        item.type === "hot" ||
-        item.type === "ice" ||
-        item.type === "hotOre" ||
-        item.type === "iceOre",
-    );
+    const coffees = order.getCoffeeCups();
 
     console.log(coffees);
 
