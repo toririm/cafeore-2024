@@ -113,6 +113,7 @@ export default function FielsOfMaster() {
                             className={cn(
                               "pt-6",
                               item.type === "iceOre" && "bg-sky-200",
+                              item.type === "hotOre" && "bg-orange-300",
                               item.type === "ice" && "bg-blue-200",
                               item.type === "milk" && "bg-gray-300",
                               item.name === "限定" && "bg-red-300",
