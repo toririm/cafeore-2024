@@ -80,55 +80,56 @@ export default function Dashboard() {
     }
     return valueNum;
   };
+
   const chartData = [
     {
       name: "べっぴん",
-      num: itemValue(ITEM_MASTER.q.name),
+      num: itemValue(ITEM_MASTER["-"].name),
       fill: "var(--color-hot)",
     },
     {
       name: "俺ブレ",
-      num: itemValue(ITEM_MASTER.w.name),
+      num: itemValue(ITEM_MASTER["^"].name),
       fill: "var(--color-hot)",
     },
     {
       name: "ピンク",
-      num: itemValue(ITEM_MASTER.s.name),
+      num: itemValue(ITEM_MASTER[":"].name),
       fill: "var(--color-hot)",
     },
     {
       name: "コスタ",
-      num: itemValue(ITEM_MASTER.d.name),
+      num: itemValue(ITEM_MASTER["]"].name),
       fill: "var(--color-hot)",
     },
     {
       name: "マンデ",
-      num: itemValue(ITEM_MASTER.a.name),
+      num: itemValue(ITEM_MASTER[";"].name),
       fill: "var(--color-hot)",
     },
     {
       name: "限定",
-      num: itemValue(ITEM_MASTER.e.name),
+      num: itemValue(ITEM_MASTER["¥"].name),
       fill: "var(--color-hot)",
     },
     {
       name: "氷",
-      num: itemValue(ITEM_MASTER.z.name),
+      num: itemValue(ITEM_MASTER["."].name),
       fill: "var(--color-ice)",
     },
     {
       name: "Iceオレ",
-      num: itemValue(ITEM_MASTER.c.name),
+      num: itemValue(ITEM_MASTER["["].name),
       fill: "var(--color-aulait)",
     },
     {
       name: "Hotオレ",
-      num: itemValue(ITEM_MASTER.x.name),
+      num: itemValue(ITEM_MASTER["@"].name),
       fill: "var(--color-aulait)",
     },
     {
       name: "ミルク",
-      num: itemValue(ITEM_MASTER.v.name),
+      num: itemValue(ITEM_MASTER["/"].name),
       fill: "var(--color-milk)",
     },
   ];

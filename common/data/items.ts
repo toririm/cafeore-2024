@@ -76,7 +76,7 @@ export const ITEM_MASTER = {
     price: 100,
     type: "milk",
   },
-  _: {
+  "\\": {
     id: "50_coaster",
     name: "コースター",
     abbr: "コースター",
