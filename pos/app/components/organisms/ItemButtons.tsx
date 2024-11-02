@@ -1,3 +1,4 @@
+import { key2item } from "common/data/items";
 import type { WithId } from "common/lib/typeguard";
 import type { ItemEntity } from "common/models/item";
 import { Button } from "../ui/button";
