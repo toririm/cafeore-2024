@@ -14,7 +14,7 @@ export default function CasherMini() {
   return (
     <div className="wrap flex h-full flex-col bg-theme px-[50px] pt-[40px]">
       <p className="pb-[50px] font-serif text-5xl text-white">
-        No. <span className="font-serif text-6xl">{order?.orderId}</span>
+        No. <span className="text-6xl">{order?.orderId}</span>
       </p>
       <div className="grid grid-cols-2 items-center justify-items-center p-[20px]">
         <div>
