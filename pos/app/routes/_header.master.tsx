@@ -95,7 +95,7 @@ export default function FielsOfMaster() {
                     <div className="flex items-center justify-between">
                       <CardTitle>{`No. ${order.orderId}`}</CardTitle>
                       <CardTitle className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-stone-500">
-                        {order.items.length}
+                        {order.getDrinkCups().length}
                       </CardTitle>
                       <div className="grid">
                         <div className="px-2 text-right">
@@ -107,7 +107,7 @@ export default function FielsOfMaster() {
                   </CardHeader>
                   <CardContent>
                     <div className="mb-4 grid grid-cols-2 gap-2">
-                      {order.items.map((item, index) => (
+                      {order.getDrinkCups().map((item, index) => (
                         <div key={`${order.id}-${index}-${item.id}`}>
                           <Card
                             className={cn(

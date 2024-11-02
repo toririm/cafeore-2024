@@ -26,7 +26,7 @@ export const orderSchema = z.object({
   discountOrderId: z.number().nullable(),
   discountOrderCups: z.number(),
   DISCOUNT_PER_CUP: z.number(),
-  discount: z.number(), // min(this.getCoffeeCount(), discountOrderCups) * DISCOUNT_PER_CUP
+  discount: z.number(), // min(this.getCoffeeCups(), discountOrderCups) * DISCOUNT_PER_CUP
   estimateTime: z.number(), // seconds
 });
 
@@ -201,7 +201,7 @@ export class OrderEntity implements Order {
 
   get discount() {
     this._discount =
-      Math.min(this.getCoffeeCount(), this._discountOrderCups) *
+      Math.min(this.getCoffeeCups().length, this._discountOrderCups) *
       this._DISCOUNT_PER_CUP;
     return this._discount;
   }
@@ -221,12 +221,17 @@ export class OrderEntity implements Order {
    * コーヒーの数を取得する
    * @returns 割引の対象となるコーヒーの数
    */
-  getCoffeeCount() {
-    // milk 以外のアイテムの数を返す
+  getCoffeeCups() {
+    // milk と others 以外のアイテムを返す
     // TODO(toririm): このメソッドは items が変更された時だけでいい
     return this.items.filter(
       (item) => item.type !== "milk" && item.type !== "others",
-    ).length;
+    );
+  }
+
+  getDrinkCups() {
+    // others 以外のアイテムを返す
+    return this.items.filter((item) => item.type !== "others");
   }
 
   /**
@@ -284,7 +289,7 @@ export class OrderEntity implements Order {
    */
   applyDiscount(previousOrder: OrderEntity) {
     this._discountOrderId = previousOrder.orderId;
-    this._discountOrderCups = previousOrder.getCoffeeCount();
+    this._discountOrderCups = previousOrder.getCoffeeCups().length;
   }
 
   /**
