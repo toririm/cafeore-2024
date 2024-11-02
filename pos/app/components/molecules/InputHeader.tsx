@@ -10,7 +10,12 @@ type props = {
 
 const InputHeader = memo(({ title, focus, number }: props) => {
   return (
-    <div className="flex items-center p-3">
+    <div
+      className={cn(
+        "flex items-center rounded-xl p-3",
+        focus && "bg-purple-100",
+      )}
+    >
       <Circle focus={focus} className="flex-initial">
         {number}
       </Circle>
