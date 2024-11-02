@@ -6,8 +6,6 @@ import {
 import { orderConverter } from "common/firebase-utils/converter";
 import { documentSub } from "common/firebase-utils/subscription";
 import { useEffect, useRef, useState } from "react";
-import { HiBell } from "react-icons/hi";
-import { HiBellAlert } from "react-icons/hi2";
 import useSWRSubscription from "swr/subscription";
 import bellSound from "~/assets/bell.mp3";
 import logoMotion from "~/assets/cafeore_logo_motion.webm";
@@ -18,20 +16,10 @@ console.log(import.meta.env.VITE_SOHOSAI_VOTE_URL);
 export default function Welcome() {
   const [searchParam, setSearchParam] = useSearchParams();
   const [videoShown, setVideoShown] = useState(true);
-  const [notifySound, setNotifySound] = useState(false);
   const id = searchParam.get("id") ?? "none";
 
   const soundRef1 = useRef<HTMLAudioElement>(null);
   const soundRef2 = useRef<HTMLAudioElement>(null);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setVideoShown(false);
-    }, 1300);
-    return () => {
-      clearTimeout(timer);
-    };
-  }, []);
 
   const { data: order } = useSWRSubscription(
     ["orders", id],
@@ -42,9 +30,6 @@ export default function Welcome() {
     if (!order?.readyAt) {
       return;
     }
-    if (!notifySound) {
-      return;
-    }
     soundRef1.current?.play();
     const timer = setTimeout(() => {
       soundRef2.current?.play();
@@ -52,32 +37,39 @@ export default function Welcome() {
     return () => {
       clearTimeout(timer);
     };
-  }, [order?.readyAt, notifySound]);
+  }, [order?.readyAt]);
 
   return (
     <>
       {/* ローディングアニメーション部分 */}
       <div
         className={cn(
-          "absolute top-0 left-0 h-screen w-screen transition-all duration-300",
+          "absolute top-0 left-0 z-10 h-screen w-screen transition-all duration-300",
           "flex items-center justify-center bg-black",
           "grid columns-4",
           !videoShown && "opacity-0",
         )}
       >
-        <video
-          playsInline
-          muted
-          autoPlay
-          src={logoMotion}
-          className="h-3/5 w-full object-contain"
-        />
+        <button
+          type="button"
+          onClick={() => setVideoShown(false)}
+          className="h-screen w-screen"
+        >
+          <video
+            playsInline
+            muted
+            autoPlay
+            src={logoMotion}
+            className="h-3/5 w-full object-contain"
+          />
+          <h1 className="font-sans text-white">タップで開く</h1>
+        </button>
       </div>
       {/* メイン部分 */}
       <div
         className={cn(
           "absolute top-0 left-0 h-screen w-screen opacity-0 transition-all duration-500",
-          !videoShown && "z-10 opacity-100",
+          !videoShown && "z-20 opacity-100",
         )}
       >
         <div>
@@ -100,18 +92,6 @@ export default function Welcome() {
               {order.readyAt === null && (
                 <p>ご注文の提供をこの画面でお知らせします</p>
               )}
-              <div>
-                <button
-                  type="button"
-                  onClick={() => setNotifySound((prev) => !prev)}
-                >
-                  {notifySound ? (
-                    <HiBellAlert className="h-7 w-7 rotate-12 fill-orange-600" />
-                  ) : (
-                    <HiBell className="h-7 w-7 fill-stone-500" />
-                  )}
-                </button>
-              </div>
             </>
           )}
         </div>
