@@ -1,15 +1,26 @@
 import { itemSource } from "common/data/items";
 import { cashierStateConverter } from "common/firebase-utils/converter";
 import { documentSub } from "common/firebase-utils/subscription";
+import { QRCodeSVG } from "qrcode.react";
+import { useEffect, useState } from "react";
 import useSWRSubscription from "swr/subscription";
+import { BASE_CLIENT_URL } from "./_header.serve";
 
 export default function CasherMini() {
   const items = itemSource;
+  const [qrShowing, setQrShowing] = useState(false);
   const { data: orderState } = useSWRSubscription(
     ["global", "cashier-state"],
     documentSub({ converter: cashierStateConverter }),
   );
   const order = orderState?.edittingOrder;
+  const submittedOrderId = orderState?.submittedOrderId;
+
+  const url = `${BASE_CLIENT_URL}/welcome?id=${submittedOrderId}`;
+
+  useEffect(() => {
+    setQrShowing(submittedOrderId != null);
+  }, [submittedOrderId]);
 
   return (
     <div className="wrap flex h-full flex-col px-[35px] pt-[25px]">
@@ -38,6 +49,7 @@ export default function CasherMini() {
           </p>
         </div>
       </div>
+      <div>{qrShowing && <QRCodeSVG value={url} />}</div>
     </div>
   );
 }

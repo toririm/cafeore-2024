@@ -23,7 +23,7 @@ import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { cn } from "~/lib/utils";
 
-const BASE_CLIENT_URL = "https://cafeore-2024.pages.dev";
+export const BASE_CLIENT_URL = "https://cafeore-2024.pages.dev";
 
 export const meta: MetaFunction = () => {
   return [{ title: "提供 / 珈琲・俺POS" }];
