@@ -68,11 +68,12 @@ export default function Welcome() {
       {/* メイン部分 */}
       <div
         className={cn(
-          "absolute top-0 left-0 h-screen w-screen opacity-0 transition-all duration-500",
+          "absolute top-0 left-0 h-dvh w-screen opacity-0 transition-all duration-500",
+          "flex flex-col items-center justify-between",
           !videoShown && "z-20 opacity-100",
         )}
       >
-        <div>
+        <div className="flex-1">
           {order === undefined ? (
             <div className="flex h-5/6 w-screen items-center justify-center">
               <h1 className="text-2xl">またのご来店をお待ちしております</h1>
@@ -95,7 +96,7 @@ export default function Welcome() {
             </>
           )}
         </div>
-        <footer className="absolute bottom-0 h-1/6 w-screen bg-gray-100">
+        <footer className="h-1/6 w-screen bg-gray-100">
           <a
             href={import.meta.env.VITE_SOHOSAI_VOTE_URL}
             className="flex h-full w-full flex-col items-center justify-center"
