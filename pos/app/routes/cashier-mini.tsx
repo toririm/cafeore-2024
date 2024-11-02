@@ -72,7 +72,7 @@ export default function CasherMini() {
     if (!isOperational) {
       return "しばらくお待ちください";
     }
-    return "　";
+    return "　ご来店ありがとうございます";
   }, [isOperational, submittedOrderId]);
 
   const charge = useMemo(() => order?.getCharge() ?? 0, [order]);
@@ -97,7 +97,7 @@ export default function CasherMini() {
             playsInline
             muted
             src={logoMotion}
-            className="h-3/5 w-full object-contain"
+            className="h-3/5 w-full flex-none object-contain"
           />
           <h1
             className={cn(
@@ -115,6 +115,7 @@ export default function CasherMini() {
           "bg-gradient-to-br from-[#A877D9] via-[#E665C5] to-[#E67651]",
         )}
       >
+        <button type="button" className="absolute top-0 left-0 h-24 w-60" />
         <img src={logoSVG} alt="" className="absolute h-screen w-screen p-28" />
         <div className="wrap flex flex-col px-[50px] pt-[40px]">
           <p className="pb-[50px] font-serif text-5xl text-white">
