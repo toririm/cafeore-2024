@@ -109,12 +109,12 @@ export default function Dashboard() {
     },
     {
       name: "限定",
-      num: itemValue(ITEM_MASTER["¥"].name),
+      num: itemValue(ITEM_MASTER["."].name),
       fill: "var(--color-hot)",
     },
     {
       name: "氷",
-      num: itemValue(ITEM_MASTER["."].name),
+      num: itemValue(ITEM_MASTER["\\"].name),
       fill: "var(--color-ice)",
     },
     {

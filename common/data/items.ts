@@ -20,7 +20,7 @@ export const ITEM_MASTER = {
     price: 300,
     type: "hot",
   },
-  "¥": {
+  ".": {
     id: "03_special",
     name: "限定",
     abbr: "限定",
@@ -48,7 +48,7 @@ export const ITEM_MASTER = {
     price: 400,
     type: "hot",
   },
-  ".": {
+  "\\": {
     id: "10_ice_coffee",
     name: "アイスコーヒー",
     abbr: "氷",
@@ -76,7 +76,7 @@ export const ITEM_MASTER = {
     price: 100,
     type: "milk",
   },
-  "\\": {
+  ",": {
     id: "50_coaster",
     name: "コースター",
     abbr: "コースター",
