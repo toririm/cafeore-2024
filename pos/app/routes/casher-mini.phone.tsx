@@ -21,21 +21,14 @@ export default function CasherMini() {
           <p className="sans-serif text-base">
             商品点数： {order?.items.length ?? 0} 点
           </p>
-          <p className="sans-serif text-base">小計： {order?.total ?? 0} 円</p>
-          <p className="sans-serif text-base">
-            割引： {order?.discount ?? 0} 円
-          </p>
         </div>
         <div>
           <p className="sans-serif text-base">
             合計： {order?.billingAmount ?? 0} 円
           </p>
           <p className="sans-serif text-base">
-            お預り： {order?.received ?? 0} 円
-          </p>
-          <p className="sans-serif text-base">
-            {/* お釣り： {(order?.received ?? 0) - (order?.billingAmount ?? 0)} 円 */}
-            お釣り： {order?.getCharge() ?? 0} 円
+            お釣り： {(order?.received ?? 0) - (order?.billingAmount ?? 0)} 円
+            {/* お釣り： {order?.getCharge() ?? 0} 円 */}
           </p>
         </div>
       </div>
