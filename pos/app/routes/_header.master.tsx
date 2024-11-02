@@ -90,7 +90,7 @@ export default function FielsOfMaster() {
           return (
             order.servedAt === null && (
               <div key={order.id}>
-                <Card className={cn(isReady && "bg-gray-100 text-gray-500")}>
+                <Card className={cn(isReady && "bg-gray-300 text-gray-500")}>
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <CardTitle>{`No. ${order.orderId}`}</CardTitle>
@@ -137,7 +137,16 @@ export default function FielsOfMaster() {
                         {order.comments.map((comment, index) => (
                           <div
                             key={`${index}-${comment.author}`}
-                            className="my-2 flex gap-2 rounded-md bg-gray-200 px-2 py-1"
+                            className={cn(
+                              isReady && "bg-gray-400",
+                              "my-2",
+                              "flex",
+                              "gap-2",
+                              "rounded-md",
+                              "bg-gray-200",
+                              "px-2",
+                              "py-1",
+                            )}
                           >
                             <div className="flex-none font-bold">
                               {(comment.author === "cashier" && "レ") ||
