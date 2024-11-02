@@ -4,7 +4,6 @@ import {
   orderConverter,
 } from "common/firebase-utils/converter";
 import { documentSub } from "common/firebase-utils/subscription";
-import { ItemEntity } from "common/models/item";
 import { QRCodeSVG } from "qrcode.react";
 import { useEffect, useMemo, useState } from "react";
 import useSWRSubscription from "swr/subscription";
@@ -61,7 +60,7 @@ export default function CasherMini() {
             お預り： {order?.received ?? 0} 円
           </p>
           <p className="sans-serif text-base">
-            お釣り： {(order?.received ?? 0) - (order?.billingAmount ?? 0)} 円
+            お釣り： {order?.getCharge()} 円
           </p>
         </div>
       </div>
