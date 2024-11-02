@@ -3,7 +3,7 @@ import type { ItemEntity } from "common/models/item";
 import type { OrderEntity } from "common/models/order";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Switch } from "~/components/ui/switch";
-import { usePrinter } from "~/label/printer";
+import { usePrinter } from "~/label/print-util";
 import { cn } from "~/lib/utils";
 import { useInputStatus } from "../functional/useInputStatus";
 import { useLatestOrderId } from "../functional/useLatestOrderId";
@@ -74,20 +74,7 @@ const CashierV2 = ({ items, orders, submitPayload, syncOrder }: props) => {
     submitOne.nowCreated();
     // 備考を追加
     submitOne.addComment("cashier", descComment);
-    // TODO: 別関数に切り出す
-    // ラベル印刷
-    const items = submitOne.items.toSorted((a, b) =>
-      a.name.localeCompare(b.name),
-    );
-    for (let idx = 0; idx < items.length; idx++) {
-      const item = items[idx];
-      const assigneeView = item.assignee ? `指名:${item.assignee}` : "　";
-      printer.addQueue(
-        `No.${submitOne.orderId}\n${item.name}\n${idx + 1}/${items.length}\n${assigneeView}`,
-      );
-    }
-    printer.addQueue("　\n　\n　\n　");
-    printer.print();
+    printer.printOrderLabel(submitOne);
     submitPayload(submitOne);
     resetAll();
   }, [newOrder, resetAll, printer, submitPayload, descComment]);
