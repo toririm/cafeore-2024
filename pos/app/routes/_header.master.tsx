@@ -19,6 +19,7 @@ import { orderRepository } from "common/repositories/order";
 import dayjs from "dayjs";
 import { orderBy } from "firebase/firestore";
 import { useCallback } from "react";
+import { LuHourglass } from "react-icons/lu";
 import useSWRSubscription from "swr/subscription";
 import { z } from "zod";
 import { useOrderStat } from "~/components/functional/useOrderStat";
@@ -84,11 +85,12 @@ export default function FielsOfMaster() {
       </div>
 
       <div className="grid grid-cols-4 gap-4">
-        {orders?.map(
-          (order) =>
+        {orders?.map((order) => {
+          const isReady = order.readyAt !== null;
+          return (
             order.servedAt === null && (
               <div key={order.id}>
-                <Card>
+                <Card className={cn(isReady && "bg-gray-300 text-gray-500")}>
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <CardTitle>{`No. ${order.orderId}`}</CardTitle>
@@ -97,7 +99,7 @@ export default function FielsOfMaster() {
                       </CardTitle>
                       <div className="grid">
                         <div className="px-2 text-right">
-                          {dayjs(order.createdAt).format("H:mm:ss")}
+                          {dayjs(order.createdAt).format("H時m分")}
                         </div>
                         <RealtimeElapsedTime order={order} />
                       </div>
@@ -111,9 +113,11 @@ export default function FielsOfMaster() {
                             className={cn(
                               "pt-6",
                               item.type === "iceOre" && "bg-sky-200",
+                              item.type === "hotOre" && "bg-orange-300",
                               item.type === "ice" && "bg-blue-200",
-                              item.type === "milk" && "bg-yellow-200",
+                              item.type === "milk" && "bg-gray-300",
                               item.name === "限定" && "bg-red-300",
+                              isReady && "bg-gray-200 text-gray-500",
                             )}
                           >
                             <CardContent>
@@ -134,7 +138,16 @@ export default function FielsOfMaster() {
                         {order.comments.map((comment, index) => (
                           <div
                             key={`${index}-${comment.author}`}
-                            className="my-2 flex gap-2 rounded-md bg-gray-200 px-2 py-1"
+                            className={cn(
+                              isReady && "bg-gray-400",
+                              "my-2",
+                              "flex",
+                              "gap-2",
+                              "rounded-md",
+                              "bg-gray-200",
+                              "px-2",
+                              "py-1",
+                            )}
                           >
                             <div className="flex-none font-bold">
                               {(comment.author === "cashier" && "レ") ||
@@ -148,11 +161,18 @@ export default function FielsOfMaster() {
                       </div>
                     )}
                     <InputComment order={order} addComment={mutateOrder} />
+                    {isReady && (
+                      <div className="mt-5 flex items-center">
+                        <LuHourglass className="mr-1 h-5 w-5 stroke-yellow-600" />
+                        <p className="text-yellow-700">提供待ち</p>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </div>
-            ),
-        )}
+            )
+          );
+        })}
       </div>
     </div>
   );

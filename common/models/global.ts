@@ -1,12 +1,29 @@
 import { z } from "zod";
-import { orderSchema } from "./order";
+import { OrderEntity, orderSchema } from "./order";
 
 export const globalCashierStateSchema = z.object({
   id: z.literal("cashier-state"),
   edittingOrder: orderSchema,
+  submittedOrderId: z.string().nullable(),
 });
 
 export type GlobalCashierState = z.infer<typeof globalCashierStateSchema>;
+
+export class CashierStateEntity implements GlobalCashierState {
+  constructor(
+    public id: "cashier-state",
+    public edittingOrder: OrderEntity,
+    public submittedOrderId: string | null,
+  ) {}
+
+  static fromCashierState(state: GlobalCashierState): CashierStateEntity {
+    return new CashierStateEntity(
+      state.id,
+      OrderEntity.fromOrder(state.edittingOrder),
+      state.submittedOrderId,
+    );
+  }
+}
 
 export const orderStatTypes = ["stop", "operational"] as const;
 

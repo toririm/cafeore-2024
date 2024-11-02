@@ -27,6 +27,7 @@ export const orderSchema = z.object({
   discountOrderCups: z.number(),
   DISCOUNT_PER_CUP: z.number(),
   discount: z.number(), // min(this.getCoffeeCount(), discountOrderCups) * DISCOUNT_PER_CUP
+  estimateTime: z.number(), // seconds
 });
 
 export type Order = z.infer<typeof orderSchema>;
@@ -81,6 +82,7 @@ export class OrderEntity implements Order {
     private _discountOrderCups: number,
     private readonly _DISCOUNT_PER_CUP: number,
     private _discount: number,
+    private _estimateTime: number,
   ) {}
 
   static createNew({ orderId }: { orderId: number }): OrderEntity {
@@ -99,6 +101,7 @@ export class OrderEntity implements Order {
       0,
       STATIC_DISCOUNT_PER_CUP,
       0,
+      -1,
     );
   }
 
@@ -122,6 +125,7 @@ export class OrderEntity implements Order {
       order.discountOrderCups,
       order.DISCOUNT_PER_CUP,
       order.discount,
+      order.estimateTime,
     );
   }
 
@@ -200,6 +204,13 @@ export class OrderEntity implements Order {
       Math.min(this.getCoffeeCount(), this._discountOrderCups) *
       this._DISCOUNT_PER_CUP;
     return this._discount;
+  }
+
+  get estimateTime() {
+    return this._estimateTime;
+  }
+  set estimateTime(estimateTime: number) {
+    this._estimateTime = estimateTime;
   }
 
   // --------------------------------------------------
@@ -320,6 +331,7 @@ export class OrderEntity implements Order {
       discountOrderCups: this.discountOrderCups,
       DISCOUNT_PER_CUP: this.DISCOUNT_PER_CUP,
       discount: this.discount,
+      estimateTime: this.estimateTime,
     };
   }
 

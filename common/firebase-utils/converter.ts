@@ -9,7 +9,7 @@ import _ from "lodash";
 import type { ZodSchema } from "zod";
 import type { WithId } from "../lib/typeguard";
 import {
-  type GlobalCashierState,
+  CashierStateEntity,
   MasterStateEntity,
   globalCashierStateSchema,
   globalMasterStateSchema,
@@ -102,7 +102,7 @@ export const orderConverter: FirestoreDataConverter<WithId<OrderEntity>> = {
   },
 };
 
-export const cashierStateConverter: FirestoreDataConverter<GlobalCashierState> =
+export const cashierStateConverter: FirestoreDataConverter<CashierStateEntity> =
   {
     toFirestore: converter(globalCashierStateSchema).toFirestore,
     fromFirestore: (
@@ -114,7 +114,7 @@ export const cashierStateConverter: FirestoreDataConverter<GlobalCashierState> =
         options,
       );
 
-      return convertedData;
+      return CashierStateEntity.fromCashierState(convertedData);
     },
   };
 

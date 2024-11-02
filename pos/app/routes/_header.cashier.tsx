@@ -89,7 +89,14 @@ export const submitOrderAction: ClientActionFunction = async ({ request }) => {
 
   const savedOrder = await orderRepository.save(order);
 
-  console.log("savedOrder", savedOrder);
+  const cashierState = await cashierRepository.get();
+  if (cashierState == null) {
+    return console.log("cashierState is null");
+  }
+  await cashierRepository.set({
+    ...cashierState,
+    submittedOrderId: savedOrder.id,
+  });
 
   return new Response("ok");
 };
@@ -113,6 +120,7 @@ export const syncOrderAction: ClientActionFunction = async ({ request }) => {
   cashierRepository.set({
     id: "cashier-state",
     edittingOrder: OrderEntity.fromOrder(syncOrder),
+    submittedOrderId: null,
   });
 
   return new Response("ok");
