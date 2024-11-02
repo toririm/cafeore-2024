@@ -99,7 +99,7 @@ export default function FielsOfMaster() {
                       </CardTitle>
                       <div className="grid">
                         <div className="px-2 text-right">
-                          {dayjs(order.createdAt).format("H:mm:ss")}
+                          {dayjs(order.createdAt).format("H時m分")}
                         </div>
                         <RealtimeElapsedTime order={order} />
                       </div>

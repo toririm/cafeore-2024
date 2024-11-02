@@ -124,8 +124,8 @@ export default function Serve() {
                         </CardTitle>
                       </a>
                       <div className="grid">
-                        <div className="text-right">
-                          {dayjs(order.createdAt).format("H:mm:ss")}
+                        <div className="px-2 text-right">
+                          {dayjs(order.createdAt).format("H時m分")}
                         </div>
                         <RealtimeElapsedTime order={order} />
                       </div>
@@ -183,7 +183,7 @@ export default function Serve() {
                           const now = new Date();
                           beServed(order);
                           toast(`提供完了 No.${order.orderId}`, {
-                            description: `${dayjs(now).format("H:mm:ss")}`,
+                            description: `${dayjs(now).format("H時m分")}`,
                             action: {
                               label: "取消",
                               onClick: () => undoServe(order),
