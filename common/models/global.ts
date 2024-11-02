@@ -4,6 +4,7 @@ import { orderSchema } from "./order";
 export const globalCashierStateSchema = z.object({
   id: z.literal("cashier-state"),
   edittingOrder: orderSchema,
+  submittedOrderId: z.string().nullable(),
 });
 
 export type GlobalCashierState = z.infer<typeof globalCashierStateSchema>;
