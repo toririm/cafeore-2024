@@ -75,6 +75,8 @@ export default function CasherMini() {
     return "　";
   }, [isOperational, submittedOrderId]);
 
+  const charge = useMemo(() => order?.getCharge() ?? 0, [order]);
+
   return (
     <>
       <div
@@ -129,7 +131,7 @@ export default function CasherMini() {
                 合計： {order?.billingAmount ?? 0} 円
               </p>
               <p className="font-serif text-4xl text-white">
-                お釣り： {order?.getCharge()} 円
+                お釣り： {Math.max(charge, 0)} 円
               </p>
             </div>
           </div>
