@@ -5,15 +5,24 @@ import {
 } from "@remix-run/react";
 import { orderConverter } from "common/firebase-utils/converter";
 import { documentSub } from "common/firebase-utils/subscription";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { HiBell } from "react-icons/hi";
+import { HiBellAlert } from "react-icons/hi2";
 import useSWRSubscription from "swr/subscription";
+import bellSound from "~/assets/bell.mp3";
 import logoMotion from "~/assets/cafeore_logo_motion.webm";
 import { cn } from "~/lib/utils";
+
+console.log(import.meta.env.VITE_SOHOSAI_VOTE_URL);
 
 export default function Welcome() {
   const [searchParam, setSearchParam] = useSearchParams();
   const [videoShown, setVideoShown] = useState(true);
+  const [notifySound, setNotifySound] = useState(false);
   const id = searchParam.get("id") ?? "none";
+
+  const soundRef1 = useRef<HTMLAudioElement>(null);
+  const soundRef2 = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -24,13 +33,30 @@ export default function Welcome() {
     };
   }, []);
 
-  const order = useSWRSubscription(
+  const { data: order } = useSWRSubscription(
     ["orders", id],
     documentSub({ converter: orderConverter }),
   );
 
+  useEffect(() => {
+    if (!order?.readyAt) {
+      return;
+    }
+    if (!notifySound) {
+      return;
+    }
+    soundRef1.current?.play();
+    const timer = setTimeout(() => {
+      soundRef2.current?.play();
+    }, 500);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [order?.readyAt, notifySound]);
+
   return (
     <>
+      {/* ローディングアニメーション部分 */}
       <div
         className={cn(
           "absolute top-0 left-0 h-screen w-screen transition-all duration-300",
@@ -47,14 +73,65 @@ export default function Welcome() {
           className="h-3/5 w-full object-contain"
         />
       </div>
+      {/* メイン部分 */}
       <div
         className={cn(
-          "opacity-0 transition-all duration-500",
+          "absolute top-0 left-0 h-screen w-screen opacity-0 transition-all duration-500",
           !videoShown && "z-10 opacity-100",
         )}
       >
-        <h1 className="text-center font-serif text-4xl">珈琲・俺へようこそ</h1>
-        <code>{JSON.stringify(order.data?.toOrder(), null, 2)}</code>
+        <div>
+          {order === undefined ? (
+            <div className="flex h-5/6 w-screen items-center justify-center">
+              <h1 className="text-2xl">またのご来店をお待ちしております</h1>
+            </div>
+          ) : (
+            <>
+              <h1 className="text-xl">No. {order.orderId}</h1>
+              {order.readyAt && (
+                <div>
+                  <h2 className="font-bold text-orange-600 text-xl">
+                    ドリップが完了しました！
+                  </h2>
+                  <p>提供口にてお受け取りください</p>
+                  <p>ごゆっくりとお楽しみください！</p>
+                </div>
+              )}
+              {order.readyAt === null && (
+                <p>ご注文の提供をこの画面でお知らせします</p>
+              )}
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setNotifySound((prev) => !prev)}
+                >
+                  {notifySound ? (
+                    <HiBellAlert className="h-7 w-7 rotate-12 fill-orange-600" />
+                  ) : (
+                    <HiBell className="h-7 w-7 fill-stone-500" />
+                  )}
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+        <footer className="absolute bottom-0 h-1/6 w-screen bg-gray-100">
+          <a
+            href={import.meta.env.VITE_SOHOSAI_VOTE_URL}
+            className="flex h-full w-full flex-col items-center justify-center"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <h4 className="text-lg">雙峰祭グランプリ</h4>
+            <h4 className="text-lg">投票をお願いします！</h4>
+          </a>
+        </footer>
+        <audio src={bellSound} ref={soundRef1}>
+          <track kind="captions" />
+        </audio>
+        <audio src={bellSound} ref={soundRef2}>
+          <track kind="captions" />
+        </audio>
       </div>
     </>
   );
