@@ -108,7 +108,7 @@ export default function Serve() {
           return (
             order.servedAt === null && (
               <div key={order.id}>
-                <Card className={cn(isReady && "bg-gray-100 text-gray-500")}>
+                <Card className={cn(isReady && "bg-gray-300 text-gray-500")}>
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <CardTitle>{`No. ${order.orderId}`}</CardTitle>
@@ -159,7 +159,16 @@ export default function Serve() {
                         {order.comments.map((comment, index) => (
                           <div
                             key={`${index}-${comment.author}`}
-                            className="my-2 flex gap-2 rounded-md bg-gray-200 px-2 py-1"
+                            className={cn(
+                              isReady && "bg-gray-400",
+                              "my-2",
+                              "flex",
+                              "gap-2",
+                              "rounded-md",
+                              "bg-gray-200",
+                              "px-2",
+                              "py-1",
+                            )}
                           >
                             <div className="flex-none font-bold">
                               {(comment.author === "cashier" && "レ") ||
@@ -178,6 +187,12 @@ export default function Serve() {
                         order={order}
                         changeReady={(ready) => changeReady(order, ready)}
                       />
+                      {/* {isReady && (
+                        <div className="flex-1 px-2">
+                          <div>呼び出し時刻</div>
+                          <div>{dayjs(order.readyAt).format("H時m分")}</div>
+                        </div>
+                      )} */}
                       <Button
                         onClick={() => {
                           const now = new Date();
@@ -190,7 +205,7 @@ export default function Serve() {
                             },
                           });
                         }}
-                        className="h-16 w-16 bg-green-700 text-lg hover:bg-green-500 "
+                        className="h-16 w-16 bg-green-700 text-lg hover:bg-green-600 "
                       >
                         提供
                       </Button>
