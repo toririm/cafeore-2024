@@ -6,6 +6,7 @@ import {
 import { documentSub } from "common/firebase-utils/subscription";
 import { useEffect, useMemo, useRef, useState } from "react";
 import useSWRSubscription from "swr/subscription";
+import bellSound from "~/assets/bell.mp3";
 import logoSVG from "~/assets/cafeore.svg";
 import logoMotion from "~/assets/cafeore_logo_motion.webm";
 import { useOrderStat } from "~/components/functional/useOrderStat";
@@ -18,6 +19,8 @@ export const meta: MetaFunction = () => {
 export default function CasherMini() {
   const [logoShown, setLogoShown] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const soundRef1 = useRef<HTMLAudioElement>(null);
+  const soundRef2 = useRef<HTMLAudioElement>(null);
   const { data: orderState } = useSWRSubscription(
     ["global", "cashier-state"],
     documentSub({ converter: cashierStateConverter }),
@@ -48,6 +51,19 @@ export default function CasherMini() {
     }
     videoRef.current?.play();
   }, [logoShown]);
+
+  useEffect(() => {
+    if (submittedOrderId === null) {
+      return;
+    }
+    soundRef1.current?.play();
+    const timer = setTimeout(() => {
+      soundRef2.current?.play();
+    }, 500);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [submittedOrderId]);
 
   const textBelowLogo = useMemo(() => {
     if (submittedOrderId != null) {
@@ -119,6 +135,12 @@ export default function CasherMini() {
           </div>
         </div>
       </div>
+      <audio src={bellSound} ref={soundRef1}>
+        <track kind="captions" />
+      </audio>
+      <audio src={bellSound} ref={soundRef2}>
+        <track kind="captions" />
+      </audio>
     </>
   );
 }
