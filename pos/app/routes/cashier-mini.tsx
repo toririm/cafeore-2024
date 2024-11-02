@@ -16,6 +16,7 @@ export default function CasherMini() {
     documentSub({ converter: cashierStateConverter }),
   );
   const order = orderState?.edittingOrder;
+  const [charge, setCharge] = useState(0);
   const submittedOrderId = orderState?.submittedOrderId;
 
   const { data: preOrder } = useSWRSubscription(
@@ -41,6 +42,10 @@ export default function CasherMini() {
     videoRef.current?.play();
   }, [thanksShowing]);
 
+  useEffect(() => {
+    setCharge(order?.received - order?.billingAmount);
+  }, [order?.received, order?.billingAmount]);
+
   return (
     <>
       <div
@@ -59,7 +64,7 @@ export default function CasherMini() {
           className="h-3/5 w-full object-contain"
         />
       </div>
-      <div className="wrap flex h-full flex-col bg-theme px-[50px] pt-[40px]">
+      <div className="wrap flex h-screen flex-col bg-theme px-[50px] pt-[40px]">
         <p className="pb-[50px] font-serif text-5xl text-white">
           No. <span className="text-6xl">{orderId}</span>
         </p>
@@ -74,7 +79,7 @@ export default function CasherMini() {
               合計： {order?.billingAmount ?? 0} 円
             </p>
             <p className="font-serif text-4xl text-white">
-              お釣り： {order?.getCharge()} 円
+              お釣り： {charge > 0 ? charge : 0} 円
             </p>
           </div>
         </div>
