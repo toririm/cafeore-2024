@@ -36,6 +36,8 @@ jobs:
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: bun install --frozen-lockfile
       - run: bun run build
+        env:
+          VITE_SOHOSAI_VOTE_URL: ${{ secrets.VITE_SOHOSAI_VOTE_URL }}
       - name: Publish to Cloudflare Pages
         uses: cloudflare/pages-action@v1
         with:
