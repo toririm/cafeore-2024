@@ -6,6 +6,7 @@ import {
 import { documentSub } from "common/firebase-utils/subscription";
 import { useEffect, useMemo, useRef, useState } from "react";
 import useSWRSubscription from "swr/subscription";
+import logoSVG from "~/assets/cafeore.svg";
 import logoMotion from "~/assets/cafeore_logo_motion.webm";
 import { useOrderStat } from "~/components/functional/useOrderStat";
 import { cn } from "~/lib/utils";
@@ -90,23 +91,31 @@ export default function CasherMini() {
           </h1>
         </div>
       </div>
-      <div className="wrap flex h-full flex-col bg-theme px-[50px] pt-[40px]">
-        <p className="pb-[50px] font-serif text-5xl text-white">
-          No. <span className="text-6xl">{orderId}</span>
-        </p>
-        <div className="grid grid-cols-2 items-center justify-items-center p-[20px]">
-          <div>
-            <p className="font-serif text-4xl text-white">
-              商品点数： {order?.items.length ?? 0} 点
-            </p>
-          </div>
-          <div>
-            <p className="font-serif text-4xl text-white">
-              合計： {order?.billingAmount ?? 0} 円
-            </p>
-            <p className="font-serif text-4xl text-white">
-              お釣り： {order?.getCharge()} 円
-            </p>
+      <div
+        className={cn(
+          "absolute top-0 left-0 z-0 h-screen w-screen",
+          "bg-gradient-to-br from-[#A877D9] via-[#E665C5] to-[#E67651]",
+        )}
+      >
+        <img src={logoSVG} alt="" className="absolute h-screen w-screen p-28" />
+        <div className="wrap flex flex-col px-[50px] pt-[40px]">
+          <p className="pb-[50px] font-serif text-5xl text-white">
+            No. <span className="text-6xl">{orderId}</span>
+          </p>
+          <div className="grid grid-cols-2 items-center justify-items-center p-[20px]">
+            <div>
+              <p className="font-serif text-4xl text-white">
+                商品点数： {order?.items.length ?? 0} 点
+              </p>
+            </div>
+            <div>
+              <p className="font-serif text-4xl text-white">
+                合計： {order?.billingAmount ?? 0} 円
+              </p>
+              <p className="font-serif text-4xl text-white">
+                お釣り： {order?.getCharge()} 円
+              </p>
+            </div>
           </div>
         </div>
       </div>
