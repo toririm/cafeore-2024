@@ -120,6 +120,36 @@ export default function CasherMini() {
           </p>
           <div className="grid grid-cols-2 items-center justify-items-center p-[20px]">
             <div>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[100px]">Invoice</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Method</TableHead>
+                    <TableHead className="text-right">Amount</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {invoices.map((invoice) => (
+                    <TableRow key={invoice.invoice}>
+                      <TableCell className="font-medium">
+                        {invoice.invoice}
+                      </TableCell>
+                      <TableCell>{invoice.paymentStatus}</TableCell>
+                      <TableCell>{invoice.paymentMethod}</TableCell>
+                      <TableCell className="text-right">
+                        {invoice.totalAmount}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+                <TableFooter>
+                  <TableRow>
+                    <TableCell colSpan={3}>Total</TableCell>
+                    <TableCell className="text-right">$2,500.00</TableCell>
+                  </TableRow>
+                </TableFooter>
+              </Table>
               <p className="font-serif text-4xl text-white">
                 商品点数： {order?.items.length ?? 0} 点
               </p>
@@ -129,7 +159,7 @@ export default function CasherMini() {
                 合計： {order?.billingAmount ?? 0} 円
               </p>
               <p className="font-serif text-4xl text-white">
-                お釣り： {order?.getCharge()} 円
+                お釣り： {charge > 0 ? charge : 0} 円
               </p>
             </div>
           </div>
