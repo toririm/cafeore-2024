@@ -22,19 +22,19 @@ export const ItemButtons = ({ items, addItem }: props) => {
         style={{ gridTemplateRows: "auto" }}
       >
         <Button
-          key="q"
+          key="-"
           className="h-[50px] w-[150px] bg-theme text-lg hover:bg-theme hover:ring-4"
           onClick={() => {
-            addItem(key2item("q"));
+            addItem(key2item("-"));
           }}
         >
           べっぴんブレンド
         </Button>
         <Button
-          key="w"
+          key="^"
           className="h-[50px] w-[150px] bg-theme text-lg hover:bg-theme hover:ring-4"
           onClick={() => {
-            addItem(key2item("w"));
+            addItem(key2item("^"));
           }}
         >
           珈琲・俺ブレンド
@@ -51,10 +51,10 @@ export const ItemButtons = ({ items, addItem }: props) => {
         style={{ gridTemplateRows: "auto" }}
       >
         <Button
-          key="e"
+          key="/"
           className="h-[50px] w-[150px] bg-theme text-lg hover:bg-theme hover:ring-4"
           onClick={() => {
-            addItem(key2item("e"));
+            addItem(key2item("/"));
           }}
         >
           限定
@@ -71,28 +71,28 @@ export const ItemButtons = ({ items, addItem }: props) => {
         style={{ gridTemplateRows: "auto" }}
       >
         <Button
-          key="a"
+          key=";"
           className="h-[50px] w-[150px] bg-hot text-lg hover:bg-theme hover:ring-4"
           onClick={() => {
-            addItem(key2item("a"));
+            addItem(key2item(";"));
           }}
         >
           マンデリン
         </Button>
         <Button
-          key="s"
+          key=":"
           className="h-[50px] w-[150px] bg-hot text-lg hover:bg-theme hover:ring-4"
           onClick={() => {
-            addItem(key2item("s"));
+            addItem(key2item(":"));
           }}
         >
           ピンクブルボン
         </Button>
         <Button
-          key="d"
+          key="]"
           className="h-[50px] w-[150px] bg-hot text-lg hover:bg-theme hover:ring-4"
           onClick={() => {
-            addItem(key2item("d"));
+            addItem(key2item("]"));
           }}
         >
           コスタリカ
@@ -109,46 +109,46 @@ export const ItemButtons = ({ items, addItem }: props) => {
         style={{ gridTemplateRows: "auto" }}
       >
         <Button
-          key="x"
+          key="@"
           className="h-[50px] w-[150px] bg-ore text-lg hover:bg-hot hover:ring-4"
           onClick={() => {
-            addItem(key2item("x"));
+            addItem(key2item("@"));
           }}
         >
           ホットオレ
         </Button>
         <Button
-          key="c"
+          key="["
           className="h-[50px] w-[150px] bg-ore text-lg hover:bg-ice hover:ring-4"
           onClick={() => {
-            addItem(key2item("c"));
+            addItem(key2item("["));
           }}
         >
           アイスオレ
         </Button>
         <Button
-          key="z"
+          key="\\"
           className="h-[50px] w-[150px] bg-ice text-lg hover:bg-theme hover:ring-4"
           onClick={() => {
-            addItem(key2item("z"));
+            addItem(key2item("\\"));
           }}
         >
           アイスコーヒー
         </Button>
         <Button
-          key="v"
+          key="."
           className="h-[50px] w-[150px] bg-ice text-lg hover:bg-ice hover:ring-4"
           onClick={() => {
-            addItem(key2item("v"));
+            addItem(key2item("."));
           }}
         >
           アイスミルク
         </Button>
         <Button
-          key="v"
+          key=","
           className="h-[50px] w-[150px] text-lg hover:ring-4"
           onClick={() => {
-            addItem(key2item("v"));
+            addItem(key2item(","));
           }}
         >
           コースター
