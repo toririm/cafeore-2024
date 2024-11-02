@@ -1,7 +1,6 @@
 import { masterStateConverter } from "common/firebase-utils/converter";
 import { documentSub } from "common/firebase-utils/subscription";
 import { MasterStateEntity } from "common/models/global";
-import { useMemo } from "react";
 import useSWRSubscription from "swr/subscription";
 
 /**
@@ -15,10 +14,6 @@ export const useOrderStat = (): boolean => {
     documentSub({ converter: masterStateConverter }),
   );
   const masterStat = masterRemoStat ?? MasterStateEntity.createNew();
-  const orderStat = useMemo(() => {
-    const state = masterStat.orderStats[masterStat.orderStats.length - 1];
-    return state.type;
-  }, [masterStat]);
 
-  return orderStat === "operational";
+  return masterStat.isOrderOperational();
 };
