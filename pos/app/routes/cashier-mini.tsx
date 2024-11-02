@@ -48,23 +48,47 @@ export default function CasherMini() {
     videoRef.current?.play();
   }, [logoShown]);
 
+  const textBelowLogo = useMemo(() => {
+    if (submittedOrderId != null) {
+      return "ご注文ありがとうございました";
+    }
+    if (!isOperational) {
+      return "しばらくお待ちください";
+    }
+    return "　";
+  }, [isOperational, submittedOrderId]);
+
   return (
     <>
       <div
         className={cn(
           "absolute top-0 left-0 z-10 h-screen w-screen transition-all",
-          "flex items-center justify-center bg-black",
-          "grid columns-4",
+          "bg-black",
           !logoShown && "opacity-0 duration-500",
         )}
       >
-        <video
-          ref={videoRef}
-          playsInline
-          muted
-          src={logoMotion}
-          className="h-3/5 w-full object-contain"
-        />
+        <div
+          className={cn(
+            "h-screen w-screen",
+            "flex flex-col items-center justify-center",
+          )}
+        >
+          <video
+            ref={videoRef}
+            playsInline
+            muted
+            src={logoMotion}
+            className="h-3/5 w-full object-contain"
+          />
+          <h1
+            className={cn(
+              "text-center font-zen text-5xl text-[#b09860] opacity-0 duration-1000",
+              logoShown && "opacity-100 duration-500",
+            )}
+          >
+            {textBelowLogo}
+          </h1>
+        </div>
       </div>
       <div className="wrap flex h-full flex-col bg-theme px-[50px] pt-[40px]">
         <p className="pb-[50px] font-serif text-5xl text-white">
