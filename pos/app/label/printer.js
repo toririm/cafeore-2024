@@ -1,17 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 
 /**
- *
- * @returns {{
- * connect: () => void,
- * status: "init" | "disconnected" | "connecting" | "connected",
- * addQueue: (text: string) => void,
- * addNumber: (num: number) => void,
- * print: () => void
- * }}
+ * jsでしか書けない部分を書くフック
+ * @returns {printer}
  */
-export const usePrinter = () => {
-  const [status, setConnStat] = useState("init");
+export const useRawPrinter = () => {
+  const [status, setStatus] = useState("init");
   const ePosDeviceRef = useRef();
   const printerRef = useRef();
 
@@ -22,7 +16,7 @@ export const usePrinter = () => {
   }, [status]);
 
   const connect = () => {
-    setConnStat("connecting");
+    setStatus("connecting");
     const ePosDev = new window.epson.ePOSDevice();
     ePosDeviceRef.current = ePosDev;
 
@@ -35,53 +29,79 @@ export const usePrinter = () => {
           (devobj, retcode) => {
             if (retcode === "OK") {
               printerRef.current = devobj;
-              setConnStat("connected");
+              setStatus("connected");
             } else {
-              setConnStat("disconnected");
+              setStatus("disconnected");
               throw retcode;
             }
           },
         );
       } else {
-        setConnStat("disconnected");
+        setStatus("disconnected");
         console.log(data);
       }
     });
   };
 
-  const addQueue = (text) => {
+  /**
+   *
+   * @returns {void}
+   */
+  const init = () => {
     const prn = printerRef.current;
     if (!prn) {
-      setConnStat("disconnected");
+      setStatus("disconnected");
       console.error("Printer not connected");
       return;
     }
 
     prn.addTextLang("ja");
     prn.addTextSize(2, 2);
-    prn.addText(` ${text}`);
-    prn.addFeedLine(5);
   };
 
-  const addNumber = (num) => {
+  /**
+   *
+   * @param {string} text
+   * @param {[width:number, height:number]}
+   * @returns {void}
+   */
+  const addLine = (text, [width, height]) => {
     const prn = printerRef.current;
     if (!prn) {
-      setConnStat("disconnected");
+      setStatus("disconnected");
       console.error("Printer not connected");
       return;
     }
 
-    prn.addTextLang("ja");
-    prn.addTextSize(5, 5);
-    prn.addText(`No. ${num.toString()}\n`);
-    prn.addTextSize(4, 4);
-    prn.addText("--------\n");
+    prn.addTextSize(2, 2);
+    prn.addText(" ");
+    prn.addTextSize(width, height);
+    prn.addText(`${text}\n`);
   };
 
+  /**
+   * @param {number} line
+   * @returns {void}
+   * */
+  const addFeed = (line) => {
+    const prn = printerRef.current;
+    if (!prn) {
+      setStatus("disconnected");
+      console.error("Printer not connected");
+      return;
+    }
+
+    prn.addFeedLine(line);
+  };
+
+  /**
+   *
+   * @returns {void}
+   */
   const print = () => {
     const prn = printerRef.current;
     if (!prn) {
-      setConnStat("disconnected");
+      setStatus("disconnected");
       console.error("Printer not connected");
       return;
     }
@@ -91,9 +111,13 @@ export const usePrinter = () => {
 
   const printer = {
     connect,
+    /**
+     * @type {"init"|"connecting"|"connected"|"disconnected"}
+     */
     status,
-    addQueue,
-    addNumber,
+    init,
+    addLine,
+    addFeed,
     print,
   };
 
