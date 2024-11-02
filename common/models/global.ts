@@ -77,4 +77,8 @@ export class MasterStateEntity implements GlobalMasterState {
       type: stat,
     });
   }
+
+  isOrderOperational() {
+    return this._orderStats[this._orderStats.length - 1].type === "operational";
+  }
 }
