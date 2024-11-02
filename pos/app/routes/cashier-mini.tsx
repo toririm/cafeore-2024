@@ -38,28 +38,21 @@ export default function CasherMini() {
   }, [submittedOrderId]);
 
   return (
-    <div className="wrap flex h-full flex-col px-[35px] pt-[25px]">
-      <div className="pb-[50px]">
-        <p className="font-serif text-4xl">No. {orderId}</p>
-      </div>
-      <div className="grid grid-cols-2 items-center justify-items-center">
+    <div className="wrap flex h-full flex-col bg-theme px-[50px] pt-[40px]">
+      <p className="pb-[50px] font-serif text-5xl text-white">
+        No. <span className="text-6xl">{orderId}</span>
+      </p>
+      <div className="grid grid-cols-2 items-center justify-items-center p-[20px]">
         <div>
-          <p className="sans-serif text-base">
+          <p className="font-serif text-4xl text-white">
             商品点数： {order?.items.length ?? 0} 点
-          </p>
-          <p className="sans-serif text-base">小計： {order?.total ?? 0} 円</p>
-          <p className="sans-serif text-base">
-            割引： {order?.discount ?? 0} 円
           </p>
         </div>
         <div>
-          <p className="sans-serif text-base">
+          <p className="font-serif text-4xl text-white">
             合計： {order?.billingAmount ?? 0} 円
           </p>
-          <p className="sans-serif text-base">
-            お預り： {order?.received ?? 0} 円
-          </p>
-          <p className="sans-serif text-base">
+          <p className="font-serif text-4xl text-white">
             お釣り： {order?.getCharge()} 円
           </p>
         </div>
