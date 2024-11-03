@@ -27,18 +27,17 @@ export const usePrinter = () => {
     const items = order.items.toSorted((a, b) => a.name.localeCompare(b.name));
     rawPrinter.init();
 
-    const coffees = items.filter(
-      (item) =>
-        item.type === "hot" ||
-        item.type === "ice" ||
-        item.type === "hotOre" ||
-        item.type === "iceOre",
-    );
+    const coffees = order.getCoffeeCups();
 
     console.log(coffees);
 
     for (const [idx, item] of coffees.entries()) {
-      printSingleItemLabel(order.orderId, idx + 1, items.length, item);
+      printSingleItemLabel(
+        order.orderId,
+        idx + 1,
+        order.getCoffeeCups().length,
+        item,
+      );
     }
     rawPrinter.addFeed(7);
     rawPrinter.print();

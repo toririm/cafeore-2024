@@ -71,10 +71,10 @@ export default function CasherMini() {
     if (!isOperational) {
       return "しばらくお待ちください";
     }
-    return "　";
+    return "　ご来店ありがとうございます";
   }, [isOperational, submittedOrderId]);
 
-  const charge = order?.getCharge();
+  const charge = useMemo(() => order?.getCharge() ?? 0, [order]);
 
   return (
     <>
@@ -96,12 +96,12 @@ export default function CasherMini() {
             playsInline
             muted
             src={logoMotion}
-            className="h-3/5 w-full object-contain"
+            className="h-3/5 w-full flex-none object-contain"
           />
           <h1
             className={cn(
-              "text-center font-zen text-5xl text-[#b09860] opacity-0 duration-1000",
-              logoShown && "opacity-100 duration-500",
+              "text-center font-zen text-6xl text-[#b09860] opacity-0 duration-1000 ease-in-out",
+              logoShown && "mt-5 text-5xl opacity-100 duration-500",
             )}
           >
             {textBelowLogo}
@@ -114,6 +114,7 @@ export default function CasherMini() {
           "bg-gradient-to-br from-[#A877D9] via-[#E665C5] to-[#E67651]",
         )}
       >
+        <button type="button" className="absolute top-0 left-0 h-24 w-60" />
         <img src={logoSVG} alt="" className="absolute h-screen w-screen p-28" />
         <div className="flex h-screen w-screen flex-col px-28 py-10 font-noto">
           <p className="flex-none pb-16 font-medium text-5xl text-white">
@@ -175,7 +176,7 @@ export default function CasherMini() {
                 )}
               </div>
               <div className="flex h-12 items-center justify-between pb-7">
-                {(charge ?? 0) >= 0 && (
+                {charge >= 0 && (
                   <>
                     <p className="flex-none pr-14 font-bold text-4xl text-white">
                       おつり
