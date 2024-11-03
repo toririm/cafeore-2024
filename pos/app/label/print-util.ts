@@ -32,7 +32,12 @@ export const usePrinter = () => {
     console.log(coffees);
 
     for (const [idx, item] of coffees.entries()) {
-      printSingleItemLabel(order.orderId, idx + 1, items.length, item);
+      printSingleItemLabel(
+        order.orderId,
+        idx + 1,
+        order.getCoffeeCups().length,
+        item,
+      );
     }
     rawPrinter.addFeed(7);
     rawPrinter.print();
