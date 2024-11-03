@@ -10,6 +10,15 @@ import bellSound from "~/assets/bell.mp3";
 import logoSVG from "~/assets/cafeore.svg";
 import logoMotion from "~/assets/cafeore_logo_motion.webm";
 import { useOrderStat } from "~/components/functional/useOrderStat";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "~/components/ui/table";
 import { cn } from "~/lib/utils";
 
 export const meta: MetaFunction = () => {
@@ -27,6 +36,7 @@ export default function CasherMini() {
   );
   const order = orderState?.edittingOrder;
   const submittedOrderId = orderState?.submittedOrderId;
+  const [queuedItems, setQueuedItems] = useState(new Map());
 
   const { data: preOrder } = useSWRSubscription(
     ["orders", submittedOrderId ?? "none"],
@@ -74,6 +84,20 @@ export default function CasherMini() {
     }
     return "　";
   }, [isOperational, submittedOrderId]);
+
+  useEffect(() => {
+    if (order?.items?.length === 0) return;
+    const item = order?.items?.slice(-1)[0].name;
+    const updatedItems = new Map(queuedItems);
+    if (item in queuedItems) {
+      updatedItems[item] += 1;
+      setQueuedItems(updatedItems);
+    } else {
+      updatedItems.set(item, 1);
+      setQueuedItems(updatedItems);
+    }
+    [order?.items];
+  });
 
   return (
     <>
@@ -123,22 +147,19 @@ export default function CasherMini() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[100px]">Invoice</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Method</TableHead>
-                    <TableHead className="text-right">Amount</TableHead>
+                    <TableHead className="w-[100px]">商品名</TableHead>
+                    <TableHead>杯数</TableHead>
+                    <TableHead className="text-right">金額</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {invoices.map((invoice) => (
-                    <TableRow key={invoice.invoice}>
-                      <TableCell className="font-medium">
-                        {invoice.invoice}
-                      </TableCell>
-                      <TableCell>{invoice.paymentStatus}</TableCell>
-                      <TableCell>{invoice.paymentMethod}</TableCell>
+                  {queuedItems?.forEach((name, cups) => (
+                    <TableRow key={name}>
+                      <TableCell className="font-medium">{name}</TableCell>
+                      <TableCell>{cups}</TableCell>
                       <TableCell className="text-right">
-                        {invoice.totalAmount}
+                        {order?.items.find((item) => item.name === name)
+                          ?.price * cups}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -159,7 +180,8 @@ export default function CasherMini() {
                 合計： {order?.billingAmount ?? 0} 円
               </p>
               <p className="font-serif text-4xl text-white">
-                お釣り： {charge > 0 ? charge : 0} 円
+                {/* お釣り： {charge > 0 ? charge : 0} 円 */}
+                お釣り： {0} 円
               </p>
             </div>
           </div>
