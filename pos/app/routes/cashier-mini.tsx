@@ -10,15 +10,6 @@ import bellSound from "~/assets/bell.mp3";
 import logoSVG from "~/assets/cafeore.svg";
 import logoMotion from "~/assets/cafeore_logo_motion.webm";
 import { useOrderStat } from "~/components/functional/useOrderStat";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "~/components/ui/table";
 import { cn } from "~/lib/utils";
 
 export const meta: MetaFunction = () => {
@@ -36,8 +27,6 @@ export default function CasherMini() {
   );
   const order = orderState?.edittingOrder;
   const submittedOrderId = orderState?.submittedOrderId;
-  const [queuedItems, setQueuedItems] = useState(new Map());
-
   const { data: preOrder } = useSWRSubscription(
     ["orders", submittedOrderId ?? "none"],
     documentSub({ converter: orderConverter }),
@@ -85,19 +74,7 @@ export default function CasherMini() {
     return "　";
   }, [isOperational, submittedOrderId]);
 
-  useEffect(() => {
-    if (order?.items?.length === 0) return;
-    const item = order?.items?.slice(-1)[0].name;
-    const updatedItems = new Map(queuedItems);
-    if (item in queuedItems) {
-      updatedItems[item] += 1;
-      setQueuedItems(updatedItems);
-    } else {
-      updatedItems.set(item, 1);
-      setQueuedItems(updatedItems);
-    }
-    [order?.items];
-  });
+  const charge = order?.getCharge();
 
   return (
     <>
@@ -138,51 +115,75 @@ export default function CasherMini() {
         )}
       >
         <img src={logoSVG} alt="" className="absolute h-screen w-screen p-28" />
-        <div className="wrap flex flex-col px-[50px] pt-[40px]">
-          <p className="pb-[50px] font-serif text-5xl text-white">
-            No. <span className="text-6xl">{orderId}</span>
+        <div className="flex h-screen w-screen flex-col px-28 py-10 font-noto">
+          <p className="flex-none pb-16 font-medium text-5xl text-white">
+            No. <span className="font-semibold text-7xl">{orderId}</span>
           </p>
-          <div className="grid grid-cols-2 items-center justify-items-center p-[20px]">
-            <div>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[100px]">商品名</TableHead>
-                    <TableHead>杯数</TableHead>
-                    <TableHead className="text-right">金額</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {queuedItems?.forEach((name, cups) => (
-                    <TableRow key={name}>
-                      <TableCell className="font-medium">{name}</TableCell>
-                      <TableCell>{cups}</TableCell>
-                      <TableCell className="text-right">
-                        {order?.items.find((item) => item.name === name)
-                          ?.price * cups}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-                <TableFooter>
-                  <TableRow>
-                    <TableCell colSpan={3}>Total</TableCell>
-                    <TableCell className="text-right">$2,500.00</TableCell>
-                  </TableRow>
-                </TableFooter>
-              </Table>
-              <p className="font-serif text-4xl text-white">
-                商品点数： {order?.items.length ?? 0} 点
-              </p>
+          <div className="flex h-4/5 flex-col justify-between">
+            <div className="">
+              {order?.items.map((item, idx) => {
+                return (
+                  <div
+                    key={`${idx}-${item.id}`}
+                    className="flex items-center justify-between pb-7"
+                  >
+                    <p className="flex-none pr-14 font-bold text-6xl text-white">
+                      {idx + 1}
+                    </p>
+                    <p className="flex-1 font-bold text-5xl text-white">
+                      {item.name}
+                    </p>
+                    <p className="flex-none font-bold text-5xl text-white">
+                      {item.price} 円
+                    </p>
+                  </div>
+                );
+              })}
+              <div className="flex items-center justify-between pb-7">
+                {(order?.discount ?? 0) > 0 && (
+                  <>
+                    <p className="flex-none pr-14 font-bold text-3xl text-white">
+                      割引
+                    </p>
+                    <p className="font-bold text-4xl text-white">
+                      -{order?.discount} 円
+                    </p>
+                  </>
+                )}
+              </div>
             </div>
-            <div>
-              <p className="font-serif text-4xl text-white">
-                合計： {order?.billingAmount ?? 0} 円
-              </p>
-              <p className="font-serif text-4xl text-white">
-                {/* お釣り： {charge > 0 ? charge : 0} 円 */}
-                お釣り： {0} 円
-              </p>
+            <div className="">
+              <div className="mb-7 h-1 w-full bg-white" />
+              <div className="flex items-center justify-between pb-7">
+                <p className="flex-none pr-14 font-bold text-5xl text-white">
+                  合計
+                </p>
+                <p className="font-bold text-5xl text-white">
+                  {order?.billingAmount} 円
+                </p>
+              </div>
+              <div className="flex h-14 items-center justify-between pb-7">
+                {(order?.received ?? 0) > 0 && (
+                  <>
+                    <p className="flex-none pr-14 font-bold text-4xl text-white">
+                      お預かり
+                    </p>
+                    <p className="font-bold text-4xl text-white">
+                      {order?.received} 円
+                    </p>
+                  </>
+                )}
+              </div>
+              <div className="flex h-12 items-center justify-between pb-7">
+                {(charge ?? 0) >= 0 && (
+                  <>
+                    <p className="flex-none pr-14 font-bold text-4xl text-white">
+                      おつり
+                    </p>
+                    <p className="font-bold text-4xl text-white">{charge} 円</p>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>
