@@ -63,6 +63,7 @@ module.exports = {
       },
       fontFamily: {
         zen: "Zen Old Mincho",
+        noto: "Noto Sans JP Variable",
       },
       keyframes: {
         "accordion-down": {
