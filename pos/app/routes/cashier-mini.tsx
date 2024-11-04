@@ -6,7 +6,6 @@ import {
 import { documentSub } from "common/firebase-utils/subscription";
 import { useEffect, useMemo, useRef, useState } from "react";
 import useSWRSubscription from "swr/subscription";
-import bellSound from "~/assets/bell.mp3";
 import logoSVG from "~/assets/cafeore.svg";
 import logoMotion from "~/assets/cafeore_logo_motion.webm";
 import { useOrderStat } from "~/components/functional/useOrderStat";
@@ -115,7 +114,11 @@ export default function CasherMini() {
         )}
       >
         <button type="button" className="absolute top-0 left-0 h-24 w-60" />
-        <img src={logoSVG} alt="" className="absolute h-screen w-screen p-28" />
+        <img
+          src={logoSVG}
+          alt=""
+          className="absolute bottom-10 h-screen w-screen p-40"
+        />
         <div className="flex h-screen w-screen flex-col px-28 py-10 font-noto">
           <p className="flex-none pb-16 font-medium text-5xl text-white">
             No. <span className="font-semibold text-7xl">{orderId}</span>
@@ -189,12 +192,6 @@ export default function CasherMini() {
           </div>
         </div>
       </div>
-      <audio src={bellSound} ref={soundRef1}>
-        <track kind="captions" />
-      </audio>
-      <audio src={bellSound} ref={soundRef2}>
-        <track kind="captions" />
-      </audio>
     </>
   );
 }
