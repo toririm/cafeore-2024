@@ -1,7 +1,8 @@
 import type { WithId } from "common/lib/typeguard";
 import type { ItemEntity } from "common/models/item";
 import type { OrderEntity } from "common/models/order";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import bellSound from "~/assets/bell.mp3";
 import { Switch } from "~/components/ui/switch";
 import { usePrinter } from "~/label/print-util";
 import { cn } from "~/lib/utils";
@@ -46,6 +47,19 @@ const CashierV2 = ({ items, orders, submitPayload, syncOrder }: props) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [UISession, renewUISession] = useUISession();
   const { nextOrderId } = useLatestOrderId(orders);
+  const soundRef1 = useRef<HTMLAudioElement>(null);
+  const soundRef2 = useRef<HTMLAudioElement>(null);
+
+  const playSound = useCallback(() => {
+    soundRef1.current?.play();
+    const timer = setTimeout(() => {
+      soundRef2.current?.play();
+    }, 500);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, []);
+
   useSyncCahiserOrder(newOrder, syncOrder);
 
   const printer = usePrinter();
@@ -77,7 +91,8 @@ const CashierV2 = ({ items, orders, submitPayload, syncOrder }: props) => {
     printer.printOrderLabel(submitOne);
     submitPayload(submitOne);
     resetAll();
-  }, [newOrder, resetAll, printer, submitPayload, descComment]);
+    playSound();
+  }, [newOrder, resetAll, printer, submitPayload, descComment, playSound]);
 
   const keyEventHandlers = useMemo(() => {
     return {
@@ -240,6 +255,12 @@ const CashierV2 = ({ items, orders, submitPayload, syncOrder }: props) => {
             />
           </div>
         </div>
+        <audio src={bellSound} ref={soundRef1}>
+          <track kind="captions" />
+        </audio>
+        <audio src={bellSound} ref={soundRef2}>
+          <track kind="captions" />
+        </audio>
       </div>
     </>
   );
