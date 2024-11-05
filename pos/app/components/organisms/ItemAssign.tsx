@@ -37,6 +37,10 @@ const ItemAssign = memo(
     }, [assignee, idx, mutateItem]);
 
     // アサイン入力欄を閉じるときに保存
+    /**
+     * BAD: useEffect内でstateを更新している
+     * https://ja.react.dev/learn/you-might-not-need-an-effect#notifying-parent-components-about-state-changes
+     */
     useEffect(() => {
       if (!focus) {
         saveAssignInput();
